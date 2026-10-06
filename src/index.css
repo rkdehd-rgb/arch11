@@ -1,7 +1,10 @@
 @import "https://fonts.googleapis.cn/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap";
-@import "tailwindcss";
 
-@theme {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
   --color-paper: #faf9f7;
   --color-surface: #ffffff;
   --color-ink: #1c1b19;
@@ -13,6 +16,7 @@
   --color-accent-dark: #8e3a24;
   --color-accent-soft: #f3e7e1;
   --color-canvas: #1c1b19;
+  --color-blueprint: #14171c;
   --color-surface-raised: #f6f5f2;
   --font-sans: "Inter", "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "Inter", monospace;
