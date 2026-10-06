@@ -58,6 +58,7 @@
 - **降级兜底**：未配置 Key、CORS（`GrsaiError.corsLike`/TypeError）或接口失败时，自动调用 `ImageGenerationService`（`services/imageGeneration.ts`）生成确定性 SVG，入板 meta 标 `grsaiMode=degraded`，流程不中断。
 - **Key 与节点**：Grsai 三接口与 LLM 共用同一 API Key；节点 `global=grsaiapi.com` / `cn=grsai.dakka.com.cn` 存于 settings 的 `grsaiNode`。设置页含「Grsai」LLM 预设（baseUrl 随节点、model=gemini-3.1-pro）。
 - **图片兜底**：所有外部图片经 `SafeImage`，失败回退建筑线稿 SVG。
+- **Vite 中间件模式坑点**（`server/vite.ts`）：`createViteServer` 默认仍会自动加载根目录 `vite.config.ts`（其 plugins 已含 react 插件），若再内联注册 `react()` 会使 react-refresh 前导被注入两次，报 `inWebWorker / prevRefreshReg has already been declared`。故中间件模式必须显式 `configFile: false` 且插件只声明一次；同时不要展开复用 `vite.config.ts` 的实例化 plugins。端口从 `DEPLOY_RUN_PORT` 读取（HMR 固定 6000，path `/hot/vite-hmr`）。
 
 ## 编码规范
 

@@ -7,7 +7,7 @@ import router from './routes/index';
 import { setupVite } from './vite';
 
 const isDev = process.env.COZE_PROJECT_ENV !== 'PROD';
-const port = parseInt(process.env.PORT || '5000', 10);
+const port = parseInt(process.env.DEPLOY_RUN_PORT || process.env.PORT || '5000', 10);
 const hostname = process.env.HOSTNAME || 'localhost';
 const app = express();
 // 使用 http.createServer 包装 Express app，以便支持 WebSocket 等协议升级
