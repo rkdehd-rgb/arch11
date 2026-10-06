@@ -14,7 +14,12 @@ function loadBoard(): BoardItem[] {
 }
 
 function persist(items: BoardItem[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  } catch (err) {
+    // 容量超限等：本次更新仍保留在内存中，仅无法持久化，不拖垮操作
+    console.warn('[board] 持久化失败：', err instanceof Error ? err.message : err);
+  }
 }
 
 let idCounter = 0;

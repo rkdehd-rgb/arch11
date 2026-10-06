@@ -275,6 +275,9 @@ export default function SettingsPage() {
             全部生图接口（统一异步生成 / OpenAI 同步生图 / 图片编辑）与 16 个模型共用上方 API Key
             （Authorization Bearer）。切换节点将同时影响全部生图接口。
           </p>
+          <p className="mb-5 rounded-md border border-line bg-paper px-3.5 py-2.5 text-[11.5px] leading-relaxed text-ink-3">
+            参考图将在本地（浏览器端）预处理为 base64 后再提交，无需公网可访问；个别图无法加载时会自动剔除并提示。
+          </p>
 
           <span className="field-label">接入节点</span>
           <div className="flex gap-2">

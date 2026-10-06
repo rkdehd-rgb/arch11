@@ -31,6 +31,7 @@
 │   │   ├── llm.ts             # prompt 构建 / JSON 解析 / 推理 / 本地兜底 / 协同边
 │   │   ├── strategyPool.ts    # 内置+用户自定义统一策略池解析（定义/案例/维度/建 id）
 │   │   ├── grsai.ts           # Grsai 真实生图：MODEL_CATALOG(16 模型) + 异步轮询/同步/编辑
+│   │   ├── referenceImage.ts  # 参考图提交前浏览器端下载转 base64（15s 超时/失败剔除/错误识别）
 │   │   └── imageGeneration.ts # ImageGenerationService + 8 风格 SVG（降级/演示兜底）
 │   ├── stores/                # settings / task / report / board / customStrategy
 │   ├── components/

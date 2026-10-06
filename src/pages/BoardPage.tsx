@@ -8,6 +8,10 @@ import SafeImage from '../components/SafeImage';
 import { resolveCases, resolveCaseMeta } from '../services/strategyPool';
 import { compressImage, StorageQuotaError } from '../services/imageCompress';
 import {
+  prepareReferenceImages,
+  isImageUploadError,
+} from '../services/referenceImage';
+import {
   imageGenerationService,
   type GeneratedImage,
 } from '../services/imageGeneration';
@@ -117,6 +121,10 @@ export default function BoardPage() {
   const [progress, setProgress] = useState(0);
   const [genError, setGenError] = useState<string | null>(null);
   const [boardNotice, setBoardNotice] = useState<string | null>(null);
+  // 参考图预处理（提交前下载转 base64）进度
+  const [preprocess, setPreprocess] = useState<{ done: number; total: number } | null>(null);
+  // 画板图片异步预转换失败的 item id 集合（显示红标）
+  const [failedPreconvert, setFailedPreconvert] = useState<string[]>([]);
   const cancelRef = useRef(false);
 
   const [viewport, setViewport] = useState<Viewport>({ x: 0, y: 0, scale: 1 });
@@ -395,6 +403,50 @@ export default function BoardPage() {
     return () => window.clearTimeout(t);
   }, [boardNotice]);
 
+  // ---------------- 画板图片异步预转换（后台下载转 base64） ----------------
+
+  /** 后台预转换一张画板图片：远程 URL → data URI，成功后替换 src */
+  async function preconvertItem(item: BoardItem): Promise<void> {
+    if (/^data:/i.test(item.src.trim())) return;
+    try {
+      const { images, failed } = await prepareReferenceImages([item.src]);
+      if (images[0]) {
+        useBoardStore.getState().updateItem(item.id, { src: images[0] });
+        setFailedPreconvert((prev) => prev.filter((id) => id !== item.id));
+      } else if (failed[0]) {
+        setFailedPreconvert((prev) =>
+          prev.includes(item.id) ? prev : [...prev, item.id],
+        );
+      }
+    } catch {
+      setFailedPreconvert((prev) =>
+        prev.includes(item.id) ? prev : [...prev, item.id],
+      );
+    }
+  }
+
+  // 案例图 / 灵感图贴入画板后，后台异步预转换（生成图通常本身即 data URI，跳过）
+  useEffect(() => {
+    const pending = items.filter(
+      (item) =>
+        item.kind !== 'generated' &&
+        !/^data:/i.test(item.src.trim()) &&
+        !failedPreconvert.includes(item.id),
+    );
+    if (pending.length === 0) return;
+    let cancelled = false;
+    void (async () => {
+      for (const item of pending) {
+        if (cancelled) break;
+        await preconvertItem(item);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items]);
+
   // ---------------- 生成概念图 ----------------
 
   /** 计算 gpt-base 型号的 size：比例字符串或像素值 */
@@ -423,25 +475,65 @@ export default function BoardPage() {
       return;
     }
 
-    try {
-      let imageUrl = '';
+    // ---- 参考图预处理：浏览器端下载转 base64，避免服务端拉图失败 ----
+    let submitImages = referenceImages;
+    let fallbackImages: string[] = [];
+    if (genMode !== 'edit' && referenceImages.length > 0) {
+      setPreprocess({ done: 0, total: referenceImages.length });
+      const prepared = await prepareReferenceImages(referenceImages, {
+        onProgress: (done, total) => setPreprocess({ done, total }),
+      });
+      setPreprocess(null);
+      submitImages = prepared.images;
+      fallbackImages = prepared.originals;
+      if (prepared.failed.length > 0) {
+        const names = prepared.failed.map((f) => `图${f.index}`).join('、');
+        setBoardNotice(
+          `${prepared.failed.length}/${referenceImages.length} 张参考图无法加载，已剔除：${names}`,
+        );
+      }
+    }
+
+    // edit 模式：预处理选中图（单张）
+    let editSubmitSrc = selectedItem?.src ?? '';
+    const editFallbackSrc = selectedItem?.src ?? '';
+    if (genMode === 'edit' && selectedItem) {
+      setPreprocess({ done: 0, total: 1 });
+      const prepared = await prepareReferenceImages([selectedItem.src], {
+        onProgress: (done, total) => setPreprocess({ done, total }),
+      });
+      setPreprocess(null);
+      if (prepared.images[0]) {
+        editSubmitSrc = prepared.images[0];
+      } else {
+        const r = prepared.failed[0]?.reason ?? '无法加载';
+        setGenError(`待编辑图片无法读取（${r}），请替换为本地图片后重试。`);
+        setGenPhase('idle');
+        return;
+      }
+    }
+
+    /** 按当前模式提交一次；dataUri=true 传预处理 base64，false 传原 URL */
+    async function submitOnce(dataUri: boolean): Promise<string> {
+      const images = dataUri ? submitImages : fallbackImages;
       if (genMode === 'async') {
         const taskId = await submitAsyncGenerate(grsaiNode, grsaiKey, {
           prompt,
           model: modelId,
           aspectRatio: aspectRatio === 'auto' ? '1:1' : aspectRatio,
           imageSize,
-          images: referenceImages,
+          images,
           quality: modelSpec.family === 'gpt-image' ? quality : undefined,
           background: transparent ? 'transparent' : undefined,
           mask: maskUrl || undefined,
         });
         setProgress(2);
-        imageUrl = await pollAsyncResult(grsaiNode, grsaiKey, taskId, {
+        return await pollAsyncResult(grsaiNode, grsaiKey, taskId, {
           onProgress: (p) => setProgress(p),
           shouldCancel: () => cancelRef.current,
         });
-      } else if (genMode === 'sync') {
+      }
+      if (genMode === 'sync') {
         const size = modelSpec.paramStyle === 'gpt-vip'
           ? pixelSize
           : modelSpec.paramStyle === 'gpt-base'
@@ -451,23 +543,41 @@ export default function BoardPage() {
                 const preset = PIXEL_PRESETS.find((p) => p.ratio === aspectRatio);
                 return preset?.values[0] ?? GPT_BASE_DEFAULT_SIZE;
               })();
-        imageUrl = await generateSync(grsaiNode, grsaiKey, {
+        return await generateSync(grsaiNode, grsaiKey, {
           prompt,
           model: modelId,
           size,
-          image: referenceImages,
+          image: images,
           quality: modelSpec.family === 'gpt-image' ? quality : undefined,
           background: transparent ? 'transparent' : undefined,
         });
-      } else if (selectedItem) {
-        imageUrl = await editImage(grsaiNode, grsaiKey, {
-          prompt,
-          model: modelId,
-          image: selectedItem.src,
-          quality: modelSpec.family === 'gpt-image' ? quality : undefined,
-          background: transparent ? 'transparent' : undefined,
-          mask: maskUrl || undefined,
-        });
+      }
+      return await editImage(grsaiNode, grsaiKey, {
+        prompt,
+        model: modelId,
+        image: dataUri ? editSubmitSrc : editFallbackSrc,
+        quality: modelSpec.family === 'gpt-image' ? quality : undefined,
+        background: transparent ? 'transparent' : undefined,
+        mask: maskUrl || undefined,
+      });
+    }
+
+    try {
+      let imageUrl = '';
+      try {
+        imageUrl = await submitOnce(true);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        // data URI 被拒 / 参考图相关错误：改用原 URL 再试一次
+        const canFallback = genMode === 'edit'
+          ? Boolean(editFallbackSrc) && editFallbackSrc !== editSubmitSrc
+          : fallbackImages.some((x, i) => x !== submitImages[i]);
+        if (isImageUploadError(msg) && canFallback) {
+          setBoardNotice('base64 参考图被拒，已改用原图地址重试一次。');
+          imageUrl = await submitOnce(false);
+        } else {
+          throw err;
+        }
       }
 
       if (cancelRef.current) return;
@@ -709,6 +819,16 @@ export default function BoardPage() {
                     />
                   </div>
 
+                  {/* 预转换失败红标：此图无法作为参考图 */}
+                  {failedPreconvert.includes(item.id) && (
+                    <span
+                      title="此图无法作为参考图，建议替换为本地图片"
+                      className="absolute -left-1.5 -top-1.5 z-30 flex h-5 w-5 items-center justify-center rounded-full bg-[#C0392B] text-[12px] font-bold text-white shadow-md ring-2 ring-blueprint"
+                    >
+                      !
+                    </span>
+                  )}
+
                   {/* 标题 + 类型徽标 */}
                   <div className="mt-1.5 flex items-center gap-1.5">
                     <span
@@ -851,6 +971,19 @@ export default function BoardPage() {
                 Generating Concept
               </div>
               <div className="space-y-4">
+                {preprocess && (
+                  <div className="flex items-start gap-3">
+                    <span className="spinner !h-5 !w-5 !border-white/30 !border-t-accent" />
+                    <div>
+                      <div className="text-[13px] font-medium text-white/85">
+                        参考图预处理
+                      </div>
+                      <div className="font-mono text-[11px] text-white/40">
+                        下载并转码 {preprocess.done}/{preprocess.total}
+                      </div>
+                    </div>
+                  </div>
+                )}
                 {GEN_STEPS.map((step, i) => {
                   const state = i < genStep ? 'done' : i === genStep ? 'active' : 'idle';
                   return (
