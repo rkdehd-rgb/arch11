@@ -2,7 +2,7 @@
 
 ## 项目概览
 
-**ArchReason（建筑推理引擎）**：辅助建筑师创作的 AI 工具。输入设计任务书 → LLM 策略推理 → 策略协同图 → 结构化推理报告（含真实案例）→ 无限画布工作台 → 程序化生成概念方案图。
+**ArchReason（建筑推理引擎）**：辅助建筑师创作的 AI 工具。输入设计任务书 → LLM 策略推理 → 策略协同图 → 结构化推理报告（含真实案例）→ 无限画布工作台 → Grsai 真实生图（失败/未配置时程序化 SVG 兜底）。
 
 - **技术栈**：Vite 7 + React 19 + TypeScript 5 + Express（开发态承载 Vite 中间件）
 - **状态管理**：Zustand（全部 localStorage 持久化）
@@ -29,7 +29,8 @@
 │   │   └── cases.ts           # 64 个真实建筑案例
 │   ├── services/
 │   │   ├── llm.ts             # prompt 构建 / JSON 解析 / 推理 / 本地兜底 / 协同边
-│   │   └── imageGeneration.ts # ImageGenerationService 接口 + 8 风格 SVG 生成器
+│   │   ├── grsai.ts           # Grsai 真实生图：MODEL_CATALOG(16 模型) + 异步轮询/同步/编辑
+│   │   └── imageGeneration.ts # ImageGenerationService + 8 风格 SVG（降级/演示兜底）
 │   ├── stores/                # settings / task / report / board
 │   ├── components/
 │   │   ├── Layout.tsx         # 侧边栏 + 主区域
@@ -53,7 +54,9 @@
 
 - **推理链路**（`services/llm.ts`）：`buildSystemPrompt` 注入 32 条策略 → `runInference` 调 chat/completions → `extractJson` 支持 code fence / 前后杂文字 / 字段归一化 → 失败由 `localFallback` 规则打分兜底（报告标记 `degraded`）。
 - **协同边**（`buildEdges`）：命中策略间的预置 `synergies`（strength=`preset`）+ 模型 `synergyInsights`（strength=`insight`）。
-- **生图服务**：`ImageGenerationService.generate(prompt, styleId, options)` 返回 data URI；演示版为确定性 SVG（同 prompt+style 画面稳定），真实 API 实现位见文件尾部注释，可无缝替换。
+- **生图链路**（`pages/BoardPage.tsx`）：默认走 `services/grsai.ts` 真实接口，三模式 `async`（/v1/api/generate + /result 轮询，真实 progress）、`sync`（/v1/images/generations 同步）、`edit`（/v1/images/edits，针对画板选中单图）。参数区按 `MODEL_CATALOG`（16 模型，paramStyle=banana/banana2/gpt-base/gpt-vip）动态渲染；`PIXEL_PRESETS` 为 vip/flare/sunburst 的合规像素网格。
+- **降级兜底**：未配置 Key、CORS（`GrsaiError.corsLike`/TypeError）或接口失败时，自动调用 `ImageGenerationService`（`services/imageGeneration.ts`）生成确定性 SVG，入板 meta 标 `grsaiMode=degraded`，流程不中断。
+- **Key 与节点**：Grsai 三接口与 LLM 共用同一 API Key；节点 `global=grsaiapi.com` / `cn=grsai.dakka.com.cn` 存于 settings 的 `grsaiNode`。设置页含「Grsai」LLM 预设（baseUrl 随节点、model=gemini-3.1-pro）。
 - **图片兜底**：所有外部图片经 `SafeImage`，失败回退建筑线稿 SVG。
 
 ## 编码规范

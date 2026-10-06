@@ -177,6 +177,15 @@ body {
   padding: 0 9px;
   font-size: 12px;
 }
+.chip-accent {
+  border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-line));
+  color: var(--color-accent-dark);
+}
+.chip-selected {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  color: var(--color-accent-dark);
+}
 
 .shadow-float {
   box-shadow: 0 10px 32px rgba(28, 27, 25, 0.12), 0 2px 6px rgba(28, 27, 25, 0.06);

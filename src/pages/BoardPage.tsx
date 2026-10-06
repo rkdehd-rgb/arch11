@@ -2,15 +2,27 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useReportStore } from '../stores/report';
 import { useBoardStore } from '../stores/board';
+import { useSettingsStore } from '../stores/settings';
 import { strategyMap } from '../data/strategies';
 import { getCasesByStrategy } from '../data/cases';
 import SafeImage from '../components/SafeImage';
 import {
   imageGenerationService,
-  STYLE_OPTIONS,
   type GeneratedImage,
 } from '../services/imageGeneration';
-import type { BoardItem, InferenceReport } from '../types';
+import {
+  MODEL_CATALOG,
+  PIXEL_PRESETS,
+  DEFAULT_MODEL_ID,
+  GPT_BASE_DEFAULT_SIZE,
+  getModelSpec,
+  submitAsyncGenerate,
+  pollAsyncResult,
+  generateSync,
+  editImage,
+  GrsaiError,
+} from '../services/grsai';
+import type { BoardItem, GrsaiMode, GrsaiNode, InferenceReport } from '../types';
 
 type GenPhase = 'idle' | 'running';
 
@@ -21,6 +33,12 @@ const GEN_STEPS = [
   { title: '细化渲染', desc: '补充材质、光影与环境配景' },
 ];
 
+const GEN_MODE_TABS: { id: GrsaiMode; label: string; hint: string }[] = [
+  { id: 'async', label: 'AI 生成', hint: '统一异步接口，真实进度' },
+  { id: 'sync', label: '快速生图', hint: 'OpenAI 同步，备用通道' },
+  { id: 'edit', label: '图片编辑', hint: '针对画板选中的一张图' },
+];
+
 interface Viewport {
   x: number;
   y: number;
@@ -29,7 +47,7 @@ interface Viewport {
 
 function buildPrompt(
   strategyName: string,
-  styleName: string,
+  modelLabel: string,
   report: InferenceReport,
 ): string {
   const keywords = [
@@ -40,7 +58,7 @@ function buildPrompt(
     .filter(Boolean)
     .slice(0, 5)
     .join('、');
-  return `以「${strategyName}」为核心策略，采用${styleName}的建筑语言，为位于${report.task.location || '项目场地'}的${report.task.buildingType || '建筑'}（${keywords}）生成概念方案示意图：突出体块组合与虚实关系，呼应场地环境与核心诉求，画面呈现专业建筑草图气质，构图克制、层次清晰。`;
+  return `以「${strategyName}」为核心策略，采用 ${modelLabel} 的视觉表现，为位于${report.task.location || '项目场地'}的${report.task.buildingType || '建筑'}（${keywords}）生成概念方案示意图：突出体块组合与虚实关系，呼应场地环境与核心诉求，画面呈现专业建筑草图气质，构图克制、层次清晰。`;
 }
 
 export default function BoardPage() {
@@ -70,11 +88,34 @@ export default function BoardPage() {
   const [genStrategy, setGenStrategy] = useState<string>(
     initialStrategy || report?.result.strategies[0]?.strategyId || '',
   );
-  const [styleId, setStyleId] = useState<string>(STYLE_OPTIONS[0].id);
+
+  const llmConfig = useSettingsStore((s) => s.config);
+  const grsaiNode: GrsaiNode = llmConfig.grsaiNode ?? 'global';
+  const grsaiKey = llmConfig.apiKey;
+  const grsaiReady = Boolean(grsaiKey.trim());
+
+  const [genMode, setGenMode] = useState<GrsaiMode>('async');
+  const [modelId, setModelId] = useState<string>(DEFAULT_MODEL_ID);
+  // 各模型参数
+  const [aspectRatio, setAspectRatio] = useState<string>('auto');
+  const [imageSize, setImageSize] = useState<string>('1K');
+  const [gptRatio, setGptRatio] = useState<string>('1:1');
+  const [pixelSize, setPixelSize] = useState<string>('1024x1024');
+  const [quality, setQuality] = useState<string>('auto');
+  const [transparent, setTransparent] = useState(false);
+  const [maskUrl, setMaskUrl] = useState<string>('');
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  // 异步模式参考图（多图）；默认自动带入当前策略案例
+  const [referenceImages, setReferenceImages] = useState<string[]>([]);
+  const [autoRefStrategy, setAutoRefStrategy] = useState<string>('');
+
   const [prompt, setPrompt] = useState<string>('');
   const [promptEdited, setPromptEdited] = useState(false);
   const [genPhase, setGenPhase] = useState<GenPhase>('idle');
   const [genStep, setGenStep] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const [genError, setGenError] = useState<string | null>(null);
+  const cancelRef = useRef(false);
 
   const [viewport, setViewport] = useState<Viewport>({ x: 0, y: 0, scale: 1 });
   const stageRef = useRef<HTMLDivElement | null>(null);
@@ -82,13 +123,59 @@ export default function BoardPage() {
   const draggingRef = useRef<{ id: string; startX: number; startY: number; ox: number; oy: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const modelSpec = getModelSpec(modelId);
+
+  // 画板当前选中项（图片编辑模式使用，仅允许一张）
+  const selectedItem = items.find((it) => it.id === selectedId) ?? null;
+
+  // 切换模型：归一化参数到合法区间
+  function handleModelChange(nextId: string): void {
+    const spec = getModelSpec(nextId);
+    setModelId(nextId);
+    setGenError(null);
+    if (spec.paramStyle === 'banana' || spec.paramStyle === 'banana2') {
+      if (!spec.ratios?.includes(aspectRatio)) setAspectRatio(spec.ratios?.[0] ?? 'auto');
+      if (!spec.sizes?.includes(imageSize)) setImageSize('1K');
+    } else if (spec.paramStyle === 'gpt-base') {
+      setQuality('auto');
+    } else {
+      setQuality(spec.qualities?.[0] ?? 'medium');
+      setTransparent(false);
+    }
+  }
+
+  function handleModeChange(mode: GrsaiMode): void {
+    if (mode === 'edit' && !selectedItem) return;
+    setGenMode(mode);
+    setGenError(null);
+  }
+
+  // 异步参考图：策略变化时自动带入该策略案例图（用户未手动改过时）
+  useEffect(() => {
+    if (genStrategy !== autoRefStrategy) {
+      const refs = getCasesByStrategy(genStrategy)
+        .map((c) => c.image)
+        .filter((src) => src.startsWith('http'))
+        .slice(0, 3);
+      setReferenceImages(refs);
+      setAutoRefStrategy(genStrategy);
+    }
+  }, [genStrategy, autoRefStrategy]);
+
+  function addReferenceFromGallery(src: string): void {
+    setReferenceImages((prev) => (prev.includes(src) ? prev : [...prev, src]));
+  }
+  function removeReference(src: string): void {
+    setReferenceImages((prev) => prev.filter((x) => x !== src));
+  }
+
   // 同步策略选择到提示词
   useEffect(() => {
     if (!report || promptEdited) return;
     const strategyName = strategyMap.get(genStrategy)?.name ?? '';
-    const styleName = STYLE_OPTIONS.find((s) => s.id === styleId)?.name ?? '';
-    setPrompt(buildPrompt(strategyName, styleName, report));
-  }, [genStrategy, styleId, report, promptEdited]);
+    const modelLabel = getModelSpec(modelId).label;
+    setPrompt(buildPrompt(strategyName, modelLabel, report));
+  }, [genStrategy, modelId, report, promptEdited]);
 
   // 若 report 变化且未水合，自动贴入第一策略参考图
   useEffect(() => {
@@ -275,20 +362,103 @@ export default function BoardPage() {
 
   // ---------------- 生成概念图 ----------------
 
+  /** 计算 gpt-base 型号的 size：比例字符串或像素值 */
+  function resolveGptBaseSize(): string {
+    if (gptRatio.includes('x')) return gptRatio;
+    return GPT_BASE_DEFAULT_SIZE;
+  }
+
   async function handleGenerate(): Promise<void> {
     if (!report || !prompt.trim()) return;
+    if (genMode === 'edit' && !selectedItem) {
+      setGenError('请先在画板上选中一张要编辑的图片');
+      return;
+    }
+
     const startedAt = Date.now();
     setGenPhase('running');
     setGenStep(0);
+    setProgress(0);
+    setGenError(null);
+    cancelRef.current = false;
 
+    // 未配置 Key：直接走演示兜底
+    if (!grsaiReady) {
+      await runDemoFallback(startedAt, true);
+      return;
+    }
+
+    try {
+      let imageUrl = '';
+      if (genMode === 'async') {
+        const taskId = await submitAsyncGenerate(grsaiNode, grsaiKey, {
+          prompt,
+          model: modelId,
+          aspectRatio: aspectRatio === 'auto' ? '1:1' : aspectRatio,
+          imageSize,
+          images: referenceImages,
+          quality: modelSpec.family === 'gpt-image' ? quality : undefined,
+          background: transparent ? 'transparent' : undefined,
+          mask: maskUrl || undefined,
+        });
+        setProgress(2);
+        imageUrl = await pollAsyncResult(grsaiNode, grsaiKey, taskId, {
+          onProgress: (p) => setProgress(p),
+          shouldCancel: () => cancelRef.current,
+        });
+      } else if (genMode === 'sync') {
+        const size = modelSpec.paramStyle === 'gpt-vip'
+          ? pixelSize
+          : modelSpec.paramStyle === 'gpt-base'
+            ? resolveGptBaseSize()
+            : (() => {
+                // nano-banana 在同步接口下映射为像素
+                const preset = PIXEL_PRESETS.find((p) => p.ratio === aspectRatio);
+                return preset?.values[0] ?? GPT_BASE_DEFAULT_SIZE;
+              })();
+        imageUrl = await generateSync(grsaiNode, grsaiKey, {
+          prompt,
+          model: modelId,
+          size,
+          image: referenceImages,
+          quality: modelSpec.family === 'gpt-image' ? quality : undefined,
+          background: transparent ? 'transparent' : undefined,
+        });
+      } else if (selectedItem) {
+        imageUrl = await editImage(grsaiNode, grsaiKey, {
+          prompt,
+          model: modelId,
+          image: selectedItem.src,
+          quality: modelSpec.family === 'gpt-image' ? quality : undefined,
+          background: transparent ? 'transparent' : undefined,
+          mask: maskUrl || undefined,
+        });
+      }
+
+      if (cancelRef.current) return;
+      addGeneratedItem(imageUrl, modelSpec.label, genMode, startedAt, false);
+      setGenPhase('idle');
+    } catch (err) {
+      if (err instanceof GrsaiError && err.message === '已取消生成') {
+        setGenPhase('idle');
+        return;
+      }
+      // 真实接口失败：自动降级为程序化 SVG 演示
+      const reason = err instanceof Error ? err.message : String(err);
+      setGenError(`真实接口失败（${reason}），已自动切换为演示生成。`);
+      await runDemoFallback(startedAt, false, reason);
+    }
+  }
+
+  /** 程序化 SVG 演示兜底（未配置 Key 或真实接口失败时） */
+  async function runDemoFallback(startedAt: number, noKey: boolean, reason?: string): Promise<void> {
     const stepTimers = GEN_STEPS.map((_, i) =>
       setTimeout(() => setGenStep(i), i * 680),
     );
-
     const strategyName = strategyMap.get(genStrategy)?.name ?? '';
     let generated: GeneratedImage;
     try {
-      generated = await imageGenerationService.generate(prompt, styleId, {
+      generated = await imageGenerationService.generate(prompt, modelSpec.family, {
         strategyId: genStrategy,
         strategyName,
         timestamp: startedAt,
@@ -296,28 +466,46 @@ export default function BoardPage() {
     } finally {
       stepTimers.forEach(clearTimeout);
     }
-
-    // 保证分步动画完整播放
     const animationMs = GEN_STEPS.length * 680 + 300;
     const waitMs = Math.max(0, animationMs - (Date.now() - startedAt));
     await new Promise((r) => setTimeout(r, waitMs));
 
+    const label = noKey ? `${modelSpec.label}·演示` : `${modelSpec.label}·降级`;
+    addGeneratedItem(generated.src, label, 'degraded', startedAt, true);
+    if (reason) setGenError(`接口失败：${reason}；已用程序化 SVG 兜底。`);
+    setGenPhase('idle');
+  }
+
+  function addGeneratedItem(
+    src: string,
+    label: string,
+    mode: GrsaiMode | 'degraded',
+    startedAt: number,
+    degraded: boolean,
+  ): void {
     addItem({
       kind: 'generated',
       x: 360 + Math.random() * 60,
       y: 150 + Math.random() * 40,
       width: 380,
-      src: generated.src,
-      title: `概念方案图 · ${generated.styleName}`,
+      src,
+      title: `概念方案图 · ${label}`,
       meta: {
         strategyId: genStrategy,
-        style: generated.styleName,
+        style: label,
         prompt,
         timestamp: startedAt,
+        grsaiModel: modelId,
+        grsaiMode: mode,
       },
     });
+    void degraded;
+  }
 
+  function handleCancel(): void {
+    cancelRef.current = true;
     setGenPhase('idle');
+    setGenError(null);
   }
 
   if (!report) {
@@ -370,12 +558,33 @@ export default function BoardPage() {
                 onClick={() => addCaseToBoard(ref.image, ref.name, ref.highlight)}
                 title={`点击贴入画板：${ref.name}`}
               >
-                <div className="aspect-[4/3] w-full overflow-hidden bg-line">
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-line">
                   <SafeImage
                     src={ref.image}
                     alt={ref.name}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.04]"
                   />
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    title="加入生成参考图"
+                    className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded bg-[rgba(20,23,28,0.72)] text-white opacity-0 transition-opacity hover:bg-accent group-hover:opacity-100"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addReferenceFromGallery(ref.image);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.stopPropagation();
+                        addReferenceFromGallery(ref.image);
+                      }
+                    }}
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                  </span>
                 </div>
                 <div className="truncate px-2 py-1.5 text-[11px] text-ink-2">{ref.name}</div>
               </button>
@@ -619,63 +828,312 @@ export default function BoardPage() {
       <aside className="flex w-[300px] shrink-0 flex-col border-l border-line bg-surface">
         <div className="border-b border-line px-5 py-4">
           <div className="text-[14.5px] font-semibold text-ink">生成控制面板</div>
-          <div className="mt-0.5 text-[11.5px] text-ink-3">演示版：程序化 SVG 概念示意图</div>
+          <div className="mt-0.5 flex items-center gap-1.5 text-[11.5px] text-ink-3">
+            Grsai
+            <span className="font-mono">
+              {grsaiNode === 'global' ? 'grsaiapi.com' : 'grsai.dakka.com.cn'}
+            </span>
+            · {grsaiReady ? '真实接口' : '演示模式'}
+          </div>
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 py-5">
-          <label className="field-label" htmlFor="genStrategy">策略选择（单选）</label>
-          <select
-            id="genStrategy"
-            className="input"
-            value={genStrategy}
-            onChange={(e) => setGenStrategy(e.target.value)}
-          >
-            {report.result.strategies.map((match, i) => (
-              <option key={match.strategyId} value={match.strategyId}>
-                {i + 1}. {strategyMap.get(match.strategyId)?.name ?? match.strategyId}
-              </option>
-            ))}
-          </select>
-
-          <div className="mt-5">
-            <span className="field-label">风格选择</span>
-            <div className="grid grid-cols-4 gap-2">
-              {STYLE_OPTIONS.map((style) => (
+          {/* 生成模式三选一 */}
+          <span className="field-label">生成模式</span>
+          <div className="grid grid-cols-3 gap-1.5">
+            {GEN_MODE_TABS.map((tab) => {
+              const disabled = tab.id === 'edit' && !selectedItem;
+              return (
                 <button
-                  key={style.id}
+                  key={tab.id}
                   type="button"
-                  className={`flex flex-col items-center gap-1.5 rounded-md border px-1 py-2 transition-all ${
-                    styleId === style.id
-                      ? 'border-accent bg-accent-soft'
-                      : 'border-line hover:border-line-strong'
-                  }`}
-                  onClick={() => setStyleId(style.id)}
+                  disabled={disabled}
+                  title={tab.hint}
+                  className={`rounded-md border px-1 py-2 text-[11.5px] transition-all ${
+                    genMode === tab.id
+                      ? 'border-accent bg-accent-soft text-accent-dark'
+                      : 'border-line text-ink-2 hover:border-line-strong'
+                  } ${disabled ? 'cursor-not-allowed opacity-40 hover:border-line' : ''}`}
+                  onClick={() => handleModeChange(tab.id)}
                 >
-                  <span
-                    className="flex h-8 w-8 items-center justify-center rounded"
-                    style={{ backgroundColor: style.palette.secondary }}
-                  >
-                    <span
-                      className="block h-4 w-4"
-                      style={{
-                        backgroundColor: style.palette.accent,
-                        clipPath:
-                          style.id === 'parametric'
-                            ? 'polygon(50% 0,100% 100%,0 100%)'
-                            : style.id === 'folded-plate'
-                              ? 'polygon(0 100%,50% 0,100% 100%)'
-                              : 'inset(2px)',
-                      }}
-                    />
-                  </span>
-                  <span className={`text-[10px] leading-tight ${styleId === style.id ? 'text-accent-dark' : 'text-ink-2'}`}>
-                    {style.name}
-                  </span>
+                  {tab.label}
                 </button>
+              );
+            })}
+          </div>
+          {genMode === 'edit' && (
+            <p className="mt-1.5 text-[11px] text-ink-3">
+              {selectedItem
+                ? `编辑对象：${selectedItem.title}`
+                : '请先在画板上点选一张图片'}
+            </p>
+          )}
+          {genMode === 'sync' && (
+            <p className="mt-1.5 text-[11px] text-ink-3">同步等待，无进度百分比。</p>
+          )}
+
+          {/* 策略选择（edit 模式不强制） */}
+          <div className="mt-5">
+            <label className="field-label" htmlFor="genStrategy">策略选择</label>
+            <select
+              id="genStrategy"
+              className="input"
+              value={genStrategy}
+              onChange={(e) => setGenStrategy(e.target.value)}
+            >
+              {report.result.strategies.map((match, i) => (
+                <option key={match.strategyId} value={match.strategyId}>
+                  {i + 1}. {strategyMap.get(match.strategyId)?.name ?? match.strategyId}（{match.matchScore}%）
+                </option>
               ))}
+            </select>
+          </div>
+
+          {/* 模型分组下拉 */}
+          <div className="mt-5">
+            <label className="field-label" htmlFor="modelSelect">模型选择（16）</label>
+            <select
+              id="modelSelect"
+              className="input font-mono text-[12.5px]"
+              value={modelId}
+              onChange={(e) => handleModelChange(e.target.value)}
+            >
+              <optgroup label="nano-banana 系列">
+                {MODEL_CATALOG.filter((m) => m.family === 'nano-banana')
+                  .map((m) => (
+                    <option key={m.id} value={m.id}>{m.label}</option>
+                  ))}
+              </optgroup>
+              <optgroup label="gpt-image 系列">
+                {MODEL_CATALOG.filter((m) => m.family === 'gpt-image')
+                  .map((m) => (
+                    <option key={m.id} value={m.id}>{m.label}</option>
+                  ))}
+              </optgroup>
+            </select>
+            <div className="mt-2 flex flex-wrap gap-1">
+              {modelSpec.capabilities.map((cap) => (
+                <span
+                  key={cap}
+                  className="rounded border border-line bg-paper px-1.5 py-0.5 text-[10px] text-ink-2"
+                >
+                  {cap}
+                </span>
+              ))}
+              <span className="rounded px-1.5 py-0.5 text-[9.5px] text-ink-3">
+                后缀含义以实际效果为准
+              </span>
             </div>
           </div>
 
+          {/* -------- 动态参数区：nano-banana -------- */}
+          {(modelSpec.paramStyle === 'banana' || modelSpec.paramStyle === 'banana2') && (
+            <div className="mt-5 space-y-4">
+              <div>
+                <span className="field-label">画面比例</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {modelSpec.ratios?.map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      className={`h-7 rounded-md border px-2 font-mono text-[11px] transition-all ${
+                        aspectRatio === r
+                          ? 'border-accent bg-accent-soft text-accent-dark'
+                          : 'border-line text-ink-2 hover:border-line-strong'
+                      }`}
+                      onClick={() => setAspectRatio(r)}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <span className="field-label">分辨率</span>
+                <div className="flex gap-1.5">
+                  {modelSpec.sizes?.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      className={`h-7 flex-1 rounded-md border font-mono text-[11px] transition-all ${
+                        imageSize === s
+                          ? 'border-accent bg-accent-soft text-accent-dark'
+                          : 'border-line text-ink-2 hover:border-line-strong'
+                      }`}
+                      onClick={() => setImageSize(s)}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* -------- 动态参数区：gpt-base -------- */}
+          {modelSpec.paramStyle === 'gpt-base' && (
+            <div className="mt-5 space-y-4">
+              <div>
+                <span className="field-label">比例或像素</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {modelSpec.ratios?.map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      className={`h-7 rounded-md border px-2 font-mono text-[11px] transition-all ${
+                        gptRatio === r
+                          ? 'border-accent bg-accent-soft text-accent-dark'
+                          : 'border-line text-ink-2 hover:border-line-strong'
+                      }`}
+                      onClick={() => setGptRatio(r)}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    className={`h-7 rounded-md border px-2 font-mono text-[11px] transition-all ${
+                      gptRatio === GPT_BASE_DEFAULT_SIZE
+                        ? 'border-accent bg-accent-soft text-accent-dark'
+                        : 'border-line text-ink-2 hover:border-line-strong'
+                    }`}
+                    onClick={() => setGptRatio(GPT_BASE_DEFAULT_SIZE)}
+                  >
+                    {GPT_BASE_DEFAULT_SIZE}
+                  </button>
+                </div>
+              </div>
+              <div>
+                <span className="field-label">质量</span>
+                <div className="flex gap-1.5">
+                  {modelSpec.qualities?.map((q) => (
+                    <button
+                      key={q}
+                      type="button"
+                      className="h-7 flex-1 rounded-md border font-mono text-[11px] border-accent bg-accent-soft text-accent-dark"
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* -------- 动态参数区：vip/flare/sunburst -------- */}
+          {modelSpec.paramStyle === 'gpt-vip' && (
+            <div className="mt-5 space-y-4">
+              <div>
+                <span className="field-label">像素预设（比例 × 分辨率）</span>
+                <div className="space-y-2">
+                  {PIXEL_PRESETS.map((preset) => (
+                    <div key={preset.ratio}>
+                      <div className="mb-1 font-mono text-[10px] text-ink-3">{preset.ratio}</div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {preset.values.map((v) => (
+                          <button
+                            key={v}
+                            type="button"
+                            className={`h-7 rounded-md border px-2 font-mono text-[10.5px] transition-all ${
+                              pixelSize === v
+                                ? 'border-accent bg-accent-soft text-accent-dark'
+                                : 'border-line text-ink-2 hover:border-line-strong'
+                            }`}
+                            onClick={() => setPixelSize(v)}
+                          >
+                            {v}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <span className="field-label">质量档位</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {modelSpec.qualities?.map((q) => (
+                    <button
+                      key={q}
+                      type="button"
+                      className={`h-7 rounded-md border px-2.5 font-mono text-[11px] transition-all ${
+                        quality === q
+                          ? 'border-accent bg-accent-soft text-accent-dark'
+                          : 'border-line text-ink-2 hover:border-line-strong'
+                      }`}
+                      onClick={() => setQuality(q)}
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {modelSpec.transparent && (
+                <label className="flex items-center justify-between rounded-md border border-line px-3 py-2 text-[12px] text-ink-2">
+                  <span>透明背景</span>
+                  <input
+                    type="checkbox"
+                    className="accent-[var(--color-accent)]"
+                    checked={transparent}
+                    onChange={(e) => setTransparent(e.target.checked)}
+                  />
+                </label>
+              )}
+
+              {modelSpec.mask && (
+                <div>
+                  <button
+                    type="button"
+                    className="text-[11.5px] text-ink-3 hover:text-accent"
+                    onClick={() => setShowAdvanced((v) => !v)}
+                  >
+                    {showAdvanced ? '▾' : '▸'} 高级选项（mask）
+                  </button>
+                  {showAdvanced && (
+                    <input
+                      className="input mt-2 font-mono text-[11.5px]"
+                      placeholder="mask 图片 URL（可选）"
+                      value={maskUrl}
+                      onChange={(e) => setMaskUrl(e.target.value)}
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* -------- 参考图（async 多图 / sync 多图 / edit 单图） -------- */}
+          {genMode !== 'edit' && (
+            <div className="mt-5">
+              <span className="field-label">
+                参考图（{genMode === 'async' ? '多图' : '多图'}，{referenceImages.length}）
+              </span>
+              {referenceImages.length === 0 ? (
+                <p className="rounded-md border border-dashed border-line-strong px-3 py-3 text-[11px] text-ink-3">
+                  暂无参考图；将图库图片悬停后点「+」加入。
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {referenceImages.map((src) => (
+                    <div key={src} className="group relative h-14 w-[52px] overflow-hidden rounded border border-line">
+                      <SafeImage src={src} alt="ref" className="h-full w-full object-cover" />
+                      <button
+                        type="button"
+                        title="移除"
+                        className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center bg-accent text-white opacity-0 group-hover:opacity-100"
+                        onClick={() => removeReference(src)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 提示词 */}
           <div className="mt-5">
             <div className="mb-1.5 flex items-center justify-between">
               <span className="text-[13px] font-medium text-ink-2">提示词</span>
@@ -685,15 +1143,14 @@ export default function BoardPage() {
                 onClick={() => {
                   setPromptEdited(false);
                   const strategyName = strategyMap.get(genStrategy)?.name ?? '';
-                  const styleName = STYLE_OPTIONS.find((s) => s.id === styleId)?.name ?? '';
-                  setPrompt(buildPrompt(strategyName, styleName, report));
+                  setPrompt(buildPrompt(strategyName, getModelSpec(modelId).label, report));
                 }}
               >
                 重新拼装
               </button>
             </div>
             <textarea
-              className="input min-h-[168px] resize-y text-[12.5px] leading-[1.7]"
+              className="input min-h-[150px] resize-y text-[12.5px] leading-[1.7]"
               value={prompt}
               onChange={(e) => {
                 setPrompt(e.target.value);
@@ -701,24 +1158,52 @@ export default function BoardPage() {
               }}
             />
           </div>
+
+          {genError && (
+            <div className="mt-4 rounded-md border border-accent/40 bg-accent-soft px-3 py-2.5 text-[11.5px] leading-relaxed text-accent-dark fade-in">
+              {genError}
+            </div>
+          )}
+          {!grsaiReady && (
+            <p className="mt-4 text-[11.5px] text-ink-3">
+              未配置 API Key，将使用程序化 SVG 演示生成；前往「设置」配置 Grsai 可启用真实生图。
+            </p>
+          )}
         </div>
 
         <div className="border-t border-line px-5 py-4">
-          <button
-            type="button"
-            className="btn btn-primary w-full"
-            disabled={genPhase === 'running' || !prompt.trim()}
-            onClick={handleGenerate}
-          >
-            {genPhase === 'running' ? (
-              <>
-                <span className="spinner !border-white/40 !border-t-white" />
-                生成中…
-              </>
-            ) : (
-              '生成概念方案图'
-            )}
-          </button>
+          {genPhase === 'running' ? (
+            <button type="button" className="btn btn-secondary w-full" onClick={handleCancel}>
+              取消生成
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-primary w-full"
+              disabled={!prompt.trim() || (genMode === 'edit' && !selectedItem)}
+              onClick={handleGenerate}
+            >
+              {genMode === 'edit' ? '编辑图片' : '生成概念方案图'}
+            </button>
+          )}
+          {/* 异步真实进度条 */}
+          {genPhase === 'running' && genMode === 'async' && (
+            <div className="mt-3">
+              <div className="h-1 w-full overflow-hidden rounded bg-line">
+                <div
+                  className="h-full bg-accent transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <div className="mt-1 text-right font-mono text-[10.5px] text-ink-3">{progress}%</div>
+            </div>
+          )}
+          {genPhase === 'running' && genMode === 'sync' && (
+            <div className="mt-3 flex items-center justify-center gap-2 text-[11.5px] text-ink-3">
+              <span className="spinner !h-3.5 !w-3.5 !border-ink-3/40 !border-t-accent" />
+              同步生成中…
+            </div>
+          )}
         </div>
       </aside>
     </div>

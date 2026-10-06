@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSettingsStore } from '../stores/settings';
 import { testConnection } from '../services/llm';
+import { GRSAI_NODES } from '../services/grsai';
+import type { GrsaiNode } from '../types';
 
 type TestStatus = 'idle' | 'testing' | 'success' | 'fail';
 
@@ -27,6 +29,15 @@ const PRESET_PROVIDERS = [
     model: 'moonshot-v1-8k',
   },
 ];
+
+/** Grsai 预设：一个 Key 同时跑通推理与生图 */
+function applyGrsaiPreset(node: GrsaiNode, update: ReturnType<typeof useSettingsStore.getState>['update']): void {
+  update({
+    grsaiNode: node,
+    baseUrl: `${GRSAI_NODES[node]}/v1`,
+    model: 'gemini-3.1-pro',
+  });
+}
 
 export default function SettingsPage() {
   const navigate = useNavigate();
@@ -92,7 +103,18 @@ export default function SettingsPage() {
                   {provider.label}
                 </button>
               ))}
+              <button
+                type="button"
+                className="chip chip-accent"
+                onClick={() => applyGrsaiPreset(config.grsaiNode ?? 'global', update)}
+                title="一键填入 Grsai：推理与生图共用同一 API Key"
+              >
+                Grsai
+              </button>
             </div>
+            <p className="mt-2 text-[11.5px] text-ink-3">
+              Grsai 预设：Base URL 随下方接入节点切换，模型示例 gemini-3.1-pro，与生图共用同一 API Key。
+            </p>
           </div>
 
           <div className="space-y-5">
@@ -153,6 +175,53 @@ export default function SettingsPage() {
               />
             </div>
           </div>
+
+        {/* Grsai 生图配置 */}
+        <div className="card mt-6 p-7">
+          <div className="mb-1 flex items-center gap-2">
+            <h2 className="text-[15px] font-semibold text-ink">Grsai 生图接口</h2>
+          </div>
+          <p className="mb-5 text-[12.5px] text-ink-2">
+            全部生图接口（统一异步生成 / OpenAI 同步生图 / 图片编辑）与 16 个模型共用上方 API Key
+            （Authorization Bearer）。切换节点将同时影响全部生图接口。
+          </p>
+
+          <span className="field-label">接入节点</span>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              className={`chip justify-between gap-3 ${(config.grsaiNode ?? 'global') === 'global' ? 'chip-selected' : ''}`}
+              onClick={() => update({ grsaiNode: 'global' })}
+            >
+              <span>全球节点</span>
+              <span className="font-mono text-[10.5px] text-ink-3">grsaiapi.com</span>
+            </button>
+            <button
+              type="button"
+              className={`chip justify-between gap-3 ${config.grsaiNode === 'cn' ? 'chip-selected' : ''}`}
+              onClick={() => update({ grsaiNode: 'cn' })}
+            >
+              <span>国内节点</span>
+              <span className="font-mono text-[10.5px] text-ink-3">grsai.dakka.com.cn</span>
+            </button>
+          </div>
+
+          <div className="mt-5 rounded-md border border-line bg-paper px-4 py-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[12.5px] text-ink-2">API Key（与 LLM 共用）</span>
+              <span className={`font-mono text-[11px] ${config.apiKey.trim() ? 'text-[#5d7a52]' : 'text-accent'}`}>
+                {config.apiKey.trim() ? '已配置' : '未配置'}
+              </span>
+            </div>
+            <p className="mt-1.5 text-[11.5px] text-ink-3">
+              在上方 LLM 配置区填写 API Key 即可，一个 Key 跑通「推理 + 生图」全流程。
+            </p>
+          </div>
+
+          <p className="mt-4 text-[11.5px] text-ink-3">
+            若浏览器直连遇到 CORS 拦截或接口异常，画板会自动降级为程序化 SVG 演示生成，流程不中断。
+          </p>
+        </div>
 
           {message && (
             <div

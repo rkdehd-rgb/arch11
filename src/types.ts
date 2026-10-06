@@ -4,7 +4,14 @@ export interface ModelConfig {
   baseUrl: string;
   apiKey: string;
   model: string;
+  /** Grsai 生图接入节点：global=grsaiapi.com，cn=grsai.dakka.com.cn */
+  grsaiNode?: GrsaiNode;
 }
+
+export type GrsaiNode = 'global' | 'cn';
+
+/** 画板生成模式：async=统一异步接口，sync=OpenAI 同步生图，edit=图片编辑 */
+export type GrsaiMode = 'async' | 'sync' | 'edit';
 
 export interface TaskBrief {
   projectName: string;
@@ -64,5 +71,9 @@ export interface BoardItem {
     style?: string;
     prompt?: string;
     timestamp?: number;
+    /** Grsai 模型 id（真实生图时填充） */
+    grsaiModel?: string;
+    /** Grsai 生成模式；degraded 表示真实接口失败后程序化 SVG 兜底 */
+    grsaiMode?: GrsaiMode | 'degraded';
   };
 }
