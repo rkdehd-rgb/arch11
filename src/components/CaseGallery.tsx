@@ -1,9 +1,10 @@
 import { useRef, useState } from 'react';
 import type { CaseMeta } from '../services/strategyPool';
-import { resolveCaseView } from '../services/strategyPool';
+import { resolveCaseView, getStrategyById } from '../services/strategyPool';
 import { useCaseOverrideStore, MAX_CASE_IMAGES } from '../stores/caseOverride';
 import { compressImage, StorageQuotaError } from '../services/imageCompress';
 import SafeImage from './SafeImage';
+import ImageSearchPicker from './ImageSearchPicker';
 
 interface CaseGalleryProps {
   strategyId: string;
@@ -18,11 +19,19 @@ interface CaseGalleryProps {
 export default function CaseGallery({ strategyId, baseCases }: CaseGalleryProps) {
   const overrides = useCaseOverrideStore((s) => s.overrides);
   const addImage = useCaseOverrideStore((s) => s.addImage);
+  const addImages = useCaseOverrideStore((s) => s.addImages);
   const replaceImage = useCaseOverrideStore((s) => s.replaceImage);
   const removeImage = useCaseOverrideStore((s) => s.removeImage);
   const hiddenInputRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useState<{ action: 'add' | 'replace'; index: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // 自动找图弹层
+  const [pickerOpen, setPickerOpen] = useState(false);
+  /** 找图模式：add=追加，replace=替换某位置（仅取首张） */
+  const [pickerMode, setPickerMode] = useState<{ action: 'add' | 'replace'; index: number }>({
+    action: 'add',
+    index: -1,
+  });
 
   // 使用覆盖层数据渲染（订阅 overrides 触发更新）
   const views = resolveCaseView(strategyId, baseCases);
@@ -61,22 +70,68 @@ export default function CaseGallery({ strategyId, baseCases }: CaseGalleryProps)
     removeImage(strategyId, index);
   }
 
+  /** 找图默认搜索词：首个案例项目名 → 策略名 + 建筑案例 */
+  function defaultKeyword(): string {
+    const firstName = baseCases?.[0]?.name || views[0]?.name;
+    if (firstName && firstName !== '自定义参考案例') return firstName;
+    const strategyName = getStrategyById(strategyId)?.name ?? '';
+    return strategyName ? `${strategyName} 建筑案例` : 'architecture building';
+  }
+
+  function openSearchAdd(): void {
+    if (!canAdd) return;
+    setPickerMode({ action: 'add', index: -1 });
+    setError(null);
+    setPickerOpen(true);
+  }
+  function openSearchReplace(index: number): void {
+    setPickerMode({ action: 'replace', index });
+    setError(null);
+    setPickerOpen(true);
+  }
+
+  /** 挑选确认：已转 base64；add 批量追加，replace 替换该位置（取首张） */
+  function handlePickerConfirm(dataUris: string[]): void {
+    if (pickerMode.action === 'replace') {
+      if (dataUris[0]) replaceImage(strategyId, pickerMode.index, dataUris[0]);
+    } else {
+      addImages(strategyId, dataUris);
+    }
+  }
+
   return (
     <div>
       <input ref={hiddenInputRef} type="file" accept="image/*" className="hidden" onChange={pick} />
 
       {views.length === 0 ? (
-        <button
-          type="button"
-          onClick={openAdd}
-          className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-1.5 rounded-md border border-dashed border-line-strong text-[12px] text-ink-3 transition-colors hover:border-accent hover:text-accent"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          暂无案例图，点击添加
-        </button>
+        <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-md border border-dashed border-line-strong">
+          <span className="text-[12px] text-ink-3">暂无案例图</span>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={openSearchAdd}
+              className="flex items-center gap-1.5 rounded-md border border-accent px-3 py-1.5 text-[11.5px] text-accent transition-colors hover:bg-accent-soft"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              自动找图
+            </button>
+            <button
+              type="button"
+              onClick={openAdd}
+              className="flex items-center gap-1.5 rounded-md border border-line-strong px-3 py-1.5 text-[11.5px] text-ink-2 transition-colors hover:bg-line"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              本地上传
+            </button>
+          </div>
+        </div>
       ) : (
         <div className="grid grid-cols-2 gap-4">
           {views.map((view, i) => (
@@ -94,7 +149,18 @@ export default function CaseGallery({ strategyId, baseCases }: CaseGalleryProps)
                 <div className="absolute right-1.5 top-1.5 flex gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
                   <button
                     type="button"
-                    title="替换此图"
+                    title="自动找图替换"
+                    onClick={() => openSearchReplace(i)}
+                    className="flex h-6 w-6 items-center justify-center rounded bg-black/65 text-white backdrop-blur-sm transition-colors hover:bg-accent"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="11" cy="11" r="8" />
+                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    title="上传图片替换"
                     onClick={() => openReplace(i)}
                     className="flex h-6 w-6 items-center justify-center rounded bg-black/65 text-white backdrop-blur-sm transition-colors hover:bg-accent"
                   >
@@ -146,24 +212,51 @@ export default function CaseGallery({ strategyId, baseCases }: CaseGalleryProps)
 
           {/* 添加占位卡片 */}
           {canAdd && (
-            <button
-              type="button"
-              onClick={openAdd}
-              className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-1.5 self-start rounded-md border border-dashed border-line-strong text-[12px] text-ink-3 transition-colors hover:border-accent hover:text-accent"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-              添加案例图
-              <span className="text-[10.5px] text-ink-3">{count}/{MAX_CASE_IMAGES}</span>
-            </button>
+            <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 self-start rounded-md border border-dashed border-line-strong">
+              <button
+                type="button"
+                onClick={openSearchAdd}
+                title="自动找图"
+                className="flex items-center gap-1.5 text-[11.5px] text-accent transition-colors hover:text-accent-dark"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                自动找图
+              </button>
+              <button
+                type="button"
+                onClick={openAdd}
+                title="本地上传"
+                className="flex items-center gap-1.5 text-[11.5px] text-ink-3 transition-colors hover:text-ink"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+                本地上传
+              </button>
+              <span className="font-mono text-[10px] text-ink-3">{count}/{MAX_CASE_IMAGES}</span>
+            </div>
           )}
         </div>
       )}
 
       {error && (
         <p className="mt-2 text-[11.5px] text-[#8a2f2f]">{error}</p>
+      )}
+
+      {pickerOpen && (
+        <ImageSearchPicker
+          initialKeyword={defaultKeyword()}
+          remaining={pickerMode.action === 'replace'
+            ? MAX_CASE_IMAGES
+            : MAX_CASE_IMAGES - count}
+          onConfirm={handlePickerConfirm}
+          onClose={() => setPickerOpen(false)}
+        />
       )}
     </div>
   );

@@ -15,6 +15,8 @@ export interface CaseOverrideState {
   replaceImage: (strategyId: string, index: number, image: string) => void;
   /** 追加一张图（上限 8） */
   addImage: (strategyId: string, image: string) => void;
+  /** 批量追加（上限 8，超出截断） */
+  addImages: (strategyId: string, images: string[]) => void;
   /** 删除某位置的图（允许删到 0 张，此时移除覆盖条目，回退内置） */
   removeImage: (strategyId: string, index: number) => void;
   /** 整体替换某策略的图数组 */
@@ -53,6 +55,18 @@ export const useCaseOverrideStore = create<CaseOverrideState>()(
           const current = state.overrides[strategyId]?.images ?? [];
           if (current.length >= MAX_CASE_IMAGES) return {};
           return { overrides: normalize({ ...state.overrides, [strategyId]: { images: [...current, image] } }) };
+        }),
+      addImages: (strategyId, images) =>
+        set((state) => {
+          const current = state.overrides[strategyId]?.images ?? [];
+          const room = MAX_CASE_IMAGES - current.length;
+          if (room <= 0 || images.length === 0) return {};
+          return {
+            overrides: normalize({
+              ...state.overrides,
+              [strategyId]: { images: [...current, ...images.slice(0, room)] },
+            }),
+          };
         }),
       removeImage: (strategyId, index) =>
         set((state) => {

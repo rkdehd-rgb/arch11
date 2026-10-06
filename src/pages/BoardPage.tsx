@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useReportStore } from '../stores/report';
 import { useBoardStore } from '../stores/board';
 import { useSettingsStore } from '../stores/settings';
+import { MAX_CASE_IMAGES } from '../stores/caseOverride';
 import { strategyMap } from '../data/strategies';
 import SafeImage from '../components/SafeImage';
 import { resolveCases, resolveCaseMeta } from '../services/strategyPool';
@@ -11,6 +12,7 @@ import {
   prepareReferenceImages,
   isImageUploadError,
 } from '../services/referenceImage';
+import ImageSearchPicker from '../components/ImageSearchPicker';
 import {
   imageGenerationService,
   type GeneratedImage,
@@ -125,6 +127,8 @@ export default function BoardPage() {
   const [preprocess, setPreprocess] = useState<{ done: number; total: number } | null>(null);
   // 画板图片异步预转换失败的 item id 集合（显示红标）
   const [failedPreconvert, setFailedPreconvert] = useState<string[]>([]);
+  // 画板「自动找图」弹层
+  const [boardPickerOpen, setBoardPickerOpen] = useState(false);
   const cancelRef = useRef(false);
 
   const [viewport, setViewport] = useState<Viewport>({ x: 0, y: 0, scale: 1 });
@@ -324,6 +328,30 @@ export default function BoardPage() {
       note,
       meta: { strategyId: leftStrategy },
     });
+  }
+
+  /** 画板找图默认词：当前左栏策略名 + 建筑案例 */
+  function boardSearchKeyword(): string {
+    const strategyName = strategyMap.get(leftStrategy)?.name ?? '';
+    return strategyName ? `${strategyName} 建筑案例` : 'architecture building';
+  }
+
+  /** 画板找图确认：图片已为 base64，错落贴入画板，并加入生成参考图 */
+  function handleBoardPickerConfirm(dataUris: string[]): void {
+    dataUris.forEach((src, i) => {
+      addItem({
+        kind: 'reference',
+        x: 250 + i * 40 + Math.random() * 50,
+        y: 190 + i * 30 + Math.random() * 40,
+        width: 240,
+        src,
+        title: '网络参考图',
+        note: '自动找图结果（本地 base64）',
+        meta: { strategyId: leftStrategy },
+      });
+      addReferenceFromGallery(src);
+    });
+    setBoardNotice(`已贴入 ${dataUris.length} 张参考图，可直接参与生成。`);
   }
 
   /**
@@ -663,6 +691,15 @@ export default function BoardPage() {
 
   const generatedItems = items.filter((item) => item.kind === 'generated');
 
+  const boardPicker = boardPickerOpen ? (
+    <ImageSearchPicker
+      initialKeyword={boardSearchKeyword()}
+      remaining={MAX_CASE_IMAGES}
+      onConfirm={handleBoardPickerConfirm}
+      onClose={() => setBoardPickerOpen(false)}
+    />
+  ) : null;
+
   return (
     <div className="flex h-full overflow-hidden">
       {/* 左侧面板 */}
@@ -691,7 +728,21 @@ export default function BoardPage() {
 
           <div className="mt-5 mb-3 flex items-center justify-between">
             <span className="text-[12.5px] font-semibold text-ink-2">案例图库</span>
-            <span className="font-mono text-[10.5px] text-ink-3">{leftCases.length}</span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setBoardPickerOpen(true)}
+                title="无图时自动联网搜索候选图"
+                className="flex items-center gap-1 rounded border border-line px-1.5 py-0.5 text-[10.5px] text-accent transition-colors hover:bg-accent-soft"
+              >
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                自动找图
+              </button>
+              <span className="font-mono text-[10.5px] text-ink-3">{leftCases.length}</span>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2.5">
@@ -1405,6 +1456,8 @@ export default function BoardPage() {
           )}
         </div>
       </aside>
+
+      {boardPicker}
     </div>
   );
 }
