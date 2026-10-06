@@ -77,10 +77,10 @@ const GPT_RATIO_STRINGS = ['1:1', '16:9', '9:16', '4:3', '3:4', '3:2', '2:3', '2
 /* ----------------------------- 模型目录 ----------------------------- */
 
 export const MODEL_CATALOG: ModelSpec[] = [
-  /* -------- nano-banana 系列（11） -------- */
+  /* -------- nano-banana 系列（11），接口：POST /v1/api/generate -------- */
   {
     id: 'nano-banana', label: 'nano-banana', family: 'nano-banana',
-    paramStyle: 'banana', capabilities: ['均衡'],
+    paramStyle: 'banana', capabilities: ['均衡通用'],
     ratios: BANANA_RATIOS, sizes: ['1K', '2K', '4K'],
   },
   {
@@ -89,52 +89,52 @@ export const MODEL_CATALOG: ModelSpec[] = [
     ratios: BANANA_RATIOS, sizes: ['1K', '2K', '4K'],
   },
   {
-    id: 'nano-banana-2', label: 'nano-banana-2', family: 'nano-banana',
-    paramStyle: 'banana2', capabilities: ['新一代', '超宽比例'],
-    ratios: BANANA2_RATIOS, sizes: ['1K', '2K', '4K'],
-  },
-  {
-    id: 'nano-banana-2-cl', label: 'nano-banana-2-cl', family: 'nano-banana',
-    paramStyle: 'banana2', capabilities: ['新一代', '构图控制', '超宽比例'],
-    ratios: BANANA2_RATIOS, sizes: ['1K', '2K', '4K'],
-  },
-  {
-    id: 'nano-banana-2-2k-cl', label: 'nano-banana-2-2k-cl', family: 'nano-banana',
-    paramStyle: 'banana2', capabilities: ['新一代', '2K', '构图控制', '超宽比例'],
-    ratios: BANANA2_RATIOS, sizes: ['1K', '2K', '4K'],
-  },
-  {
-    id: 'nano-banana-2-4k-cl', label: 'nano-banana-2-4k-cl', family: 'nano-banana',
-    paramStyle: 'banana2', capabilities: ['新一代', '4K', '构图控制', '超宽比例'],
-    ratios: BANANA2_RATIOS, sizes: ['1K', '2K', '4K'],
-  },
-  {
     id: 'nano-banana-pro', label: 'nano-banana-pro', family: 'nano-banana',
     paramStyle: 'banana', capabilities: ['质量优先'],
     ratios: BANANA_RATIOS, sizes: ['1K', '2K', '4K'],
   },
   {
-    id: 'nano-banana-pro-vt', label: 'nano-banana-pro-vt', family: 'nano-banana',
-    paramStyle: 'banana', capabilities: ['质量优先', '风格迁移'],
+    id: 'nano-banana-2', label: 'nano-banana-2', family: 'nano-banana',
+    paramStyle: 'banana2', capabilities: ['新一代', '超宽比例'],
+    ratios: BANANA2_RATIOS, sizes: ['1K', '2K', '4K'],
+  },
+  {
+    id: 'nano-banana-2-fast', label: 'nano-banana-2-fast', family: 'nano-banana',
+    paramStyle: 'banana2', capabilities: ['新一代', '速度快', '超宽比例'],
+    ratios: BANANA2_RATIOS, sizes: ['1K', '2K', '4K'],
+  },
+  {
+    id: 'nano-banana-2-pro', label: 'nano-banana-2-pro', family: 'nano-banana',
+    paramStyle: 'banana2', capabilities: ['新一代', '质量优先', '超宽比例'],
+    ratios: BANANA2_RATIOS, sizes: ['1K', '2K', '4K'],
+  },
+  {
+    id: 'nano-banana-2k', label: 'nano-banana-2k', family: 'nano-banana',
+    paramStyle: 'banana', capabilities: ['2K 高清'],
     ratios: BANANA_RATIOS, sizes: ['1K', '2K', '4K'],
   },
   {
-    id: 'nano-banana-pro-cl', label: 'nano-banana-pro-cl', family: 'nano-banana',
-    paramStyle: 'banana', capabilities: ['质量优先', '构图控制'],
+    id: 'nano-banana-4k', label: 'nano-banana-4k', family: 'nano-banana',
+    paramStyle: 'banana', capabilities: ['4K 最高清'],
     ratios: BANANA_RATIOS, sizes: ['1K', '2K', '4K'],
   },
   {
-    id: 'nano-banana-pro-vip', label: 'nano-banana-pro-vip', family: 'nano-banana',
-    paramStyle: 'banana', capabilities: ['质量优先', '专属通道'],
+    id: 'nano-banana-cl', label: 'nano-banana-cl', family: 'nano-banana',
+    paramStyle: 'banana', capabilities: ['构图控制'],
     ratios: BANANA_RATIOS, sizes: ['1K', '2K', '4K'],
   },
   {
-    id: 'nano-banana-pro-4k-vip', label: 'nano-banana-pro-4k-vip', family: 'nano-banana',
-    paramStyle: 'banana', capabilities: ['质量优先', '4K', '专属通道'],
+    id: 'nano-banana-vt', label: 'nano-banana-vt', family: 'nano-banana',
+    paramStyle: 'banana', capabilities: ['风格迁移'],
+    ratios: BANANA_RATIOS, sizes: ['1K', '2K', '4K'],
+  },
+  {
+    id: 'nano-banana-outline', label: 'nano-banana-outline', family: 'nano-banana',
+    paramStyle: 'banana', capabilities: ['轮廓/线稿'],
     ratios: BANANA_RATIOS, sizes: ['1K', '2K', '4K'],
   },
 
-  /* -------- gpt-image 系列（5） -------- */
+  /* -------- gpt-image 系列（5），接口：/v1/images/generations 与 /v1/images/edits -------- */
   {
     id: 'gpt-image-2', label: 'gpt-image-2', family: 'gpt-image',
     paramStyle: 'gpt-base', capabilities: ['比例或像素'],
@@ -163,7 +163,8 @@ export const MODEL_CATALOG: ModelSpec[] = [
   },
 ];
 
-export const DEFAULT_MODEL_ID = 'nano-banana-2';
+/** 默认模型：nano-banana（通用性最好） */
+export const DEFAULT_MODEL_ID = 'nano-banana';
 
 export const modelSpecMap: Map<string, ModelSpec> = new Map(
   MODEL_CATALOG.map((m) => [m.id, m]),

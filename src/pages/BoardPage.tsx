@@ -148,6 +148,10 @@ export default function BoardPage() {
     if (mode === 'edit' && !selectedItem) return;
     setGenMode(mode);
     setGenError(null);
+    // 图片编辑仅支持 gpt-image 系列：进入时若当前模型不属于该系列则自动切换
+    if (mode === 'edit' && getModelSpec(modelId).family !== 'gpt-image') {
+      handleModelChange('gpt-image-2');
+    }
   }
 
   // 异步参考图：策略变化时自动带入该策略案例图（用户未手动改过时）
@@ -891,26 +895,35 @@ export default function BoardPage() {
 
           {/* 模型分组下拉 */}
           <div className="mt-5">
-            <label className="field-label" htmlFor="modelSelect">模型选择（16）</label>
+            <label className="field-label" htmlFor="modelSelect">
+              模型选择（{genMode === 'edit' ? 'gpt-image 5' : '16'}）
+            </label>
             <select
               id="modelSelect"
               className="input font-mono text-[12.5px]"
               value={modelId}
               onChange={(e) => handleModelChange(e.target.value)}
             >
-              <optgroup label="nano-banana 系列">
-                {MODEL_CATALOG.filter((m) => m.family === 'nano-banana')
-                  .map((m) => (
-                    <option key={m.id} value={m.id}>{m.label}</option>
-                  ))}
-              </optgroup>
-              <optgroup label="gpt-image 系列">
+              {genMode !== 'edit' && (
+                <optgroup label="nano-banana 系列（/v1/api/generate）">
+                  {MODEL_CATALOG.filter((m) => m.family === 'nano-banana')
+                    .map((m) => (
+                      <option key={m.id} value={m.id}>{m.label}</option>
+                    ))}
+                </optgroup>
+              )}
+              <optgroup label="gpt-image 系列（images/generations · edits）">
                 {MODEL_CATALOG.filter((m) => m.family === 'gpt-image')
                   .map((m) => (
                     <option key={m.id} value={m.id}>{m.label}</option>
                   ))}
               </optgroup>
             </select>
+            {genMode === 'edit' && (
+              <p className="mt-1 text-[10.5px] text-ink-3">
+                图片编辑接口仅支持 gpt-image 系列，单图指令式编辑。
+              </p>
+            )}
             <div className="mt-2 flex flex-wrap gap-1">
               {modelSpec.capabilities.map((cap) => (
                 <span
@@ -1107,7 +1120,7 @@ export default function BoardPage() {
           {genMode !== 'edit' && (
             <div className="mt-5">
               <span className="field-label">
-                参考图（{genMode === 'async' ? '多图' : '多图'}，{referenceImages.length}）
+                参考图（多图，{referenceImages.length}）
               </span>
               {referenceImages.length === 0 ? (
                 <p className="rounded-md border border-dashed border-line-strong px-3 py-3 text-[11px] text-ink-3">
