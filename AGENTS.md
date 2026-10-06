@@ -63,6 +63,7 @@
 - **生图链路**（`pages/BoardPage.tsx`）：默认走 `services/grsai.ts` 真实接口，三模式 `async`（/v1/api/generate + /result 轮询，真实 progress）、`sync`（/v1/images/generations 同步）、`edit`（/v1/images/edits，针对画板选中单图）。参数区按 `MODEL_CATALOG`（16 模型，paramStyle=banana/banana2/gpt-base/gpt-vip）动态渲染；`PIXEL_PRESETS` 为 vip/flare/sunburst 的合规像素网格。
 - **降级兜底**：未配置 Key、CORS（`GrsaiError.corsLike`/TypeError）或接口失败时，自动调用 `ImageGenerationService`（`services/imageGeneration.ts`）生成确定性 SVG，入板 meta 标 `grsaiMode=degraded`，流程不中断。
 - **Key 与节点**：Grsai 三接口与 LLM 共用同一 API Key；节点 `global=grsaiapi.com` / `cn=grsai.dakka.com.cn` 存于 settings 的 `grsaiNode`。设置页含「Grsai」LLM 预设（baseUrl 随节点、model=gemini-3.1-pro）。
+- **异步结果解析坑点**（`grsai.ts` 的 `extractResultUrl`）：`/v1/api/result` 成功响应的图片在**顶层 `results` 数组**（`results[0].url`），必须最优先读取；漏读会导致 status=succeeded 却拿不到 URL、轮询空转到超时再误降级 SVG。已加防御：原始 status 已成功但连续 5 次（约 10s）取不到 URL 即报「任务已完成但响应中未找到图片地址」；轮询默认超时 10 分钟，超时错误附任务 ID。
 - **图片兜底**：所有外部图片经 `SafeImage`，失败回退建筑线稿 SVG。
 - **Vite 中间件模式坑点**（`server/vite.ts`）：`createViteServer` 默认仍会自动加载根目录 `vite.config.ts`（其 plugins 已含 react 插件），若再内联注册 `react()` 会使 react-refresh 前导被注入两次，报 `inWebWorker / prevRefreshReg has already been declared`。故中间件模式必须显式 `configFile: false` 且插件只声明一次；同时不要展开复用 `vite.config.ts` 的实例化 plugins。端口从 `DEPLOY_RUN_PORT` 读取（HMR 固定 6000，path `/hot/vite-hmr`）。
 

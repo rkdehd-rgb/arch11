@@ -309,6 +309,8 @@ export interface AsyncResult {
   progress: number;
   url?: string;
   message?: string;
+  /** 原始 status 已为 succeeded/success/completed，但响应中取不到图片地址 */
+  succeededWithoutUrl?: boolean;
 }
 
 interface ResultResponse {
@@ -317,6 +319,8 @@ interface ResultResponse {
   progress?: number;
   percent?: number;
   url?: string;
+  /** Grsai /v1/api/result 标准成功响应：顶层 results 数组 */
+  results?: Array<string | Record<string, unknown>>;
   output?: string | string[] | { url?: string }[];
   data?: { url?: string } | { url?: string }[];
   image?: string;
@@ -352,6 +356,9 @@ export async function fetchAsyncResult(
   }
 
   const rawStatus = (json.status ?? json.state ?? '').toString().toLowerCase();
+  const isSucceededRaw =
+    rawStatus === 'succeeded' || rawStatus === 'success' || rawStatus === 'completed';
+  const isFailedRaw = rawStatus === 'failed' || rawStatus === 'error';
   const progress = typeof json.progress === 'number'
     ? json.progress
     : typeof json.percent === 'number'
@@ -359,16 +366,60 @@ export async function fetchAsyncResult(
       : 0;
 
   const url = extractResultUrl(json);
-  if (url || rawStatus === 'succeeded' || rawStatus === 'success' || rawStatus === 'completed') {
-    if (url) return { status: 'succeeded', progress: 100, url };
+  if (url) return { status: 'succeeded', progress: 100, url };
+  if (isSucceededRaw) {
+    // 服务端标记成功但响应里取不到图片地址：交由轮询做有限次重试
+    return { status: 'pending', progress: 100, succeededWithoutUrl: true };
   }
-  if (rawStatus === 'failed' || rawStatus === 'error') {
+  if (isFailedRaw) {
     return { status: 'failed', progress, message: json.message ?? json.msg ?? '生成失败' };
   }
   return { status: 'pending', progress };
 }
 
-function extractResultUrl(json: ResultResponse): string | undefined {
+function isMediaString(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  return value.startsWith('http://') || value.startsWith('https://') || value.startsWith('data:image/');
+}
+
+/** 递归在对象/数组值中找第一个 http(s):// 或 data:image/ 开头的字符串 */
+function findMediaString(value: unknown, seen: WeakSet<object> = new WeakSet()): string | undefined {
+  if (isMediaString(value)) return value;
+  if (typeof value !== 'object' || value === null) return undefined;
+  if (seen.has(value)) return undefined;
+  seen.add(value);
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const hit = findMediaString(item, seen);
+      if (hit) return hit;
+    }
+    return undefined;
+  }
+  for (const v of Object.values(value as Record<string, unknown>)) {
+    const hit = findMediaString(v, seen);
+    if (hit) return hit;
+  }
+  return undefined;
+}
+
+export function extractResultUrl(json: ResultResponse): string | undefined {
+  // 最优先：Grsai 标准成功响应顶层 results 数组
+  if (Array.isArray(json.results) && json.results.length > 0) {
+    const first = json.results[0];
+    if (typeof first === 'string') {
+      if (isMediaString(first)) return first;
+    } else {
+      if (isMediaString(first.url)) return first.url;
+      if (isMediaString(first.image)) return first.image;
+      const hit = findMediaString(first);
+      if (hit) return hit;
+    }
+    // 兜底：在整个 results 数组里找
+    const hit = findMediaString(json.results);
+    if (hit) return hit;
+  }
+
+  // 兼容其它字段
   if (json.url) return json.url;
   if (json.image) return json.image;
   if (json.images && json.images.length > 0) return json.images[0];
@@ -400,16 +451,21 @@ export async function pollAsyncResult(
   handlers: PollHandlers = {},
 ): Promise<string> {
   const interval = handlers.intervalMs ?? 2000;
-  const timeout = handlers.timeoutMs ?? 300_000;
+  const timeout = handlers.timeoutMs ?? 600_000;
   const startedAt = Date.now();
   let lastProgress = 0;
+  // 服务端已报成功但响应取不到 url 时，允许连续重试的次数（约 10s）
+  const MAX_SUCCEEDED_NO_URL = 5;
+  let succeededNoUrl = 0;
 
   for (;;) {
     if (handlers.shouldCancel?.()) {
       throw new GrsaiError('已取消生成');
     }
     if (Date.now() - startedAt > timeout) {
-      throw new GrsaiError('生成超时，请稍后重试或改用「快速生图」');
+      throw new GrsaiError(
+        `生成超时（任务ID: ${taskId}），任务可能仍在后台处理，可通过 GET /v1/api/result?id=${taskId} 查询`,
+      );
     }
 
     const result = await fetchAsyncResult(node, apiKey, taskId);
@@ -420,6 +476,12 @@ export async function pollAsyncResult(
     if (result.status === 'succeeded' && result.url) return result.url;
     if (result.status === 'failed') {
       throw new GrsaiError(result.message ?? '生成失败，可重试或改用「快速生图」');
+    }
+    if (result.succeededWithoutUrl) {
+      succeededNoUrl += 1;
+      if (succeededNoUrl >= MAX_SUCCEEDED_NO_URL) {
+        throw new GrsaiError('任务已完成但响应中未找到图片地址');
+      }
     }
     await new Promise((resolve) => setTimeout(resolve, interval));
   }
