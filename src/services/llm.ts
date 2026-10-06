@@ -5,7 +5,11 @@ import type {
   SynergyEdge,
   TaskBrief,
 } from '../types';
-import { strategies, strategyMap } from '../data/strategies';
+import {
+  getPooledStrategies,
+  getPooledMap,
+  resolveStrategy,
+} from './strategyPool';
 
 function normalizeBase(baseUrl: string): string {
   return baseUrl.replace(/\/+$/, '');
@@ -15,43 +19,69 @@ const JSON_SCHEMA_HINT = `{
   "taskSummary": "对任务书的精炼摘要，80-160字",
   "strategies": [
     {
-      "strategyId": "必须严格使用下方策略库中的 id",
+      "source": "builtin",
+      "strategyId": "source=builtin 时必须严格使用下方策略库中的 id",
       "matchScore": 0,
       "matchReason": "结合本项目任务书的具体分析，说明为什么匹配，60-140字",
       "conceptRefined": "针对本项目的策略落地思路，40-100字"
+    },
+    {
+      "source": "suggested",
+      "strategyId": "source=suggested 时给一个简短英文 kebab-case 临时标识（如 cognitive-friendly-loop）",
+      "matchScore": 0,
+      "matchReason": "说明这条库外新策略为何对本项目有价值，60-140字",
+      "conceptRefined": "针对本项目的落地思路，40-100字",
+      "definition": {
+        "name": "策略中文名",
+        "nameEn": "英文名（可留空字符串）",
+        "group": "维度归类，从 绿色低碳/空间原型/在地文脉/复合业态/建造效率/城市关系 中选一个最贴近的",
+        "tags": ["标签1", "标签2"],
+        "concept": "核心理念 2-3 句",
+        "scenarios": ["适用场景1", "适用场景2"],
+        "synergies": [],
+        "synergyNote": "与本方案其他策略的协同增益，没有可留空"
+      },
+      "cases": [
+        { "name": "真实建成项目名", "location": "地点", "year": "年份", "architect": "建筑师/事务所", "highlight": "一句话亮点", "image": "Wikimedia Commons 图片 URL，没有可靠链接可留空字符串" }
+      ]
     }
   ],
   "synergyInsights": ["结合本项目说明两个策略如何协同增益，每条 30-80 字"]
 }`;
 
 export function buildSystemPrompt(): string {
-  const catalog = strategies
+  const pooled = getPooledStrategies();
+  const map = getPooledMap();
+  const userCount = pooled.filter((s) => s.source === 'user').length;
+  const catalog = pooled
     .map((s) => {
       const synergies = s.synergies
-        .map((id) => strategyMap.get(id)?.name ?? id)
+        .map((id) => map.get(id)?.name ?? id)
         .join('、');
       return [
-        `- id: ${s.id}`,
+        `- id: ${s.id}${s.source === 'user' ? '（用户自定义）' : ''}`,
         `  名称: ${s.name} | ${s.nameEn} | 维度: ${s.group}`,
         `  标签: ${s.tags.join('、')}`,
         `  理念: ${s.concept}`,
         `  适用场景: ${s.scenarios.join('；')}`,
-        `  可协同策略: ${synergies}`,
+        `  可协同策略: ${synergies || '无'}`,
       ].join('\n');
     })
     .join('\n');
 
-  return `你是 ArchReason —— 一位资深建筑设计策略顾问。你的任务是基于内置的 32 条建筑设计策略知识库，为建筑师的设计任务书推理出最匹配的设计策略组合。
+  return `你是 ArchReason —— 一位资深建筑设计策略顾问。你的任务是为建筑师的设计任务书推理出最匹配的设计策略组合。
 
-【策略知识库】
+【策略库（共 ${pooled.length} 条：内置策略${pooled.length - userCount} 条 + 用户自定义 ${userCount} 条）】
 ${catalog}
 
 【输出要求】
-1. 从上述 32 条策略中选出与任务书最匹配的 5 条，按 matchScore 从高到低排序。
-2. matchScore 为 0-100 的整数，要拉开梯度、贴合任务书具体条件，不要全部高分。
-3. matchReason 必须引用任务书中的具体信息（地点、规模、类型、诉求等），不能空泛。
-4. synergyInsights 给出 2-4 条入选策略之间在本项目中的协同增益，必须基于策略库中预置的协同关系。
-5. 只输出一个合法 JSON 对象，不要输出 markdown 代码块标记或任何解释文字。结构如下：
+1. builtin 匹配：从上述策略库中选出与任务书最匹配的 5 条，source 填 "builtin"、strategyId 严格使用库中 id，按 matchScore 从高到低排序。
+2. suggested 库外建议：在上述 5 条之外，额外提出 2-3 条策略库中确实没有、但针对本任务书真正有价值的新策略，source 填 "suggested"，并完整填写 definition（名称/维度/理念/场景/标签）与 1-2 个真实建成参考案例 cases。若任务书信息不足以产生有价值的库外策略，可只给 0-1 条。
+3. matchScore 为 0-100 的整数，要拉开梯度、贴合任务书具体条件，不要全部高分。
+4. matchReason 必须引用任务书中的具体信息（地点、规模、类型、诉求等），不能空泛。
+5. synergyInsights 给出 2-4 条入选策略（含库外策略）之间在本项目中的协同增益。
+6. strategies 数组顺序：先 5 条 builtin（按分数降序），再 2-3 条 suggested。
+7. 只输出一个合法 JSON 对象，不要输出 markdown 代码块标记或任何解释文字。结构如下：
 ${JSON_SCHEMA_HINT}`;
 }
 
@@ -105,25 +135,85 @@ function validateResult(parsed: Partial<InferenceResult>): boolean {
   );
 }
 
+function asString(v: unknown): string {
+  return typeof v === 'string' ? v.trim() : v == null ? '' : String(v);
+}
+
+function asStringArray(v: unknown): string[] {
+  if (!Array.isArray(v)) return [];
+  return v.map(asString).filter(Boolean);
+}
+
 function normalizeResult(parsed: Partial<InferenceResult>): InferenceResult {
-  const knownIds = new Set(strategies.map((s) => s.id));
+  const pooledMap = getPooledMap();
   const seen = new Set<string>();
-  const picked: StrategyMatch[] = [];
+  const builtinPicked: StrategyMatch[] = [];
+  const suggested: StrategyMatch[] = [];
+
   for (const s of parsed.strategies ?? []) {
-    if (!knownIds.has(s.strategyId) || seen.has(s.strategyId)) continue;
-    seen.add(s.strategyId);
-    picked.push({
-      strategyId: s.strategyId,
+    const rawId = asString(s.strategyId) || asString(s.definition?.name);
+    const def = s.definition as StrategyMatch['definition'];
+    const hasDef = def != null && asString(def.name) && asString(def.group) && asString(def.concept);
+    const isSuggested = s.source === 'suggested' || (!pooledMap.has(rawId) && hasDef);
+
+    // 内置已收满 5 条时，仅跳过内置项，仍继续处理后面的库外策略
+    if (!isSuggested && builtinPicked.length >= 5) continue;
+
+    if (isSuggested) {
+      if (!hasDef) continue;
+      const tempId = `suggested::${asString(rawId) || asString(def!.name)}`;
+      const unique = seen.has(tempId) ? `${tempId}-${suggested.length + 1}` : tempId;
+      seen.add(unique);
+      const cases = Array.isArray(s.cases)
+        ? s.cases
+            .map((c) => ({
+              name: asString(c.name),
+              location: asString(c.location),
+              year: asString(c.year),
+              architect: asString(c.architect),
+              highlight: asString(c.highlight),
+              image: asString(c.image) || undefined,
+            }))
+            .filter((c) => c.name)
+        : [];
+      suggested.push({
+        strategyId: unique,
+        matchScore: Math.max(40, Math.min(99, Math.round(s.matchScore ?? 70))),
+        matchReason: asString(s.matchReason),
+        conceptRefined: asString(s.conceptRefined),
+        source: 'suggested',
+        definition: {
+          name: asString(def!.name),
+          nameEn: asString(def!.nameEn),
+          group: asString(def!.group),
+          tags: asStringArray(def!.tags),
+          concept: asString(def!.concept),
+          scenarios: asStringArray(def!.scenarios),
+          synergies: asStringArray(def!.synergies),
+          synergyNote: asString(def!.synergyNote),
+        },
+        cases,
+      });
+      if (suggested.length === 3) break;
+      continue;
+    }
+
+    if (!rawId || !pooledMap.has(rawId) || seen.has(rawId)) continue;
+    seen.add(rawId);
+    builtinPicked.push({
+      strategyId: rawId,
       matchScore: Math.max(40, Math.min(99, Math.round(s.matchScore))),
-      matchReason: String(s.matchReason ?? ''),
-      conceptRefined: String(s.conceptRefined ?? ''),
+      matchReason: asString(s.matchReason),
+      conceptRefined: asString(s.conceptRefined),
+      source: 'builtin',
     });
-    if (picked.length === 5) break;
   }
+
   return {
-    taskSummary: String(parsed.taskSummary ?? ''),
-    strategies: picked,
-    synergyInsights: (parsed.synergyInsights ?? []).map(String),
+    taskSummary: asString(parsed.taskSummary),
+    strategies: [...builtinPicked, ...suggested],
+    suggestedStrategies: suggested,
+    synergyInsights: (parsed.synergyInsights ?? []).map(asString).filter(Boolean),
   };
 }
 
@@ -222,8 +312,9 @@ export async function runInference(
     );
   }
 
-  // 若模型选出的有效策略不足 5 条，用本地打分补齐
-  if (result.strategies.length < 5) {
+  // 若模型选出的内置策略不足 5 条，用本地打分补齐（库外策略不计入这 5 条）
+  const builtinCount = result.strategies.filter((s) => s.source !== 'suggested').length;
+  if (builtinCount < 5) {
     result = fillWithLocal(result, task);
   }
   return result;
@@ -253,7 +344,8 @@ const TYPE_KEYWORDS: Record<string, string[]> = {
 };
 
 function scoreStrategyLocal(strategyId: string, text: string): number {
-  const s = strategyMap.get(strategyId);
+  const map = getPooledMap();
+  const s = map.get(strategyId);
   if (!s) return 0;
   let score = 48;
   const corpus = text;
@@ -265,7 +357,7 @@ function scoreStrategyLocal(strategyId: string, text: string): number {
     if (head && corpus.includes(head)) score += 3;
   }
   // 同组协同加成
-  if (s.synergies.some((id) => corpus.includes(strategyMap.get(id)?.name.slice(0, 3) ?? ''))) {
+  if (s.synergies.some((id) => corpus.includes(map.get(id)?.name.slice(0, 3) ?? ''))) {
     score += 2;
   }
   return score;
@@ -288,28 +380,31 @@ export function localFallback(task: TaskBrief): InferenceResult {
   }
   for (const id of TYPE_KEYWORDS[task.buildingType] ?? []) addBonus(id, 10);
 
-  const scored = strategies.map((s) => ({
+  const pool = getPooledStrategies();
+  const map = getPooledMap();
+  const scored = pool.map((s) => ({
     strategyId: s.id,
     matchScore: Math.min(96, scoreStrategyLocal(s.id, text) + (bonus.get(s.id) ?? 0)),
   }));
   scored.sort((a, b) => b.matchScore - a.matchScore);
   const picked: StrategyMatch[] = scored.slice(0, 5).map((s, i) => {
-    const strategy = strategyMap.get(s.strategyId)!;
+    const strategy = map.get(s.strategyId)!;
     return {
       strategyId: s.strategyId,
       matchScore: s.matchScore - i,
       matchReason: `本项目为${task.location || '拟建地'}的${task.buildingType || '建筑'}，${task.demands.join('、') || '核心诉求'}与「${strategy.name}」的适用场景高度吻合：${strategy.scenarios[0]}，能有效回应任务书的关键约束。`,
       conceptRefined: `建议以${strategy.name}为主线，${strategy.concept.slice(0, 40)}……并结合本项目条件在方案初期落实。`,
+      source: 'builtin',
     };
   });
 
   const insights: string[] = [];
   for (const p of picked) {
-    const strat = strategyMap.get(p.strategyId);
+    const strat = map.get(p.strategyId);
     const partner = picked.find((q) => strat?.synergies.includes(q.strategyId));
     if (partner && strat?.synergyNote) {
       insights.push(
-        `「${strat.name}」与「${strategyMap.get(partner.strategyId)?.name}」协同：${strat.synergyNote}`,
+        `「${strat.name}」与「${map.get(partner.strategyId)?.name}」协同：${strat.synergyNote}`,
       );
     }
   }
@@ -317,6 +412,7 @@ export function localFallback(task: TaskBrief): InferenceResult {
   return {
     taskSummary: buildLocalSummary(task),
     strategies: picked,
+    suggestedStrategies: [],
     synergyInsights: insights.slice(0, 4),
   };
 }
@@ -327,16 +423,19 @@ function buildLocalSummary(task: TaskBrief): string {
 
 function fillWithLocal(current: InferenceResult, task: TaskBrief): InferenceResult {
   const local = localFallback(task);
-  const existing = new Set(current.strategies.map((s) => s.strategyId));
+  const builtin = current.strategies.filter((s) => s.source !== 'suggested');
+  const suggested = current.strategies.filter((s) => s.source === 'suggested');
+  const existing = new Set(builtin.map((s) => s.strategyId));
   for (const s of local.strategies) {
-    if (current.strategies.length === 5) break;
+    if (builtin.length === 5) break;
     if (!existing.has(s.strategyId)) {
-      current.strategies.push(s);
+      builtin.push(s);
       existing.add(s.strategyId);
     }
   }
   if (!current.taskSummary) current.taskSummary = local.taskSummary;
-  current.strategies.sort((a, b) => b.matchScore - a.matchScore);
+  builtin.sort((a, b) => b.matchScore - a.matchScore);
+  current.strategies = [...builtin, ...suggested];
   if (current.synergyInsights.length === 0) {
     current.synergyInsights = local.synergyInsights;
   }
@@ -345,20 +444,26 @@ function fillWithLocal(current: InferenceResult, task: TaskBrief): InferenceResu
 
 /** 根据入选策略与其预置协同关系生成协同图的边 */
 export function buildEdges(result: InferenceResult): SynergyEdge[] {
-  const ids = result.strategies.map((s) => s.strategyId);
+  const matches = result.strategies;
+  const ids = matches.map((s) => s.strategyId);
   const idSet = new Set(ids);
   const edges: SynergyEdge[] = [];
   const seen = new Set<string>();
 
+  // 每个匹配解析出策略定义（含库外 suggested）
+  const defById = new Map(
+    matches.map((m) => [m.strategyId, resolveStrategy(m)] as const),
+  );
+
   for (const id of ids) {
-    const s = strategyMap.get(id);
+    const s = defById.get(id);
     if (!s) continue;
     for (const partnerId of s.synergies) {
       if (!idSet.has(partnerId)) continue;
       const key = [id, partnerId].sort().join('::');
       if (seen.has(key)) continue;
       seen.add(key);
-      const note = s.synergyNote ?? '组合使用可形成增益';
+      const note = s.synergyNote || '组合使用可形成增益';
       edges.push({
         source: id,
         target: partnerId,

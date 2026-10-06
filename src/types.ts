@@ -24,16 +24,45 @@ export interface TaskBrief {
   content: string;
 }
 
+/** 匹配结果来源：builtin=内置/用户池匹配，suggested=LLM 提出的库外新策略 */
+export type MatchSource = 'builtin' | 'suggested';
+
+/** 库外策略携带的参考案例（schema 与 CaseRef 对齐） */
+export interface SuggestedCaseRef {
+  name: string;
+  location: string;
+  year: string;
+  architect: string;
+  highlight: string;
+  image?: string;
+}
+
 export interface StrategyMatch {
   strategyId: string;
   matchScore: number;
   matchReason: string;
   conceptRefined: string;
+  source?: MatchSource;
+  /** 库外策略：完整策略定义（source=suggested 时填充） */
+  definition?: {
+    name: string;
+    nameEn?: string;
+    group: string;
+    tags?: string[];
+    concept: string;
+    scenarios?: string[];
+    synergies?: string[];
+    synergyNote?: string;
+  };
+  /** 库外策略：1-2 个真实参考案例 */
+  cases?: SuggestedCaseRef[];
 }
 
 export interface InferenceResult {
   taskSummary: string;
   strategies: StrategyMatch[];
+  /** LLM 提出的库外策略建议（同时也含在 strategies 中），便于单独取用 */
+  suggestedStrategies?: StrategyMatch[];
   synergyInsights: string[];
 }
 

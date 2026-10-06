@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { useRef, useState, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSettingsStore } from '../stores/settings';
 import { testConnection } from '../services/llm';
 import { GRSAI_NODES } from '../services/grsai';
+import {
+  useCustomStrategyStore,
+  type CustomCaseRef,
+} from '../stores/customStrategy';
+import type { Strategy } from '../data/strategies';
 import type { GrsaiNode } from '../types';
+
+const BUILTIN_STRATEGY_COUNT = 32;
 
 type TestStatus = 'idle' | 'testing' | 'success' | 'fail';
 
@@ -44,6 +51,12 @@ export default function SettingsPage() {
   const config = useSettingsStore((s) => s.config);
   const update = useSettingsStore((s) => s.update);
 
+  const customStrategies = useCustomStrategyStore((s) => s.strategies);
+  const customCases = useCustomStrategyStore((s) => s.cases);
+  const replaceAllCustom = useCustomStrategyStore((s) => s.replaceAll);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [libMessage, setLibMessage] = useState<string | null>(null);
+
   const [showKey, setShowKey] = useState(false);
   const [status, setStatus] = useState<TestStatus>('idle');
   const [message, setMessage] = useState<string | null>(null);
@@ -51,6 +64,67 @@ export default function SettingsPage() {
   const canTest = Boolean(
     config.baseUrl.trim() && config.apiKey.trim() && config.model.trim(),
   );
+
+  /** 导出自定义策略库为 JSON 文件 */
+  function handleExportLibrary(): void {
+    const payload = {
+      app: 'ArchReason',
+      type: 'custom-strategy-library',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      strategies: customStrategies,
+      cases: customCases,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `archreason-strategies-${new Date()
+      .toISOString()
+      .slice(0, 10)}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    setLibMessage('策略库已导出为 JSON 文件。');
+  }
+
+  /** 导入策略库 JSON（校验后整体替换当前自定义库） */
+  function handleImportFile(event: ChangeEvent<HTMLInputElement>): void {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(String(reader.result)) as {
+          strategies?: Strategy[];
+          cases?: CustomCaseRef[];
+        };
+        if (!Array.isArray(parsed.strategies)) {
+          throw new Error('文件缺少 strategies 数组');
+        }
+        const validStrategies = parsed.strategies.filter(
+          (s) => typeof s?.id === 'string' && typeof s?.name === 'string',
+        );
+        const validCases = Array.isArray(parsed.cases)
+          ? parsed.cases.filter(
+              (c) =>
+                typeof c?.id === 'string' && typeof c?.strategyId === 'string',
+            )
+          : [];
+        replaceAllCustom(validStrategies, validCases);
+        setLibMessage(
+          `已导入 ${validStrategies.length} 条自定义策略（当前自定义库被替换）。`,
+        );
+      } catch (err) {
+        setLibMessage(
+          `导入失败：${err instanceof Error ? err.message : '文件格式不正确'}`,
+        );
+      }
+    };
+    reader.readAsText(file);
+  }
 
   async function handleTest(): Promise<void> {
     if (!canTest) return;
@@ -271,6 +345,67 @@ export default function SettingsPage() {
               保存并返回
             </button>
           </div>
+        </div>
+
+        {/* 策略库管理 */}
+        <div className="mt-8 card p-7">
+          <div className="mb-1 font-mono text-[11px] uppercase tracking-[0.14em] text-ink-3">
+            Strategy Library
+          </div>
+          <h2 className="text-[17px] font-semibold text-ink">策略库</h2>
+          <div className="mt-3 flex items-center gap-3">
+            <div className="flex flex-1 items-center justify-between rounded-md border border-line bg-paper px-4 py-3">
+              <span className="text-[12.5px] text-ink-2">内置策略</span>
+              <span className="font-mono text-[15px] font-semibold text-ink">
+                {BUILTIN_STRATEGY_COUNT}
+              </span>
+            </div>
+            <div className="flex flex-1 items-center justify-between rounded-md border border-accent/40 bg-accent-soft px-4 py-3">
+              <span className="text-[12.5px] text-accent-dark">自定义策略</span>
+              <span className="font-mono text-[15px] font-semibold text-accent">
+                {customStrategies.length}
+              </span>
+            </div>
+          </div>
+          <p className="mt-2 text-[11.5px] text-ink-3">
+            当前策略库总数：内置 {BUILTIN_STRATEGY_COUNT} + 自定义 {customStrategies.length} ={' '}
+            {BUILTIN_STRATEGY_COUNT + customStrategies.length}；收藏的库外策略会在此累积并参与后续推理。
+          </p>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              className="btn btn-secondary !h-9 !text-[12.5px]"
+              onClick={handleExportLibrary}
+              disabled={customStrategies.length === 0}
+              title="导出全部自定义策略为 JSON"
+            >
+              导出策略库
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary !h-9 !text-[12.5px]"
+              onClick={() => fileInputRef.current?.click()}
+              title="从 JSON 文件导入自定义策略"
+            >
+              导入策略库
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/json,.json"
+              className="hidden"
+              onChange={handleImportFile}
+            />
+          </div>
+          <p className="mt-2 text-[11px] text-ink-3">
+            导入会整体替换当前自定义库；清空浏览器数据会丢失自定义策略，建议定期导出备份。
+          </p>
+          {libMessage && (
+            <div className="mt-3 rounded-md border border-line bg-paper px-3 py-2 text-[12px] text-ink-2 fade-in">
+              {libMessage}
+            </div>
+          )}
         </div>
       </div>
     </div>

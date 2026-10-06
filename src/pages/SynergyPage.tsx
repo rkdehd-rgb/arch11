@@ -5,8 +5,8 @@ import { GraphChart } from 'echarts/charts';
 import { TooltipComponent, LegendComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 import { useReportStore } from '../stores/report';
-import { getGroupName, strategyMap } from '../data/strategies';
-import type { Strategy } from '../types';
+import { resolveStrategy, getGroupName } from '../services/strategyPool';
+import type { Strategy } from '../data/strategies';
 
 echarts.use([GraphChart, TooltipComponent, LegendComponent, CanvasRenderer]);
 
@@ -65,7 +65,8 @@ export default function SynergyPage() {
     );
 
     const nodes = report.result.strategies.map((match) => {
-      const strategy = strategyMap.get(match.strategyId);
+      const strategy = resolveStrategy(match);
+      const isSuggested = match.source === 'suggested';
       return {
         id: match.strategyId,
         name: `${strategy?.name ?? match.strategyId}\n${match.matchScore}%`,
@@ -74,8 +75,9 @@ export default function SynergyPage() {
         category: strategy?.group ?? '',
         itemStyle: {
           color: scoreColor(match.matchScore),
-          borderColor: '#ffffff',
-          borderWidth: 2,
+          borderColor: isSuggested ? '#9c4a2f' : '#ffffff',
+          borderWidth: isSuggested ? 2.5 : 2,
+          borderType: isSuggested ? ('dashed' as const) : ('solid' as const),
           shadowBlur: 10,
           shadowColor: 'rgba(41,37,34,0.16)',
         },
@@ -154,7 +156,8 @@ export default function SynergyPage() {
       const event = rawEvent as NodeEvent;
       if (event.dataType !== 'node' || !event.data?.id) return;
       const id = event.data.id;
-      const strategy = strategyMap.get(id);
+      const match = report.result.strategies.find((s) => s.strategyId === id);
+      const strategy = match ? resolveStrategy(match) ?? null : null;
       const score = scoreMap.get(id) ?? null;
       const mouse = event.event?.event;
       if (strategy && mouse) {
@@ -180,7 +183,12 @@ export default function SynergyPage() {
     };
   }, [report]);
 
-  const selectedStrategy = selectedId ? strategyMap.get(selectedId) : null;
+  const selectedMatch = selectedId
+    ? report?.result.strategies.find((s) => s.strategyId === selectedId)
+    : undefined;
+  const selectedStrategy = selectedMatch
+    ? resolveStrategy(selectedMatch)
+    : null;
   const selectedScore =
     selectedId && report
       ? report.result.strategies.find((s) => s.strategyId === selectedId)?.matchScore ?? null
@@ -272,6 +280,13 @@ export default function SynergyPage() {
               </span>
             ))}
           </div>
+          {report.result.suggestedStrategies &&
+            report.result.suggestedStrategies.length > 0 && (
+              <div className="mt-2.5 flex items-center gap-1.5 border-t border-line pt-2 text-[10.5px] text-accent">
+                <span className="h-0 w-3.5 border-t-2 border-dashed border-accent" />
+                虚线节点 = 库外新策略
+              </div>
+            )}
         </div>
 
         {/* 操作提示 */}
@@ -325,11 +340,16 @@ export default function SynergyPage() {
             <div>
               <div className="mb-1.5 text-[11px] font-semibold text-ink-2">协同策略</div>
               <div className="flex flex-wrap gap-1.5">
-                {selectedStrategy.synergies.map((id) => (
-                  <span key={id} className="chip chip-static">
-                    {strategyMap.get(id)?.name ?? id}
-                  </span>
-                ))}
+                {selectedStrategy.synergies.map((id) => {
+                  const partner = report?.result.strategies.find(
+                    (s) => s.strategyId === id,
+                  );
+                  return (
+                    <span key={id} className="chip chip-static">
+                      {partner ? resolveStrategy(partner)?.name ?? id : id}
+                    </span>
+                  );
+                })}
               </div>
             </div>
           </div>

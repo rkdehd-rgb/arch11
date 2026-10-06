@@ -29,9 +29,10 @@
 │   │   └── cases.ts           # 64 个真实建筑案例
 │   ├── services/
 │   │   ├── llm.ts             # prompt 构建 / JSON 解析 / 推理 / 本地兜底 / 协同边
+│   │   ├── strategyPool.ts    # 内置+用户自定义统一策略池解析（定义/案例/维度/建 id）
 │   │   ├── grsai.ts           # Grsai 真实生图：MODEL_CATALOG(16 模型) + 异步轮询/同步/编辑
 │   │   └── imageGeneration.ts # ImageGenerationService + 8 风格 SVG（降级/演示兜底）
-│   ├── stores/                # settings / task / report / board
+│   ├── stores/                # settings / task / report / board / customStrategy
 │   ├── components/
 │   │   ├── Layout.tsx         # 侧边栏 + 主区域
 │   │   └── SafeImage.tsx      # 图片加载失败 SVG 兜底
@@ -52,8 +53,9 @@
 
 ## 核心模块说明
 
-- **推理链路**（`services/llm.ts`）：`buildSystemPrompt` 注入 32 条策略 → `runInference` 调 chat/completions → `extractJson` 支持 code fence / 前后杂文字 / 字段归一化 → 失败由 `localFallback` 规则打分兜底（报告标记 `degraded`）。
-- **协同边**（`buildEdges`）：命中策略间的预置 `synergies`（strength=`preset`）+ 模型 `synergyInsights`（strength=`insight`）。
+- **推理链路**（`services/llm.ts`）：`buildSystemPrompt` 注入「内置 32 + 用户自定义 N」完整策略池 → `runInference` 调 chat/completions → `extractJson` 支持 code fence / 前后杂文字 / 字段归一化，并区分 `source=builtin/suggested`：5 条池内匹配 + 最多 3 条库外建议（suggested 带 definition/cases，临时 id 前缀 `suggested::`）→ 失败由 `localFallback` 规则打分兜底（报告标记 `degraded`，只含内置）。
+- **库外策略收藏**（`stores/customStrategy.ts` + `services/strategyPool.ts`）：报告页「收藏入库」经 `makeSuggestedId` 去掉临时前缀生成稳定 id，写入独立持久化 `archreason-custom-strategies`（含策略与自带案例），幂等防重复；统一通过 `getPooledStrategies/getStrategyById/resolveCases` 取用。设置页显示「内置 32 + 自定义 N」并支持导出/导入 JSON（导入整体替换）。
+- **协同边**（`buildEdges`）：命中策略间的预置 `synergies`（strength=`preset`）+ 模型 `synergyInsights`（strength=`insight`）；库外节点用 `resolveStrategy` 现场解析定义后同样参与，协同图中以虚线描边区分。
 - **生图链路**（`pages/BoardPage.tsx`）：默认走 `services/grsai.ts` 真实接口，三模式 `async`（/v1/api/generate + /result 轮询，真实 progress）、`sync`（/v1/images/generations 同步）、`edit`（/v1/images/edits，针对画板选中单图）。参数区按 `MODEL_CATALOG`（16 模型，paramStyle=banana/banana2/gpt-base/gpt-vip）动态渲染；`PIXEL_PRESETS` 为 vip/flare/sunburst 的合规像素网格。
 - **降级兜底**：未配置 Key、CORS（`GrsaiError.corsLike`/TypeError）或接口失败时，自动调用 `ImageGenerationService`（`services/imageGeneration.ts`）生成确定性 SVG，入板 meta 标 `grsaiMode=degraded`，流程不中断。
 - **Key 与节点**：Grsai 三接口与 LLM 共用同一 API Key；节点 `global=grsaiapi.com` / `cn=grsai.dakka.com.cn` 存于 settings 的 `grsaiNode`。设置页含「Grsai」LLM 预设（baseUrl 随节点、model=gemini-3.1-pro）。

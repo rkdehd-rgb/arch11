@@ -1,3 +1,6 @@
+/** 策略来源：builtin=内置 32 条，user=用户收藏入库 */
+export type StrategySource = 'builtin' | 'user';
+
 export interface Strategy {
   id: string;
   name: string;
@@ -8,6 +11,10 @@ export interface Strategy {
   scenarios: string[];
   synergies: string[];
   synergyNote?: string;
+  /** 来源标记，内置数据默认 builtin；用户收藏策略为 user */
+  source?: StrategySource;
+  /** 入库时间（仅用户策略） */
+  addedAt?: number;
 }
 
 export interface StrategyGroup {
