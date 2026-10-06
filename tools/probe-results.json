@@ -1,0 +1,116 @@
+{
+  "bedzed": [],
+  "parkroyal-pickering": [],
+  "qunli-wetland": [],
+  "houtan-park": [],
+  "solar-siedlung": [
+    {
+      "title": "Sonnenschiff",
+      "images": [
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Solarschiff_Solarsiedlung_Freiburg_im_Breisgau_september_2014.jpg?width=300",
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Solarschiff_Solarsiedlung_Freiburg_im_Breisgau_september_2014.jpg",
+        "https://commons.wikimedia.org/wiki/Special:FilePath/SoSchiffPenthaus.jpg"
+      ]
+    }
+  ],
+  "japan-pavilion-2000": [
+    {
+      "title": "Japanese_Pavilion,_Expo_2000",
+      "images": []
+    }
+  ],
+  "unite-habitation": [
+    {
+      "title": "Cité_Radieuse",
+      "images": []
+    }
+  ],
+  "koshino-house": [
+    {
+      "title": "Koshino_House_(Azumi)",
+      "images": []
+    }
+  ],
+  "ford-foundation": [
+    {
+      "title": "Ford_Foundation_Building_(Manhattan)",
+      "images": []
+    }
+  ],
+  "new-gourna": [
+    {
+      "title": "New_Gourna,_Egypt",
+      "images": []
+    }
+  ],
+  "gando-school": [
+    {
+      "title": "Gando_Primary_School,_Burkina_Faso",
+      "images": []
+    }
+  ],
+  "masdar": [
+    {
+      "title": "Masdar_Institute",
+      "images": [
+        "https://commons.wikimedia.org/wiki/Special:FilePath/masdar_institute_logo.jpg?width=300",
+        "https://commons.wikimedia.org/wiki/Special:FilePath/masdar_institute_logo.jpg"
+      ]
+    }
+  ],
+  "yokohama-terminal": [
+    {
+      "title": "Yokohama_International_Passenger_Terminal",
+      "images": []
+    }
+  ],
+  "brock-commons": [
+    {
+      "title": "Brock_Commons_Tallwood_House",
+      "images": []
+    }
+  ],
+  "hsbc-hk": [
+    {
+      "title": "HSBC_Building_(Hong_Kong)",
+      "images": [
+        "https://commons.wikimedia.org/wiki/Special:FilePath/HK_HSBC_Main_Building_2008_(cropped).jpg?width=300",
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Cannons_of_HSBC_building.jpg",
+        "https://commons.wikimedia.org/wiki/Special:FilePath/HK_Central_HSBC_HQ_night_Xmas_decor_lighting_SCBank_CKC_Dec-2015_DSC.jpg",
+        "https://commons.wikimedia.org/wiki/Special:FilePath/HK_HSBC_Main_Building_2008_(cropped).jpg",
+        "https://commons.wikimedia.org/wiki/Special:FilePath/HK_HSBC_Lion_1.jpg",
+        "https://commons.wikimedia.org/wiki/Special:FilePath/DM2994-1-188-001.jpg",
+        "https://commons.wikimedia.org/wiki/Special:FilePath/1st_Generation_Hong_Kong_HSBC_Building_第一代香港匯豐總行大廈,_1865_-_1882.jpg",
+        "https://commons.wikimedia.org/wiki/Special:FilePath/HSBC_Building_1967.jpg",
+        "https://commons.wikimedia.org/wiki/Special:FilePath/HSBC_HQ_1901.jpg",
+        "https://commons.wikimedia.org/wiki/Special:FilePath/Leftlion.jpg",
+        "https://commons.wikimedia.org/wiki/Special:FilePath/HSBC_Main_Building_Atrium_202009.jpg"
+      ]
+    }
+  ],
+  "hearst-tower": [
+    {
+      "title": "Hearst_Tower",
+      "images": []
+    }
+  ],
+  "461-dean": [
+    {
+      "title": "461_Dean_Street",
+      "images": []
+    }
+  ],
+  "the-stack": [
+    {
+      "title": "The_Stack_(New_York_City)",
+      "images": []
+    }
+  ],
+  "diagoon": [
+    {
+      "title": "Diagoonwoningen",
+      "images": []
+    }
+  ],
+  "va-dundee": []
+}

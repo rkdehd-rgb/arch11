@@ -1,0 +1,891 @@
+[
+  {
+    "key": "ch2-melbourne",
+    "strategyId": "passive-design",
+    "title": "Council_House_2",
+    "final": "",
+    "photos": []
+  },
+  {
+    "key": "bedzed",
+    "strategyId": "passive-design",
+    "title": "Beddington_Zero_Energy_Development",
+    "final": "",
+    "photos": []
+  },
+  {
+    "key": "bosco-verticale",
+    "strategyId": "vertical-greenery",
+    "title": "Bosco_Verticale",
+    "final": "",
+    "photos": []
+  },
+  {
+    "key": "parkroyal-pickering",
+    "strategyId": "vertical-greenery",
+    "title": "PARKROYAL_on_Pickering",
+    "final": "PARKROYAL_on_Pickering",
+    "photos": []
+  },
+  {
+    "key": "qunli-wetland",
+    "strategyId": "sponge-city",
+    "title": "Qunli_National_Urban_Wetland",
+    "final": "Qunli_National_Urban_Wetland",
+    "photos": []
+  },
+  {
+    "key": "houtan-park",
+    "strategyId": "sponge-city",
+    "title": "Houtan_Park",
+    "final": "Houtan_Park",
+    "photos": []
+  },
+  {
+    "key": "copenhill",
+    "strategyId": "bipv",
+    "title": "Amager_Bakke",
+    "final": "Amager_Bakke",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Amager_Bakke.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Amager_Bakke_2.jpg"
+    ]
+  },
+  {
+    "key": "solar-siedlung",
+    "strategyId": "bipv",
+    "title": "Solar_Siedlung",
+    "final": "Solar_Siedlung",
+    "photos": []
+  },
+  {
+    "key": "eastgate-centre",
+    "strategyId": "wind-corridor",
+    "title": "Eastgate_Centre,_Harare",
+    "final": "Eastgate_Centre,_Harare",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Eastgate_Centre,_Harare,_Zimbabwe.jpg"
+    ]
+  },
+  {
+    "key": "bahrain-wtc",
+    "strategyId": "wind-corridor",
+    "title": "Bahrain_World_Trade_Center",
+    "final": "Bahrain_World_Trade_Center",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Bahrain's_World_Trade_Center_-_after_the_showers_(311240304).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Bahrain_WTC.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Bahrain_World_trade_Center_.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Bahrain_World_Trade_Center_from_below.jpg"
+    ]
+  },
+  {
+    "key": "japan-pavilion-2000",
+    "strategyId": "light-build",
+    "title": "Japan_Pavilion_(Expo_2000)",
+    "final": "Japan_Pavilion_(Expo_2000)",
+    "photos": []
+  },
+  {
+    "key": "cardboard-cathedral",
+    "strategyId": "light-build",
+    "title": "Cardboard_Cathedral",
+    "final": "Cardboard_Cathedral",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Cardboard,_wood_and_glass.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Shigeru_Ban.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Cardboard_Cathedral_a_touch_of_purple.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Christchurch_Cardboard_Cathedral_1_(31310889165).jpg"
+    ]
+  },
+  {
+    "key": "suzhou-museum",
+    "strategyId": "courtyard-embed",
+    "title": "Suzhou_Museum",
+    "final": "Suzhou_Museum",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Garden_Rocks_at_the_Central_Water_Court.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Suzhou_Museum,_China_(2015)_-_05.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Suzhou_Museum.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Suzhou_Museum_-_new_buildings.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Suzhou_Taipingtianguo_Zhongwang_Fu_2015.04.25_13-50-33.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/The_Wu_Family_Reception_Hall,_early_17th_century.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/苏州博物馆·苏州·西南向东北.jpg"
+    ]
+  },
+  {
+    "key": "mia-doha",
+    "strategyId": "courtyard-embed",
+    "title": "Museum_of_Islamic_Art,_Doha",
+    "final": "Museum_of_Islamic_Art,_Doha",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Doha,_Museo_con_banderas_01.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Doha_Museum_of_Islamic_Art_-_stairs.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Doha_skyline_&_museum.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Fisherman_on_the_Doha_Corniche_next_to_the_Islamic_Museum.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Foyer_of_Museum_of_Islamic_Art_-_Doha_-_Qatar_(34492873192).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/InsideMIA.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Islamic_Museum_Doha_-_panoramio_(14).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Islamic_Museum_Doha_-_panoramio_(7).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Museum_of_Islamic_Art,_Doha_00_(54).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Museum_of_Islamic_Art,_Doha_00_(65).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Museum_of_Islamic_Art,_Doha_00_(70).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Museum_of_Islamic_Art_Doha_interior.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Vertical_Panorama_of_Foyer_and_Main_Staircase_-_Museum_of_Islamic_Art_-_Doha_-_Qatar_(34492841612).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/IslamicArtMuseumDohaSkyline.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Doha,_Museo_de_Arte_Islámico_02.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Doha_-_Museum_of_Islamic_Art.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Doha_-_towards_the_islamic_art_museum.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Museum_of_Islamic_Art_in_Doha,_Qatar_(32673171432).jpg"
+    ]
+  },
+  {
+    "key": "villa-savoye",
+    "strategyId": "pilotis",
+    "title": "Villa_Savoye",
+    "final": "Villa_Savoye",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Institute_of_Aboriginal_Studies,_Canberra_2007.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Villa_savoye-livingroom.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Villa_savoye-terasse-from-livingroom.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/VillaSavoye.jpg"
+    ]
+  },
+  {
+    "key": "unite-habitation",
+    "strategyId": "pilotis",
+    "title": "Unité_d'Habitation",
+    "final": "Unité_d'Habitation",
+    "photos": []
+  },
+  {
+    "key": "nezu-museum",
+    "strategyId": "gray-space",
+    "title": "Nezu_Museum",
+    "final": "Nezu_Museum",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/2018_Nezu_Museum_1.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/KORIN-Irises-L.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/NEZU_Kaichiro_I.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nezu_Cafe_201805.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nezu_Museum_Garden_view1_201805.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nezu_Museum_Garden_view_201805.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nezu_Museum_Interior_201805.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nezu_Museum_M2_Floor_2018.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nezu_Museum_Outside_access_201805.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Suzuki_Kiitsu_-_Mountain_Stream_in_Summer_and_Autumn_2.jpg"
+    ]
+  },
+  {
+    "key": "koshino-house",
+    "strategyId": "gray-space",
+    "title": "Koshino_House",
+    "final": "Koshino_House",
+    "photos": []
+  },
+  {
+    "key": "habitat-67",
+    "strategyId": "terrace-step",
+    "title": "Habitat_67",
+    "final": "Habitat_67",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Habitat_67,_southwest_view.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Habitat_67_(Montreal).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Habitat_67_2019_dllu_01.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Habitat_67_Montreal_Close-up_cropped.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Habitat_panorama.jpg"
+    ]
+  },
+  {
+    "key": "interlace",
+    "strategyId": "terrace-step",
+    "title": "The_Interlace",
+    "final": "The_Interlace",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/The_Interlace,_Singapore.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/The_Interlace,_seen_from_Alexandra_Road_(2025)_-_img_05.jpg"
+    ]
+  },
+  {
+    "key": "ford-foundation",
+    "strategyId": "atrium-core",
+    "title": "Ford_Foundation_Building",
+    "final": "Ford_Foundation_Center_for_Social_Justice",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Interior-Ford_Foundation-01.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Exterior-Ford_Foundation-02.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Ford_Foundation_Building_(51921997207).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Ford_Foundation_Building_May_2021_25.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Light_and_Views.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Ford_foundation_building_1.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Hospital_for_the_Ruptured_and_Crippled,_321_East_42nd_Street,_New_York_City.jpg"
+    ]
+  },
+  {
+    "key": "sony-center",
+    "strategyId": "atrium-core",
+    "title": "Sony_Center",
+    "final": "Sony_Center",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Berlin_Sony_Center_Glass_Roof_2012.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Sony_Center_Berlin.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Sony_center_b_nacht.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/SonyCenterAtNight.jpg"
+    ]
+  },
+  {
+    "key": "edge-amsterdam",
+    "strategyId": "shared-floor",
+    "title": "The_Edge_(Amsterdam)",
+    "final": "The_Edge_(Amsterdam)",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/TheEdge_03-2024.jpg"
+    ]
+  },
+  {
+    "key": "bloomberg-london",
+    "strategyId": "shared-floor",
+    "title": "Bloomberg_London",
+    "final": "Bloomberg_London",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Bloomberg_London_central_ramp_-_2.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Bloomberg_London_central_ramp_-_3.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Bloomberg_London_exterior_-_Cannon_Street,_Walbrook.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Bloomberg_London_lobby_-_3.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Bloomberg_London_model_-_2.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Bloomberg_London_office_space.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Bloomberg_London_pantry.jpg"
+    ]
+  },
+  {
+    "key": "new-gourna",
+    "strategyId": "local-material",
+    "title": "New_Gourna",
+    "final": "Kurna",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Foundation_tablet._It_shows_the_cartouche_of_the_birth_name_and_epithet_%22Amenhotep,_the_god,_the_Ruler_of_Thebes%22._18th_Dynasty._From_Kurna,_Egypt._The_Petrie_Museum_of_Egyptian_Archaeology,_London.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Gournah.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/New_Gourna.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/New_Gourna_Village_Theater-_Plan.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Pottery_tray_with_8_compartments._Redware,_rectangular._11th_Dynasty._From_Kurna_(Qurnah),_Egypt._The_Petrie_Museum_of_Egyptian_Archaeology,_London.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Qurna23.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Qurna43.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seti_I_Temple_at_Qurna.jpg"
+    ]
+  },
+  {
+    "key": "gando-school",
+    "strategyId": "local-material",
+    "title": "Gando_Primary_School",
+    "final": "Gando_Primary_School",
+    "photos": []
+  },
+  {
+    "key": "harbin-opera",
+    "strategyId": "symbol-translate",
+    "title": "Harbin_Grand_Theatre",
+    "final": "Harbin_Grand_Theatre",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Harbin_Grand_Theatre_Pano_201609.jpg"
+    ]
+  },
+  {
+    "key": "heydar-center",
+    "strategyId": "symbol-translate",
+    "title": "Heydar_Aliyev_Center",
+    "final": "Heydar_Aliyev_Center",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Heydar_Aliyev_Cultural_Center.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/200_Azerbaijani_manat_in_2018_Obverse.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Cars_belonged_to_Heydar_Aliyev_in_Heydar_Aliyev_Center.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Heydar_Aliev_Interior_2.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Heydar_Aliev_Interior_3.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Heydar_Aliyev_Center_in_Baku_in_Azerbaijan.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Right_wing_of_Heydar_Aliyev_Center,_Baku_Azerbaijan.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/“Arşın_mal_alan”_filminin_rəngli_formatda_premyerası.jpg"
+    ]
+  },
+  {
+    "key": "tate-modern",
+    "strategyId": "memory-retain",
+    "title": "Tate_Modern",
+    "final": "Tate_Modern",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Tate_Modern_-_Bankside_Power_Station.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Claude_Monet_044.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/'Windows_Open_Simultaneously_(First_Part,_Third_Motif)'_by_Robert_Delaunay.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/A_Young_Lady's_Adventure.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Albert_Gleizes,_1911,_Portrait_de_Jacques_Nayral,_oil_on_canvas,_161.9_x_114_cm,_Tate_Modern,_London.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Juan_Gris_001.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Londres_tate_modern_kirchner_baigneurs.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Londres_tate_modern_klee_nuit_walpurgis.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Panoramic_view_from_Tate_Modern_balcony.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Tate.modern.interior.london.arp.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Tate.modern.weather.project.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Tate_Modern.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Tate_Modern_Switch_House_(27633103611).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Tate_modern_london_2001_03.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Whiteread_tate_1.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Wobbly_bridge_120600.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Pablo_Picasso,_1909-10,_Figure_dans_un_Fauteuil_(Seated_Nude,_Femme_nue_assise),_oil_on_canvas,_92.1_x_73_cm,_Tate_Modern,_London.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Georges_Braque,_1909-10,_La_guitare_(Mandora,_La_Mandore),_oil_on_canvas,_71.1_x_55.9_cm,_Tate_Modern,_London.jpg"
+    ]
+  },
+  {
+    "key": "zeitz-mocaa",
+    "strategyId": "memory-retain",
+    "title": "Zeitz_Museum_of_Contemporary_Art_Africa",
+    "final": "Zeitz_Museum_of_Contemporary_Art_Africa",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/The_Victoria_and_Alfred_Waterfront,_Cape_Town,_South_Africa.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Silo_at_the_Port_of_Cape_Town_1.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Zeitz_Museum_of_Contemporary_Art_Africa,_Cape_Town_(_1050775).jpg"
+    ]
+  },
+  {
+    "key": "superkilen",
+    "strategyId": "micro-weave",
+    "title": "Superkilen",
+    "final": "Superkilen",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Superkilen_hill-top_view.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Superkilen.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Superkilen2.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Superkilen3.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Superkilen_-_Japanese_octopus.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Superkilen_-_Russian_pavilion.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Superkilen_-_palms.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Superkilen_-_red_section.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Superkilen_park_Copenhagen,_Denmark.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Superkilen_plan.jpg"
+    ]
+  },
+  {
+    "key": "cheonggyecheon",
+    "strategyId": "micro-weave",
+    "title": "Cheonggyecheon",
+    "final": "Cheonggyecheon",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Cheonggyecheon_1904.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Cheonggyecheon_around_Mojeongyo,_Seoul_(모전교_부근_청계천).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Cheonggyecheon_evening_2.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Cheonggyecheon_shortly_after_reopening_-_oct_9_-_2005.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Cheonggyecheon_stream_4.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Cheonggyecheon_stream_at_sunrise_with_trees_in_Seoul.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seoul-01_(xndr).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seoul-Cheonggyecheon-01.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seoul-Restoration_site_02.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/서울의_야경_2.jpg"
+    ]
+  },
+  {
+    "key": "al-bahr",
+    "strategyId": "climate-form",
+    "title": "Al_Bahr_Towers",
+    "final": "Al_Bahr_Towers",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Fountain_and_Al_Bahr_Towers_-_panoramio.jpg"
+    ]
+  },
+  {
+    "key": "masdar",
+    "strategyId": "climate-form",
+    "title": "Masdar_Institute_of_Science_and_Technology",
+    "final": "Masdar_Institute",
+    "photos": []
+  },
+  {
+    "key": "the-shard",
+    "strategyId": "vertical-mix",
+    "title": "The_Shard",
+    "final": "The_Shard",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Construction_in_April_2012.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Horniman_London_skyline_2013.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/LondonShardSeptember2010.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/London_01_2013_the_Shard_London_Bridge_5205.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Morning_London_Skyline.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Shard-feb-2010-wikipedia.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/ShardRadiatorFloors.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Shard_4.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Shard_London_Bridge,_April_2011.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Shard_London_Bridge_January_2011.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Shard_London_Bridge_July_2010.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Shard_London_Bridge_May_2012.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Shard_London_Bridge_October_27_2010.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Shard_London_Bridge_august_2011.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Shard_from_Great_Tower_Street.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Southwark_Towers,_PwC,_London.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/The_Shard,_Inauguration_Lightshow,_2012.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/The_Shard_at_sunset_2017_(cropped).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/The_early_morning_Shard.jpg"
+    ]
+  },
+  {
+    "key": "azabudai-hills",
+    "strategyId": "vertical-mix",
+    "title": "Azabudai_Hills",
+    "final": "Azabudai_Hills",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/2024_Azabudai_Hills_Mori_JP_Tower_(2).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Azabudai_Hills_opening_day_19.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Azabudai_Hills_202307.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Azabudai_Hills_Garden_Plaza_A_and_B_20241021.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Azabudai_Hills_Garden_Plaza_A_and_B_20241021_(II).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/October_2024_Azabudai_Hills_by_night_4.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/October_2024_Azabudai_Hills_by_night_6.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/PXL_20230807_095136728~2.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/麻布台ヒルズ.jpg"
+    ]
+  },
+  {
+    "key": "798-district",
+    "strategyId": "time-evolve",
+    "title": "798_Art_Zone",
+    "final": "798_Art_Zone",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/798工厂展厅.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/798ArtZone2009.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/798_Art_District_beijing_inside_of_a_gallery.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/798artzone2.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/798machine_art.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Beijing_798_Art_District.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Dior在798的休息区.jpg"
+    ]
+  },
+  {
+    "key": "distillery-district",
+    "strategyId": "time-evolve",
+    "title": "Distillery_District",
+    "final": "Distillery_District",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/GooderhamAndWorts1800s.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Gooderham.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Gooderham_&_Worts_(3814013686).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/June_2012_Distillery_District_Historic_Industrial_Roof_Gables_(7418029678).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Spirit_of_York_Distillery_Co._building_in_July_2024.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Stonehouse_Distillery_at_the_Distillery_District.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/TTC_Wheeltrans_visits_the_distillery_district_on_2014_11_05_(2)_(15695645646).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/The_Distillery_District_28_Tank_House_Lane_interior_2022.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/The_Distillery_Historic_District_2021_Christmas_Tree.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/The_Distillery_Historic_District_sculpture_2022.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/The_Distillery_Historic_Sidewalk_2022.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Wildly_Delicious_Fine_Foods_2022.jpg"
+    ]
+  },
+  {
+    "key": "rolex-learning",
+    "strategyId": "boundary-penetrate",
+    "title": "Rolex_Learning_Center",
+    "final": "Rolex_Learning_Center",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Lausanne-sannaa-rolex-learning-center_innen.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Rolex_Learning_center.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Negotiations_about_Iranian_Nuclear_Program_-_the_Ministers_of_Foreign_Affairs_and_Other_Officials_of_the_P5+1_and_Ministers_of_Foreign_Affairs_of_Iran_and_EU_in_Lausanne.jpg"
+    ]
+  },
+  {
+    "key": "yokohama-terminal",
+    "strategyId": "boundary-penetrate",
+    "title": "Yokohama_International_Port_Terminal",
+    "final": "Yokohama_International_Port_Terminal",
+    "photos": []
+  },
+  {
+    "key": "roppongi-hills",
+    "strategyId": "vitality-ring",
+    "title": "Roppongi_Hills",
+    "final": "Roppongi_Hills",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Roppongi_Hills_2013-12-01.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Beside_Roppongi_Hills_2007_(510269717).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Keyakizaka_Illuminaton_2022.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Roppongi_Hills_Mori_Garden_2013.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/TOHO_Cinemas_Roppongi_Hills_201306.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Views_from_Azabudai_Hills_Mori_JP_Tower_13.jpg"
+    ]
+  },
+  {
+    "key": "xintiandi",
+    "strategyId": "vitality-ring",
+    "title": "Xintiandi",
+    "final": "Xintiandi",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Xintiandi_gem.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Xintiandi5.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Location_of_the_First_Congress_of_the_Chinese_Communist_Party_Xintiandi_Shanghai_July_1921.jpg"
+    ]
+  },
+  {
+    "key": "seattle-library",
+    "strategyId": "public-return",
+    "title": "Seattle_Central_Library",
+    "final": "Seattle_Central_Library",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Library_esc2801.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/SCL8.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/SeattleCentralLibraryNight.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seattle_-_Carnegie_Library_01.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seattle_-_Collins_Block_01.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seattle_Central_Library_03.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seattle_Central_Library_04.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seattle_Central_Library_06.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seattle_Central_Library_07.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seattle_Central_Library_09.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seattle_Central_Library_interior.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seattle_Public_Library1.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seattle_Public_Library_-_1900.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seattle_Central_Library,_Seattle,_Washington_-_20060418.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seattle_Library_01.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Rem_Koolhaas_SCL.jpg"
+    ]
+  },
+  {
+    "key": "sendai-mediatheque",
+    "strategyId": "public-return",
+    "title": "Sendai_Mediatheque",
+    "final": "Sendai_Mediatheque",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Sendai_Mediatheque_2009.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Sendai_Mediatheque_3F.jpg"
+    ]
+  },
+  {
+    "key": "nakagin",
+    "strategyId": "modular-build",
+    "title": "Nakagin_Capsule_Tower",
+    "final": "Nakagin_Capsule_Tower",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nakagin.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Augmented_Reality_of_Nakagin_Capsule_Tower.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Capsule_from_Nakagin_Capsule_Tower_Building_DSCN0159.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Kurokawa_Sony-1979.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nakagin_Capsule_Tower_(51472766807).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nakagin_Capsule_Tower_(51473761696).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nakagin_Capsule_Tower_(51473888806).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nakagin_Capsule_Tower_(51473997551).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nakagin_Capsule_Tower_(51474580769).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nakagin_kapsula_erreplika_Donostia_2019_Mugak_01.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Takara_Group_Pavilion,_Osaka_Expo'70_(April_1970_by_Kingei_Marui).jpg"
+    ]
+  },
+  {
+    "key": "brock-commons",
+    "strategyId": "modular-build",
+    "title": "Brock_Commons_Tallwood_House",
+    "final": "Brock_Commons_Tallwood_House",
+    "photos": []
+  },
+  {
+    "key": "hsbc-hk",
+    "strategyId": "core-skin",
+    "title": "HSBC_Main_Building",
+    "final": "HSBC_Building_(Hong_Kong)",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/HK_HSBC_Lion_1.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/HK_HSBC_Main_Building_2008_(cropped).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Leftlion.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/DM2994-1-188-001.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/1st_Generation_Hong_Kong_HSBC_Building_第一代香港匯豐總行大廈,_1865_-_1882.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Cannons_of_HSBC_building.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/HK_Central_HSBC_HQ_night_Xmas_decor_lighting_SCBank_CKC_Dec-2015_DSC.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/HSBC_Building_1967.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/HSBC_HQ_1901.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/HSBC_Main_Building_Atrium_202009.jpg"
+    ]
+  },
+  {
+    "key": "hearst-tower",
+    "strategyId": "core-skin",
+    "title": "Hearst_Tower_(New_York_City)",
+    "final": "Hearst_Tower_(Manhattan)",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/HearstMagazineBuilding.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Hearst_Tower_(August_2024).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Hearst_Tower_August_2021.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Hearst_Tower_Lobby_October_2006.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nueva_York7042.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/W_57th_St_Nov_2020_160.jpg"
+    ]
+  },
+  {
+    "key": "461-dean",
+    "strategyId": "prefab",
+    "title": "461_Dean",
+    "final": "461_Dean",
+    "photos": []
+  },
+  {
+    "key": "the-stack",
+    "strategyId": "prefab",
+    "title": "The_Stack_(Manhattan)",
+    "final": "The_Stack_(Manhattan)",
+    "photos": []
+  },
+  {
+    "key": "centre-pompidou",
+    "strategyId": "structure-space",
+    "title": "Centre_Pompidou",
+    "final": "Centre_Pompidou",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Museum_Kanal.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Paris_75004_Place_Igor-Stravinsky_Fountain_01b.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Picasso-in-Pompidou-Centre.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Pompidou-centre-interior.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Pompidou_Centre_building_technology.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Pompidou_center.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Málaga_Centre_Pompidou.20150418.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Metz_(F)_-_Centre_Pompidou_-_Außenansicht.jpg"
+    ]
+  },
+  {
+    "key": "sainsbury-centre",
+    "strategyId": "structure-space",
+    "title": "Sainsbury_Centre_for_Visual_Arts",
+    "final": "Sainsbury_Centre_for_Visual_Arts",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Sainsbury_Centre_building_with_rainbow.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/5122398697_9e2c28c250.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/5181650234_9ab891b722.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/AC_20230420_Henry_Moore_Hug_0004.jpg"
+    ]
+  },
+  {
+    "key": "diagoon",
+    "strategyId": "growth-frame",
+    "title": "Diagoon_Delft",
+    "final": "Diagoon_Delft",
+    "photos": []
+  },
+  {
+    "key": "quinta-monroy",
+    "strategyId": "growth-frame",
+    "title": "Quinta_Monroy",
+    "final": "Quinta_Monroy",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Quinta_Monroy_Infill_Diagram.jpg"
+    ]
+  },
+  {
+    "key": "federation-square",
+    "strategyId": "facade-vitality",
+    "title": "Federation_Square",
+    "final": "Federation_Square",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/RuddSorry.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Alfred_Deakin_Building_at_Federation_Square_2.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Australian_Centre_for_the_Moving_Image.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/B2.2008_fedsquare.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Fed_Square,_Melbourne,_west_view_20230219_1.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Fed_square_tiles.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Federation-square-sandstone-facade.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/FederationSquare-panorama.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Federation_Square_Melbourne..jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Flinderstreetstation.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Ian_Potter_Centre.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/MEL_federationssquare.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Melbourne_Federation_Square_Theatre.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/St._Paul's_Cathedral_View_from_Federation_Square.jpg"
+    ]
+  },
+  {
+    "key": "taikoo-li",
+    "strategyId": "facade-vitality",
+    "title": "Taikoo_Li_Sanlitun",
+    "final": "Taikoo_Li_Sanlitun",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/三里屯太古里南区.jpg"
+    ]
+  },
+  {
+    "key": "millennium-park",
+    "strategyId": "urban-public-space",
+    "title": "Millennium_Park",
+    "final": "Millennium_Park",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/20071007_Harris_Theater_and_Heritage.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/View_of_the_Chicago_skyline_from_340_on_the_Park.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/20070616_Crown_Fountain_(6).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Front_of_Mcdonalds_Bike_Center.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Grant_Park_Music_Festival_Pritzker_Pavilion_Red_View.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Grant_Park_from_Sears_Tower_in_1981.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Grant_Park_rail_lines_in_1981.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/In_Search_of_Paradise.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Lake_Shore_Park_1883.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Lurie_garden_and_bridgeway.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Millennium_Monument_in_Wrigley_Square.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Millennium_Park_Chase_Promenade.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Millennium_Park_from_Sears_Tower.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Millennium_Park_location.png",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Millennium_Square,_Chicago,_Illinois_(9181701264).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Nichols_Bridgeway_South.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Northwest_Pavilion.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Pano-chicago.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Pritzker_pavilion_looking_north_night_logan_reed.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Revealing_Chicago.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/SBC_Plaza.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath///www.cityofchicago.org/content/dam/city/depts/dca/Millennium%20Park/MPMap1000.png",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Lurie_Garden_in_sun.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/20090814_Pritzker_Pavilion_on_Beethoven's_9th_Day_crop.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Bp_bridge.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Millennium_Park_Ice_Skating.jpg"
+    ]
+  },
+  {
+    "key": "zaryadye",
+    "strategyId": "urban-public-space",
+    "title": "Zaryadye_Park",
+    "final": "Zaryadye_Park",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Hotel_rossiya_feb_03_2007.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Glass_Crust_in_Zaryadye_park,_Moscow,_Russia.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Zaryadye.p1.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Zaryadye.p2.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Zaryadye10.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Zaryadye25.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Zaryadye26.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Zaryadye29.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Zaryadye5.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Zaryadye8.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Zaryadye_2017_-_Зарядье_(36994973046).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Zaryadye_Concert_Hall5.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Zaryadye_Ice_Cave.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Zaryadye_Park_Moscow_img08_asv2018-01.jpg"
+    ]
+  },
+  {
+    "key": "high-line",
+    "strategyId": "slow-stitch",
+    "title": "High_Line",
+    "final": "High_Line",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Whitney_Museum_and_end_of_High_Line.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/30th_St_10h_Av_td_(2018-08-16)_05_-_High_Line_Spur.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Chelsea_Market_IMG_9040.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/HiLine_W34_jeh.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/High_Line_23_2015.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Highline_NYC_3705376658_529a375621.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Highline_NYC_4546199798_2fb244ec8b.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/New_York_City_High_Line_-_Urban_Forestry_-_20150915-OSEC-LSC-0172_(20976525663).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/The_High_Line,_New_York_(17643199203).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Westbeth_Complex_vc.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Western_Electric_complex_NYC_1936.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/AHigh_Line_Park,_Section_1a.jpg"
+    ]
+  },
+  {
+    "key": "seoullo-7017",
+    "strategyId": "slow-stitch",
+    "title": "Seoullo_7017",
+    "final": "Seoullo_7017",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seoullo_7017_Overview_(5).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Seoullo_7017_night_time_city_lights.jpg"
+    ]
+  },
+  {
+    "key": "axe-historique",
+    "strategyId": "view-corridor",
+    "title": "Axe_historique",
+    "final": "Axe_historique",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Champs-Élysées_from_the_Roue_de_Paris,_11_July_2016_001.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Arc_de_Triomphe_@_Rooftop_observatory_@_Grande_Arche_@_La_Défense_@_Paris_(35019357302).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Grande_Allée_du_Jardin_des_Tuileries_1,_Paris_15September_2010.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Jardin_des_Tuileries_Axis_Historique.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/La_Défense_Juin_2025.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Paris_1er_Jardin_des_Tuileries_573.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Arc_De_Triomphe_from_the_Grande_Arche.jpg"
+    ]
+  },
+  {
+    "key": "national-mall",
+    "strategyId": "view-corridor",
+    "title": "National_Mall",
+    "final": "National_Mall",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Army_Medical_Museum_and_Library.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Grand_Central_Palace_-_Central_Market.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Main_Building_of_the_Department_of_Agriculture,_Washington,_D.C._(no_original_caption)_-_NARA_-_512817.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Iiif-service_gmd_gmd385_g3852_g3852m_ct005090-full-pct_12.5-0-default.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/McMillan_Plan.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Jefferson_Memorial_Washington_April_2017_002.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/LOC_Main_Reading_Room_Highsmith.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Jefferson_Memorial_At_Dusk_1.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Aerial_view_of_Lincoln_Memorial_-_east_side_EDIT.jpeg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/View_of_Crowd_at_1963_March_on_Washington.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Jefferson_Pier_and_Washington_Monument.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/MarianAndersonLincolnMemorial.png",
+      "https://commons.wikimedia.org/wiki/Special:FilePath///nationalmall.org/sites/default/files/styles/1280x925/public/map-background.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath///www.nationalmall.org/sites/default/files/styles/1280x925/public/map-background.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/19-19-042-memorial.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/19_03_19_Foto_do_dia_(47419854521).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/20060327_094632_1.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/A_j_downing_urn_006.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Aerial_view_of_Korean_War_Veterans_Memorial.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Aerial_view_of_eastern_National_Mall_-_1913_to_1918.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Armory_Square_Hospital,_Washington,_D.C_LCCN2012650191.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Britney_Spears_Navy.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Center_Market,_Pennsylvania_Ave._3c34613_150px.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Constitution_Gardens_at_National_Mall_&_Memorial_Parks_(673ac0ac-cb92-4585-a0b7-d71e1d3cbdec).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/DC_23_1_(6633835613).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/DC_monument_view_from_Lincoln_memorial.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/DClandscape1846.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Dc_national_mall_15.07.2012_12-19-14.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Digging_at_the_National_Mall.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Dwight_D._Eisenhower_Memorial_captured_at_Night_(ef429585-20ed-4050-b311-3c68f9aea9df).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/FDR_Memorial_and_Cherry_Trees.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Food_trucks_next_to_national_mall.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Fourth_of_July_Washington_D.C._Washington_Monument_National_Mall_(52194788907).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/From_Washington_Monument.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Kennedy_Center_(Washington,_D.C.).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Lockkeeper's_House.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Mall_construction_090658.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Map_Number_869-86501_-_US_National_Park_Service_-_24_June_2003.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/NationalMall.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/National_Mall,_Washington,_D.C._(20100325-DSC01310).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/National_Mall_(50897571958).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/National_Mall_-_walking_path.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/National_Mall_circa_1901_-_Washington_DC.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/National_Mall_in_DC.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/National_Mall_undergoing_renovations_-_Stierch.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/National_Sylvan_Theater.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/National_World_War_II_Memorial,_Washington_DC,_July_2017.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/National_mall_(east)_satellite_image.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Obama_inaugural_address.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Railroad_Station_(3421670398).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Rehabilitation_works_Reflecting_Pool_12_2011_DC_000102.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Smithsonian_Building.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/South_National_Mall_Washington_DC_1863.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/The_National_Mall_viewed_from_the_Lincoln_Memorial.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Veterans_Day_concert_on_the_National_Mall_photo_D_Ramey_Logan.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/View_of_Lincoln_Memorial_from_top_of_Washington_Monument,_WashingtonDC,_USA_-_panoramio.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/View_of_the_Mall,_District_of_Columbia,_from_the_Washington_Monument_(3678166249).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/WASNATMALL.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/WMATA_Smithsonian.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/WWIINavyBuildingsFromMonument.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Washington,_D.C_Mai_2009_PD_005.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Washington_Monument_with_American_flags_on_a_gorgeous_Fall_day.jpg"
+    ]
+  },
+  {
+    "key": "snfcc",
+    "strategyId": "gradient-open",
+    "title": "Stavros_Niarchos_Foundation_Cultural_Center",
+    "final": "Stavros_Niarchos_Foundation_Cultural_Center",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Stavros_Niarchos_Foundation_Cultural_Center_-_52035330487.jpg"
+    ]
+  },
+  {
+    "key": "va-dundee",
+    "strategyId": "gradient-open",
+    "title": "V&A_Dundee",
+    "final": "V&A_Dundee",
+    "photos": [
+      "https://commons.wikimedia.org/wiki/Special:FilePath/The_RRS_Discovery_&_the_V&A_Museum,_Dundee.jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Dundee_Waterfront_Redevelopment_Apr_2017_a_(V_and_A_Museum).jpg",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Dundee_110419_105.jpg"
+    ]
+  }
+]

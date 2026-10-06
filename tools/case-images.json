@@ -1,0 +1,386 @@
+[
+  {
+    "key": "ch2-melbourne",
+    "strategyId": "passive-design",
+    "title": "Council_House_2",
+    "image": ""
+  },
+  {
+    "key": "bedzed",
+    "strategyId": "passive-design",
+    "title": "Beddington_Zero_Energy_Development",
+    "image": ""
+  },
+  {
+    "key": "bosco-verticale",
+    "strategyId": "vertical-greenery",
+    "title": "Bosco_Verticale",
+    "image": ""
+  },
+  {
+    "key": "parkroyal-pickering",
+    "strategyId": "vertical-greenery",
+    "title": "PARKROYAL_on_Pickering",
+    "image": ""
+  },
+  {
+    "key": "qunli-wetland",
+    "strategyId": "sponge-city",
+    "title": "Qunli_National_Urban_Wetland",
+    "image": ""
+  },
+  {
+    "key": "houtan-park",
+    "strategyId": "sponge-city",
+    "title": "Houtan_Park",
+    "image": ""
+  },
+  {
+    "key": "copenhill",
+    "strategyId": "bipv",
+    "title": "Amager_Bakke",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Amager_Bakke.jpg"
+  },
+  {
+    "key": "solar-siedlung",
+    "strategyId": "bipv",
+    "title": "Sonnenschiff",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Solarschiff_Solarsiedlung_Freiburg_im_Breisgau_september_2014.jpg"
+  },
+  {
+    "key": "eastgate-centre",
+    "strategyId": "wind-corridor",
+    "title": "Eastgate_Centre,_Harare",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Eastgate_Centre,_Harare,_Zimbabwe.jpg"
+  },
+  {
+    "key": "bahrain-wtc",
+    "strategyId": "wind-corridor",
+    "title": "Bahrain_World_Trade_Center",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bahrain_World_trade_Center_.jpg"
+  },
+  {
+    "key": "japan-pavilion-2000",
+    "strategyId": "light-build",
+    "title": "Japan_Pavilion_(Expo_2000)",
+    "image": ""
+  },
+  {
+    "key": "cardboard-cathedral",
+    "strategyId": "light-build",
+    "title": "Cardboard_Cathedral",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Christchurch_Cardboard_Cathedral_1_(31310889165).jpg"
+  },
+  {
+    "key": "suzhou-museum",
+    "strategyId": "courtyard-embed",
+    "title": "Suzhou_Museum",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Suzhou_Museum.jpg"
+  },
+  {
+    "key": "mia-doha",
+    "strategyId": "courtyard-embed",
+    "title": "Museum_of_Islamic_Art,_Doha",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Museum_of_Islamic_Art,_Doha_00_(54).jpg"
+  },
+  {
+    "key": "villa-savoye",
+    "strategyId": "pilotis",
+    "title": "Villa_Savoye",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Villa_savoye-livingroom.jpg"
+  },
+  {
+    "key": "unite-habitation",
+    "strategyId": "pilotis",
+    "title": "Unité_d'Habitation",
+    "image": ""
+  },
+  {
+    "key": "nezu-museum",
+    "strategyId": "gray-space",
+    "title": "Nezu_Museum",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Nezu_Museum_M2_Floor_2018.jpg"
+  },
+  {
+    "key": "koshino-house",
+    "strategyId": "gray-space",
+    "title": "Koshino_House",
+    "image": ""
+  },
+  {
+    "key": "habitat-67",
+    "strategyId": "terrace-step",
+    "title": "Habitat_67",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Habitat_67_2019_dllu_01.jpg"
+  },
+  {
+    "key": "interlace",
+    "strategyId": "terrace-step",
+    "title": "The_Interlace",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/The_Interlace,_Singapore.jpg"
+  },
+  {
+    "key": "ford-foundation",
+    "strategyId": "atrium-core",
+    "title": "Ford_Foundation_Building",
+    "image": ""
+  },
+  {
+    "key": "sony-center",
+    "strategyId": "atrium-core",
+    "title": "Sony_Center",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Berlin_Sony_Center_Glass_Roof_2012.jpg"
+  },
+  {
+    "key": "edge-amsterdam",
+    "strategyId": "shared-floor",
+    "title": "The_Edge_(Amsterdam)",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/TheEdge_03-2024.jpg"
+  },
+  {
+    "key": "bloomberg-london",
+    "strategyId": "shared-floor",
+    "title": "Bloomberg_London",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bloomberg_London_lobby_-_3.jpg"
+  },
+  {
+    "key": "new-gourna",
+    "strategyId": "local-material",
+    "title": "New_Gourna",
+    "image": ""
+  },
+  {
+    "key": "gando-school",
+    "strategyId": "local-material",
+    "title": "Gando_Primary_School",
+    "image": ""
+  },
+  {
+    "key": "harbin-opera",
+    "strategyId": "symbol-translate",
+    "title": "Harbin_Grand_Theatre",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Harbin_Grand_Theatre_Pano_201609.jpg"
+  },
+  {
+    "key": "heydar-center",
+    "strategyId": "symbol-translate",
+    "title": "Heydar_Aliyev_Center",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Heydar_Aliyev_Center_in_Baku_in_Azerbaijan.jpg"
+  },
+  {
+    "key": "tate-modern",
+    "strategyId": "memory-retain",
+    "title": "Tate_Modern",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Albert_Gleizes,_1911,_Portrait_de_Jacques_Nayral,_oil_on_canvas,_161.9_x_114_cm,_Tate_Modern,_London.jpg"
+  },
+  {
+    "key": "zeitz-mocaa",
+    "strategyId": "memory-retain",
+    "title": "Zeitz_Museum_of_Contemporary_Art_Africa",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Zeitz_Museum_of_Contemporary_Art_Africa,_Cape_Town_(_1050775).jpg"
+  },
+  {
+    "key": "superkilen",
+    "strategyId": "micro-weave",
+    "title": "Superkilen",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Superkilen_hill-top_view.jpg"
+  },
+  {
+    "key": "cheonggyecheon",
+    "strategyId": "micro-weave",
+    "title": "Cheonggyecheon",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Cheonggyecheon_evening_2.jpg"
+  },
+  {
+    "key": "al-bahr",
+    "strategyId": "climate-form",
+    "title": "Al_Bahr_Towers",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Fountain_and_Al_Bahr_Towers_-_panoramio.jpg"
+  },
+  {
+    "key": "masdar",
+    "strategyId": "climate-form",
+    "title": "Masdar_City",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Masdar_city_under_construction_2012.jpg"
+  },
+  {
+    "key": "the-shard",
+    "strategyId": "vertical-mix",
+    "title": "The_Shard",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/London_01_2013_the_Shard_London_Bridge_5205.jpg"
+  },
+  {
+    "key": "azabudai-hills",
+    "strategyId": "vertical-mix",
+    "title": "Azabudai_Hills",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Azabudai_Hills_opening_day_19.jpg"
+  },
+  {
+    "key": "798-district",
+    "strategyId": "time-evolve",
+    "title": "798_Art_Zone",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/798artzone2.jpg"
+  },
+  {
+    "key": "distillery-district",
+    "strategyId": "time-evolve",
+    "title": "Distillery_District",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/TTC_Wheeltrans_visits_the_distillery_district_on_2014_11_05_(2)_(15695645646).jpg"
+  },
+  {
+    "key": "rolex-learning",
+    "strategyId": "boundary-penetrate",
+    "title": "Rolex_Learning_Center",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Lausanne-sannaa-rolex-learning-center_innen.jpg"
+  },
+  {
+    "key": "yokohama-terminal",
+    "strategyId": "boundary-penetrate",
+    "title": "Yokohama_International_Port_Terminal",
+    "image": ""
+  },
+  {
+    "key": "roppongi-hills",
+    "strategyId": "vitality-ring",
+    "title": "Roppongi_Hills",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Roppongi_Hills_2013-12-01.jpg"
+  },
+  {
+    "key": "xintiandi",
+    "strategyId": "vitality-ring",
+    "title": "Xintiandi",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Location_of_the_First_Congress_of_the_Chinese_Communist_Party_Xintiandi_Shanghai_July_1921.jpg"
+  },
+  {
+    "key": "seattle-library",
+    "strategyId": "public-return",
+    "title": "Seattle_Central_Library",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/SeattleCentralLibraryNight.jpg"
+  },
+  {
+    "key": "sendai-mediatheque",
+    "strategyId": "public-return",
+    "title": "Sendai_Mediatheque",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sendai_Mediatheque_3F.jpg"
+  },
+  {
+    "key": "nakagin",
+    "strategyId": "modular-build",
+    "title": "Nakagin_Capsule_Tower",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Nakagin_Capsule_Tower_(51472766807).jpg"
+  },
+  {
+    "key": "brock-commons",
+    "strategyId": "modular-build",
+    "title": "Brock_Commons_Tallwood_House",
+    "image": ""
+  },
+  {
+    "key": "hsbc-hk",
+    "strategyId": "core-skin",
+    "title": "HSBC_Building_(Hong_Kong)",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Cannons_of_HSBC_building.jpg"
+  },
+  {
+    "key": "hearst-tower",
+    "strategyId": "core-skin",
+    "title": "Hearst_Tower_(New_York_City)",
+    "image": ""
+  },
+  {
+    "key": "461-dean",
+    "strategyId": "prefab",
+    "title": "461_Dean",
+    "image": ""
+  },
+  {
+    "key": "the-stack",
+    "strategyId": "prefab",
+    "title": "The_Stack_(Manhattan)",
+    "image": ""
+  },
+  {
+    "key": "centre-pompidou",
+    "strategyId": "structure-space",
+    "title": "Centre_Pompidou",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Metz_(F)_-_Centre_Pompidou_-_Außenansicht.jpg"
+  },
+  {
+    "key": "sainsbury-centre",
+    "strategyId": "structure-space",
+    "title": "Sainsbury_Centre_for_Visual_Arts",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sainsbury_Centre_building_with_rainbow.jpg"
+  },
+  {
+    "key": "diagoon",
+    "strategyId": "growth-frame",
+    "title": "Diagoon_Delft",
+    "image": ""
+  },
+  {
+    "key": "quinta-monroy",
+    "strategyId": "growth-frame",
+    "title": "Quinta_Monroy",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Quinta_Monroy_Infill_Diagram.jpg"
+  },
+  {
+    "key": "federation-square",
+    "strategyId": "facade-vitality",
+    "title": "Federation_Square",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/MEL_federationssquare.jpg"
+  },
+  {
+    "key": "taikoo-li",
+    "strategyId": "facade-vitality",
+    "title": "Taikoo_Li_Sanlitun",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/三里屯太古里南区.jpg"
+  },
+  {
+    "key": "millennium-park",
+    "strategyId": "urban-public-space",
+    "title": "Millennium_Park",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Millennium_Park_Ice_Skating.jpg"
+  },
+  {
+    "key": "zaryadye",
+    "strategyId": "urban-public-space",
+    "title": "Zaryadye_Park",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Zaryadye_Park_Moscow_img08_asv2018-01.jpg"
+  },
+  {
+    "key": "high-line",
+    "strategyId": "slow-stitch",
+    "title": "High_Line",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/AHigh_Line_Park,_Section_1a.jpg"
+  },
+  {
+    "key": "seoullo-7017",
+    "strategyId": "slow-stitch",
+    "title": "Seoullo_7017",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Seoullo_7017_Overview_(5).jpg"
+  },
+  {
+    "key": "axe-historique",
+    "strategyId": "view-corridor",
+    "title": "Axe_historique",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/La_Défense_Juin_2025.jpg"
+  },
+  {
+    "key": "national-mall",
+    "strategyId": "view-corridor",
+    "title": "National_Mall",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Veterans_Day_concert_on_the_National_Mall_photo_D_Ramey_Logan.jpg"
+  },
+  {
+    "key": "snfcc",
+    "strategyId": "gradient-open",
+    "title": "Stavros_Niarchos_Foundation_Cultural_Center",
+    "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Stavros_Niarchos_Foundation_Cultural_Center_-_52035330487.jpg"
+  },
+  {
+    "key": "va-dundee",
+    "strategyId": "gradient-open",
+    "title": "V&A_Dundee",
+    "image": ""
+  }
+]

@@ -1,46 +1,64 @@
-# 项目上下文
+# AGENTS.md
 
-## 技术栈
+## 项目概览
 
-- **核心**: Vite 7, TypeScript, Express
-- **UI**: Tailwind CSS
+**ArchReason（建筑推理引擎）**：辅助建筑师创作的 AI 工具。输入设计任务书 → LLM 策略推理 → 策略协同图 → 结构化推理报告（含真实案例）→ 无限画布工作台 → 程序化生成概念方案图。
+
+- **技术栈**：Vite 7 + React 19 + TypeScript 5 + Express（开发态承载 Vite 中间件）
+- **状态管理**：Zustand（全部 localStorage 持久化）
+- **样式**：Tailwind CSS 4，浅色主界面 + 深色画板
+- **图表**：ECharts（力导向策略网络图，按需注册）
+- **架构**：纯前端应用，LLM 由浏览器直连 OpenAI 兼容接口；无后端数据库
 
 ## 目录结构
 
 ```
-├── scripts/            # 构建与启动脚本
-│   ├── build.sh        # 构建脚本
-│   ├── dev.sh          # 开发环境启动脚本
-│   ├── prepare.sh      # 预处理脚本
-│   └── start.sh        # 生产环境启动脚本
-├── server/             # 服务端逻辑
-│   ├── routes/         # API 路由
-│   ├── server.ts       # Express 服务入口
-│   └── vite.ts         # Vite 中间件集成
-├── src/                # 前端源码
-│   ├── index.css       # 全局样式
-│   ├── index.ts        # 客户端入口
-│   └── main.ts         # 主逻辑
-├── index.html          # 入口 HTML
-├── package.json        # 项目依赖管理
-├── tsconfig.json       # TypeScript 配置
-└── vite.config.ts      # Vite 配置
+├── index.html
+├── vite.config.ts
+├── server/                    # Express（开发态）
+│   ├── server.ts              # 服务入口
+│   ├── vite.ts                # Vite 中间件 / 生产静态服务
+│   └── routes/index.ts        # 健康检查等示例接口
+├── src/
+│   ├── main.tsx               # 客户端入口 + RouterProvider
+│   ├── App.tsx                # 路由表
+│   ├── types.ts               # 全局类型（并 re-export Strategy）
+│   ├── index.css              # Tailwind + 设计 token + 组件类
+│   ├── data/
+│   │   ├── strategies.ts      # 32 条策略 + 6 个分组（核心资产）
+│   │   └── cases.ts           # 64 个真实建筑案例
+│   ├── services/
+│   │   ├── llm.ts             # prompt 构建 / JSON 解析 / 推理 / 本地兜底 / 协同边
+│   │   └── imageGeneration.ts # ImageGenerationService 接口 + 8 风格 SVG 生成器
+│   ├── stores/                # settings / task / report / board
+│   ├── components/
+│   │   ├── Layout.tsx         # 侧边栏 + 主区域
+│   │   └── SafeImage.tsx      # 图片加载失败 SVG 兜底
+│   └── pages/                 # Home / Settings / Synergy / Report / Reports / Board
+└── tools/                     # 一次性数据抓取/校验脚本（不入 ESLint）
 ```
 
-## 包管理规范
+## 常用命令
 
-**仅允许使用 pnpm** 作为包管理器，**严禁使用 npm 或 yarn**。
-**常用命令**：
-- 安装依赖：`pnpm add <package>`
-- 安装开发依赖：`pnpm add -D <package>`
-- 安装所有依赖：`pnpm install`
-- 移除依赖：`pnpm remove <package>`
+- 安装依赖：`pnpm install`
+- 开发启动：`pnpm run dev`（端口取自 `DEPLOY_RUN_PORT`）
+- 类型检查：`pnpm run ts-check`
+- Lint：`pnpm run lint`
+- 生产构建：`pnpm run build`
+- 生产启动：`pnpm run start`
 
-## 开发规范
+仅允许使用 **pnpm**，禁止 npm / yarn。
 
-- 使用 Tailwind CSS 进行样式开发
+## 核心模块说明
 
-### 编码规范
+- **推理链路**（`services/llm.ts`）：`buildSystemPrompt` 注入 32 条策略 → `runInference` 调 chat/completions → `extractJson` 支持 code fence / 前后杂文字 / 字段归一化 → 失败由 `localFallback` 规则打分兜底（报告标记 `degraded`）。
+- **协同边**（`buildEdges`）：命中策略间的预置 `synergies`（strength=`preset`）+ 模型 `synergyInsights`（strength=`insight`）。
+- **生图服务**：`ImageGenerationService.generate(prompt, styleId, options)` 返回 data URI；演示版为确定性 SVG（同 prompt+style 画面稳定），真实 API 实现位见文件尾部注释，可无缝替换。
+- **图片兜底**：所有外部图片经 `SafeImage`，失败回退建筑线稿 SVG。
 
-- 默认按 TypeScript `strict` 心智写代码；优先复用当前作用域已声明的变量、函数、类型和导入，禁止引用未声明标识符或拼错变量名。
-- 禁止隐式 `any` 和 `as any`；函数参数、返回值、解构项、事件对象、Express `req`/`res`、`catch` 错误在使用前应有明确类型或先完成类型收窄，并清理未使用的变量和导入。
+## 编码规范
+
+- TypeScript strict；禁止隐式 `any` / `as any`；函数参数与返回值显式标注类型。
+- 优先复用当前作用域已声明标识符；清理未使用的变量与导入。
+- 样式使用 Tailwind，遵循 `DESIGN.md` 的设计 token（赭石强调色 + 建筑纸感中性色）。
+- React 19 无需 `import React`；动态内容放 `useEffect`/事件中，避免渲染期使用 `Date.now()`/`Math.random()` 造成不一致。

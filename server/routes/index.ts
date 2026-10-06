@@ -3,7 +3,7 @@ import { Router } from 'express';
 const router = Router();
 
 // API 路由示例
-router.get('/api/hello', (req, res) => {
+router.get('/api/hello', (_req, res) => {
   res.json({
     message: 'Hello from Express + Vite!',
     timestamp: new Date().toISOString(),
@@ -20,7 +20,7 @@ router.post('/api/data', (req, res) => {
 });
 
 // 健康检查接口
-router.get('/api/health', (req, res) => {
+router.get('/api/health', (_req, res) => {
   res.json({
     status: 'ok',
     env: process.env.COZE_PROJECT_ENV,
