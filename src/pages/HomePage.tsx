@@ -34,6 +34,18 @@ const REASONING_STEPS = [
   { key: 'report', title: '生成推理报告', desc: '结构化输出匹配理由与落地思路' },
 ];
 
+const MODEL_MENU_IDS = [
+  'gemini-3.1-pro',
+  'gemini-3-pro',
+  'gpt-4o-mini',
+  'gpt-4o',
+  'o4-mini',
+  'deepseek-chat',
+  'deepseek-reasoner',
+  'moonshot-v1-8k',
+  'doubao-pro-32k',
+];
+
 function formatTime(date: Date): string {
   const pad = (v: number) => String(v).padStart(2, '0');
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
@@ -43,6 +55,7 @@ export default function HomePage() {
   const navigate = useNavigate();
   const { task, update, fillExample, reset, toggleDemand } = useTaskStore();
   const config = useSettingsStore((s) => s.config);
+  const updateSettings = useSettingsStore((s) => s.update);
   const isConfigured = useSettingsStore((s) => s.isConfigured());
   const addReport = useReportStore((s) => s.addReport);
   const reports = useReportStore((s) => s.reports);
@@ -276,12 +289,56 @@ export default function HomePage() {
         )}
 
         {/* 提交 */}
-        <div className="flex items-center justify-between">
-          <p className="text-[12px] text-ink-3">
-            {isConfigured
-              ? `当前模型：${config.model} · ${formatTime(new Date())}`
-              : '配置模型后即可开始推理'}
-          </p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <select
+                className="input h-[30px] max-w-[240px] flex-1 font-mono text-[12px]"
+                value={MODEL_MENU_IDS.includes(config.model) ? config.model : 'custom'}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val !== 'custom') updateSettings({ model: val });
+                }}
+                aria-label="切换模型"
+              >
+                <optgroup label="Grsai 常用">
+                  <option value="gemini-3.1-pro">gemini-3.1-pro</option>
+                  <option value="gemini-3-pro">gemini-3-pro</option>
+                  <option value="gpt-4o-mini">gpt-4o-mini</option>
+                  <option value="gpt-4o">gpt-4o</option>
+                  <option value="o4-mini">o4-mini</option>
+                </optgroup>
+                <optgroup label="国内服务商">
+                  <option value="deepseek-chat">deepseek-chat（DeepSeek）</option>
+                  <option value="deepseek-reasoner">deepseek-reasoner（DeepSeek R1）</option>
+                  <option value="moonshot-v1-8k">moonshot-v1-8k（Moonshot）</option>
+                  <option value="doubao-pro-32k">doubao-pro-32k（火山方舟）</option>
+                </optgroup>
+                <optgroup label="其他">
+                  <option value="custom">自定义…</option>
+                </optgroup>
+              </select>
+              <span className="shrink-0 text-[11.5px] tabular-nums text-ink-3">
+                {formatTime(new Date())}
+              </span>
+            </div>
+            {!MODEL_MENU_IDS.includes(config.model) && (
+              <input
+                className="input mt-1.5 h-[30px] w-full max-w-[240px] font-mono text-[12px]"
+                placeholder="输入任意 OpenAI 兼容模型名"
+                value={config.model}
+                onChange={(e) => updateSettings({ model: e.target.value })}
+              />
+            )}
+            <p className="mt-1 truncate text-[11px] leading-snug text-ink-3">
+              当前 Base URL 为 {config.baseUrl || '未配置'}，请确认该网关支持所选模型
+            </p>
+            {!config.apiKey && (
+              <p className="text-[11px] leading-snug text-accent">
+                尚未配置 API Key，提交推理前请先完成模型配置
+              </p>
+            )}
+          </div>
           <button
             type="button"
             className="btn btn-primary btn-lg"
