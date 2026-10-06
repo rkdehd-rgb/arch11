@@ -1,6 +1,10 @@
 import { Router } from 'express';
+import { goooodRouter } from './gooood';
 
 const router = Router();
+
+// gooood（谷德设计网）搜索与图片代理
+router.use('/api', goooodRouter);
 
 // API 路由示例
 router.get('/api/hello', (_req, res) => {

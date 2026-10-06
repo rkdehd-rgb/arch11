@@ -8,7 +8,7 @@
 - **状态管理**：Zustand（全部 localStorage 持久化）
 - **样式**：Tailwind CSS 4，浅色主界面 + 深色画板
 - **图表**：ECharts（力导向策略网络图，按需注册）
-- **架构**：纯前端应用，LLM 由浏览器直连 OpenAI 兼容接口；无后端数据库
+- **架构**：LLM 由浏览器直连 OpenAI 兼容接口；无数据库。Express 仅承载 Vite 中间件与 gooood 搜索/图片代理路由
 
 ## 目录结构
 
@@ -18,7 +18,9 @@
 ├── server/                    # Express（开发态）
 │   ├── server.ts              # 服务入口
 │   ├── vite.ts                # Vite 中间件 / 生产静态服务
-│   └── routes/index.ts        # 健康检查等示例接口
+│   └── routes/
+│       ├── index.ts           # 健康检查等示例接口，挂载 gooood 代理
+│       └── gooood.ts          # /api/case-search 搜索代理 + /api/case-image 图片代理
 ├── src/
 │   ├── main.tsx               # 客户端入口 + RouterProvider
 │   ├── App.tsx                # 路由表
@@ -32,7 +34,8 @@
 │   │   ├── strategyPool.ts    # 内置+用户自定义统一策略池解析（定义/案例/维度/建 id）
 │   │   ├── grsai.ts           # Grsai 真实生图：MODEL_CATALOG(16 模型) + 异步轮询/同步/编辑
 │   │   ├── referenceImage.ts  # 参考图提交前浏览器端下载转 base64（15s 超时/失败剔除/错误识别）
-│   │   ├── wikiImageSearch.ts # 自动找图：Wikimedia Commons API（origin=*）搜索 + 选中图下载转 base64
+│   │   ├── goooodSearch.ts    # 自动找图默认源：调 /api 代理搜 gooood + 代理图片取 blob
+│   │   ├── wikiImageSearch.ts # 自动找图回退源：Wikimedia Commons API（origin=*）+ 下载转 base64
 │   │   └── imageGeneration.ts # ImageGenerationService + 8 风格 SVG（降级/演示兜底）
 │   ├── stores/                # settings / task / report / board / customStrategy
 │   ├── components/
@@ -65,6 +68,7 @@
 - **Key 与节点**：Grsai 三接口与 LLM 共用同一 API Key；节点 `global=grsaiapi.com` / `cn=grsai.dakka.com.cn` 存于 settings 的 `grsaiNode`。设置页含「Grsai」LLM 预设（baseUrl 随节点、model=gemini-3.1-pro）。
 - **异步结果解析坑点**（`grsai.ts` 的 `extractResultUrl`）：`/v1/api/result` 成功响应的图片在**顶层 `results` 数组**（`results[0].url`），必须最优先读取；漏读会导致 status=succeeded 却拿不到 URL、轮询空转到超时再误降级 SVG。已加防御：原始 status 已成功但连续 5 次（约 10s）取不到 URL 即报「任务已完成但响应中未找到图片地址」；轮询默认超时 10 分钟，超时错误附任务 ID。
 - **图片兜底**：所有外部图片经 `SafeImage`，失败回退建筑线稿 SVG。
+- **自动找图**（`routes/gooood.ts` + `services/goooodSearch.ts`）：默认搜谷德，`/api/case-search` 服务端正则解析 `article.result-card`（标题/副标题/年份/分类/封面，原图去掉 `-宽x高` 后缀），结果内存缓存 60s；`/api/case-image` 仅允许 `oss.gooood.cn`（否则 403）。前端 gooood 失败或 0 结果自动回退 Wikimedia（提示「谷德无结果，已切换 Wikimedia」），gooood 支持分页加载更多。选中图经代理取 blob → 压缩 base64，绝不以 URL 提交。
 - **Vite 中间件模式坑点**（`server/vite.ts`）：`createViteServer` 默认仍会自动加载根目录 `vite.config.ts`（其 plugins 已含 react 插件），若再内联注册 `react()` 会使 react-refresh 前导被注入两次，报 `inWebWorker / prevRefreshReg has already been declared`。故中间件模式必须显式 `configFile: false` 且插件只声明一次；同时不要展开复用 `vite.config.ts` 的实例化 plugins。端口从 `DEPLOY_RUN_PORT` 读取（HMR 固定 6000，path `/hot/vite-hmr`）。
 
 ## 编码规范

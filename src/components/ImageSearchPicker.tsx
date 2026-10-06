@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   searchWikiImages,
-  downloadWikiSelection,
   type WikiImage,
 } from '../services/wikiImageSearch';
-import { StorageQuotaError } from '../services/imageCompress';
+import {
+  searchGooood,
+  fetchGoooodImageBlob,
+  type GoooodImage,
+} from '../services/goooodSearch';
+import { compressImage, StorageQuotaError } from '../services/imageCompress';
 import SafeImage from './SafeImage';
 
 interface ImageSearchPickerProps {
@@ -18,12 +22,59 @@ interface ImageSearchPickerProps {
   onClose: () => void;
 }
 
+type SourceKind = 'gooood' | 'wiki';
 type SearchStatus = 'idle' | 'loading' | 'succeeded' | 'empty' | 'error';
+
+interface Candidate {
+  id: string;
+  source: SourceKind;
+  thumb: string;
+  /** gooood 原图地址（经 /api/case-image 代理获取） */
+  fullUrl: string;
+  title: string;
+  subtitle: string;
+  meta: string;
+  pageUrl?: string;
+}
+
+function blobToDataUri(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(new Error('读取为 base64 失败'));
+    reader.readAsDataURL(blob);
+  });
+}
+
+/** gooood 候选：同源代理取 blob → 压缩 data URI */
+async function downloadGooood(item: GoooodImage): Promise<string> {
+  const blob = await fetchGoooodImageBlob(item.image);
+  try {
+    const { dataUrl } = await compressImage(blob);
+    return dataUrl;
+  } catch {
+    return await blobToDataUri(blob);
+  }
+}
+
+/** wiki 候选：直连下载 → 压缩 data URI */
+async function downloadWiki(img: WikiImage): Promise<string> {
+  const res = await fetch(img.url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const blob = await res.blob();
+  try {
+    const { dataUrl } = await compressImage(blob);
+    return dataUrl;
+  } catch {
+    return await blobToDataUri(blob);
+  }
+}
 
 /**
  * 自动找图候选弹层：
- * 顶部搜索框可改词重搜；网格多选（受剩余余量约束）；
- * 确认时客户端下载原图 → base64 后回调，绝不以 URL 提交。
+ * 默认源 gooood（谷德设计网，经后端代理）；失败或无结果自动回退 Wikimedia；
+ * 网格多选（受剩余余量约束）；gooood 支持分页加载更多；
+ * 确认时下载 → base64 后回调，绝不以 URL 提交参考图。
  */
 export default function ImageSearchPicker({
   initialKeyword,
@@ -32,29 +83,102 @@ export default function ImageSearchPicker({
   onClose,
 }: ImageSearchPickerProps) {
   const [keyword, setKeyword] = useState(initialKeyword);
-  const [results, setResults] = useState<WikiImage[]>([]);
+  const [source, setSource] = useState<SourceKind>('gooood');
+  const [results, setResults] = useState<Candidate[]>([]);
   const [status, setStatus] = useState<SearchStatus>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const [notice, setNotice] = useState('');
   const [selected, setSelected] = useState<string[]>([]);
   const [confirming, setConfirming] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
+  const [page, setPage] = useState(1);
   const [downloadProgress, setDownloadProgress] = useState<{ done: number; total: number } | null>(null);
   const searchSeqRef = useRef(0);
 
+  function mapGooood(items: GoooodImage[]): Candidate[] {
+    return items.map((it) => ({
+      id: `gooood::${it.image}`,
+      source: 'gooood',
+      thumb: it.thumb,
+      fullUrl: it.image,
+      title: it.title,
+      subtitle: it.subtitle,
+      meta: [it.year, it.category].filter(Boolean).join(' · '),
+      pageUrl: it.pageUrl,
+    }));
+  }
+
+  function mapWiki(images: WikiImage[]): Candidate[] {
+    return images.map((img) => ({
+      id: `wiki::${img.id}`,
+      source: 'wiki',
+      thumb: img.thumbUrl,
+      fullUrl: img.url,
+      title: img.title.replace(/^File:/, ''),
+      subtitle: '',
+      meta: `${img.width}×${img.height}`,
+    }));
+  }
+
+  async function loadWiki(term: string, seq: number): Promise<void> {
+    const images = await searchWikiImages(term);
+    if (seq !== searchSeqRef.current) return;
+    setSource('wiki');
+    setHasMore(false);
+    setResults(mapWiki(images));
+    setSelected([]);
+    setStatus(images.length === 0 ? 'empty' : 'succeeded');
+  }
+
+  /** 搜索：默认 gooood；其失败或 0 结果时回退 Wikimedia。 */
   async function runSearch(term: string): Promise<void> {
     const seq = ++searchSeqRef.current;
     setStatus('loading');
     setErrorMsg('');
+    setNotice('');
+    setResults([]);
+    setHasMore(false);
+    setPage(1);
     try {
-      const images = await searchWikiImages(term);
-      if (seq !== searchSeqRef.current) return; // 已有更新的搜索
-      setResults(images);
-      setSelected([]);
-      setStatus(images.length === 0 ? 'empty' : 'succeeded');
-    } catch (err) {
+      const pageData = await searchGooood(term, 1);
       if (seq !== searchSeqRef.current) return;
-      setResults([]);
-      setStatus('error');
-      setErrorMsg(err instanceof Error ? err.message : '搜索失败');
+      if (pageData.results.length === 0) {
+        setNotice('谷德无结果，已切换 Wikimedia');
+        await loadWiki(term, seq);
+        return;
+      }
+      setSource('gooood');
+      setResults(mapGooood(pageData.results));
+      setHasMore(pageData.hasMore);
+      setSelected([]);
+      setStatus('succeeded');
+    } catch {
+      if (seq !== searchSeqRef.current) return;
+      setNotice('谷德暂不可用，已切换 Wikimedia');
+      try {
+        await loadWiki(term, seq);
+      } catch (err) {
+        if (seq !== searchSeqRef.current) return;
+        setStatus('error');
+        setErrorMsg(err instanceof Error ? err.message : '搜索失败');
+      }
+    }
+  }
+
+  async function handleLoadMore(): Promise<void> {
+    if (source !== 'gooood' || !hasMore || loadingMore) return;
+    const nextPage = page + 1;
+    setLoadingMore(true);
+    try {
+      const pageData = await searchGooood(keyword, nextPage);
+      setPage(nextPage);
+      setHasMore(pageData.hasMore);
+      setResults((prev) => [...prev, ...mapGooood(pageData.results)]);
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : '加载更多失败');
+    } finally {
+      setLoadingMore(false);
     }
   }
 
@@ -73,31 +197,63 @@ export default function ImageSearchPicker({
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
-  function toggleSelect(img: WikiImage): void {
+  function toggleSelect(cand: Candidate): void {
     setSelected((prev) => {
-      if (prev.includes(img.id)) return prev.filter((id) => id !== img.id);
-      if (prev.length >= remaining) return prev; // 达到上限
-      return [...prev, img.id];
+      if (prev.includes(cand.id)) return prev.filter((id) => id !== cand.id);
+      if (prev.length >= remaining) return prev;
+      return [...prev, cand.id];
     });
   }
 
   async function handleConfirm(): Promise<void> {
     const chosen = selected
       .map((id) => results.find((r) => r.id === id))
-      .filter((x): x is WikiImage => Boolean(x));
+      .filter((x): x is Candidate => Boolean(x));
     if (chosen.length === 0) return;
 
     setConfirming(true);
     setDownloadProgress({ done: 0, total: chosen.length });
+    const dataUris: string[] = [];
+    const failedTitles: string[] = [];
     try {
-      const { images, failed } = await downloadWikiSelection(chosen, (done, total) =>
-        setDownloadProgress({ done, total }),
-      );
-      if (failed.length > 0) {
-        setErrorMsg(`${failed.length} 张图片无法下载，已导入其余 ${images.length} 张。`);
+      for (const cand of chosen) {
+        try {
+          let dataUri: string;
+          if (cand.source === 'gooood') {
+            const goooodItem: GoooodImage = {
+              title: cand.title,
+              subtitle: cand.subtitle,
+              thumb: cand.thumb,
+              image: cand.fullUrl,
+              pageUrl: cand.pageUrl ?? '',
+              year: cand.meta,
+              category: '',
+            };
+            dataUri = await downloadGooood(goooodItem);
+          } else {
+            const wikiItem: WikiImage = {
+              id: cand.id.replace(/^wiki::/, ''),
+              thumbUrl: cand.thumb,
+              url: cand.fullUrl,
+              title: cand.title,
+              width: 0,
+              height: 0,
+              mime: 'image/jpeg',
+            };
+            dataUri = await downloadWiki(wikiItem);
+          }
+          dataUris.push(dataUri);
+        } catch {
+          failedTitles.push(cand.title || '未命名图片');
+        }
+        setDownloadProgress({ done: dataUris.length + failedTitles.length, total: chosen.length });
       }
-      if (images.length > 0) {
-        await onConfirm(images);
+
+      if (failedTitles.length > 0) {
+        setErrorMsg(`${failedTitles.length} 张图片无法下载，已导入其余 ${dataUris.length} 张。`);
+      }
+      if (dataUris.length > 0) {
+        await onConfirm(dataUris);
         onClose();
       }
     } catch (err) {
@@ -144,7 +300,7 @@ export default function ImageSearchPicker({
             <input
               className="input flex-1"
               value={keyword}
-              placeholder="输入关键词，如 Tate Modern"
+              placeholder="输入项目名或关键词，如 博物馆、Tate Modern"
               onChange={(e) => setKeyword(e.target.value)}
             />
             <button type="submit" className="btn btn-secondary shrink-0">
@@ -152,11 +308,15 @@ export default function ImageSearchPicker({
             </button>
           </form>
           <div className="mt-2 flex items-center justify-between text-[11.5px] text-ink-3">
-            <span>来源：Wikimedia Commons</span>
+            <span>
+              来源：
+              {source === 'gooood' ? 'gooood.cn（谷德设计网）' : 'Wikimedia Commons'}
+            </span>
             <span>
               已选 <span className="font-mono text-accent">{selected.length}</span> / 可添加 {remaining}
             </span>
           </div>
+          {notice && <p className="mt-1 text-[11.5px] text-accent">{notice}</p>}
         </div>
 
         {/* 候选网格 */}
@@ -189,46 +349,81 @@ export default function ImageSearchPicker({
           )}
 
           {status === 'succeeded' && (
-            <div className="grid grid-cols-4 gap-3">
-              {results.map((img) => {
-                const isSelected = selected.includes(img.id);
+            <div className="grid grid-cols-3 gap-3">
+              {results.map((cand) => {
+                const isSelected = selected.includes(cand.id);
                 const disabled = !isSelected && selected.length >= remaining;
                 return (
-                  <button
-                    key={img.id}
-                    type="button"
-                    disabled={disabled}
-                    onClick={() => toggleSelect(img)}
-                    title={img.title}
+                  <div
+                    key={cand.id}
                     className={`group relative overflow-hidden rounded-md border text-left transition-all ${
                       isSelected
                         ? 'border-accent ring-1 ring-accent'
                         : 'border-line hover:border-line-strong'
                     } ${disabled ? 'cursor-not-allowed opacity-40' : ''}`}
                   >
-                    <div className="relative aspect-[4/3] w-full bg-line">
-                      <SafeImage
-                        src={img.thumbUrl}
-                        alt={img.title}
-                        className="h-full w-full object-cover"
-                      />
-                      {isSelected && (
-                        <span className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-white">
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
-                        </span>
+                    <button
+                      type="button"
+                      disabled={disabled}
+                      onClick={() => toggleSelect(cand)}
+                      title={cand.title}
+                      className="block w-full"
+                    >
+                      <div className="relative aspect-[4/3] w-full bg-line">
+                        <SafeImage
+                          src={cand.thumb}
+                          alt={cand.title}
+                          className="h-full w-full object-cover"
+                        />
+                        {cand.source === 'gooood' && (
+                          <span className="absolute left-1 top-1 rounded bg-black/55 px-1 py-px text-[9px] text-white opacity-0 transition-opacity group-hover:opacity-100">
+                            来源：gooood.cn
+                          </span>
+                        )}
+                        {isSelected && (
+                          <span className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-white">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                    <div className="px-2 py-1.5">
+                      <div className="truncate text-[11px] text-ink">{cand.title}</div>
+                      {cand.subtitle && (
+                        <div className="truncate text-[10px] text-ink-3">{cand.subtitle}</div>
                       )}
-                    </div>
-                    <div className="px-1.5 py-1">
-                      <div className="truncate text-[10px] text-ink-2">{img.title.replace(/^File:/, '')}</div>
-                      <div className="font-mono text-[9px] text-ink-3">
-                        {img.width}×{img.height}
+                      <div className="mt-0.5 flex items-center justify-between">
+                        <span className="font-mono text-[9px] text-ink-3">{cand.meta}</span>
+                        {cand.pageUrl && (
+                          <a
+                            href={cand.pageUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[9.5px] text-accent hover:underline"
+                          >
+                            查看来源
+                          </a>
+                        )}
                       </div>
                     </div>
-                  </button>
+                  </div>
                 );
               })}
+            </div>
+          )}
+
+          {status === 'succeeded' && hasMore && (
+            <div className="mt-4 flex justify-center">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => void handleLoadMore()}
+                disabled={loadingMore}
+              >
+                {loadingMore ? '加载中…' : '加载更多'}
+              </button>
             </div>
           )}
 
