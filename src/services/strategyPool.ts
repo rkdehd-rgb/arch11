@@ -7,7 +7,30 @@ import {
 import { getCasesByStrategy } from '../data/cases';
 import type { CaseRef } from '../data/cases';
 import { useCustomStrategyStore } from '../stores/customStrategy';
+import { useCaseOverrideStore } from '../stores/caseOverride';
 import type { StrategyMatch } from '../types';
+
+/** 案例的最小元数据（内置 CaseRef / 库外 cases / 用户添加均可） */
+export interface CaseMeta {
+  image: string;
+  name?: string;
+  location?: string;
+  year?: string;
+  architect?: string;
+  highlight?: string;
+}
+
+/** 渲染用案例视图：合并覆盖层图片与基础元数据 */
+export interface CaseView {
+  image: string;
+  name: string;
+  location: string;
+  year: string;
+  architect: string;
+  highlight: string;
+  /** 是否为用户在基础案例之外新增的图 */
+  custom: boolean;
+}
 
 /** 非响应式读取当前用户自定义策略（供服务层/提示词构建使用） */
 export function getUserStrategies(): Strategy[] {
@@ -41,7 +64,7 @@ export function getGroupName(groupId: string): string {
   return g ? g.name : groupId;
 }
 
-/** 取策略参考案例：内置策略查内置案例库，用户策略查自定义案例 */
+/** 取策略参考案例（基础元数据）：内置策略查内置案例库，用户策略查自定义案例 */
 export function resolveCases(strategyId: string): CaseRef[] {
   if (isUserStrategy(strategyId)) {
     return useCustomStrategyStore.getState().cases.filter(
@@ -49,6 +72,63 @@ export function resolveCases(strategyId: string): CaseRef[] {
     ) as CaseRef[];
   }
   return getCasesByStrategy(strategyId);
+}
+
+/** 有效案例元数据：覆盖层优先，否则用基础案例；用于画板自动贴图等只需图片/简述处 */
+export function resolveCaseMeta(strategyId: string): CaseMeta[] {
+  const override = useCaseOverrideStore.getState().overrides[strategyId];
+  if (override) {
+    const base = resolveCases(strategyId);
+    return override.images.map((image, i) => {
+      const b = base[i];
+      return {
+        image,
+        name: b?.name,
+        location: b?.location,
+        year: b?.year,
+        architect: b?.architect,
+        highlight: b?.highlight,
+      };
+    });
+  }
+  if (isUserStrategy(strategyId)) {
+    return useCustomStrategyStore
+      .getState()
+      .cases.filter((c) => c.strategyId === strategyId)
+      .map((c) => ({
+        id: c.id,
+        strategyId: c.strategyId,
+        name: c.name,
+        location: c.location,
+        year: c.year,
+        architect: c.architect,
+        highlight: c.highlight,
+        image: c.image ?? '',
+      }));
+  }
+  return getCasesByStrategy(strategyId);
+}
+
+/** 渲染用案例视图：合并覆盖层图片 + 基础元数据，新增图标 custom */
+export function resolveCaseView(
+  strategyId: string,
+  baseCases?: CaseMeta[],
+): CaseView[] {
+  const base = baseCases ?? resolveCases(strategyId);
+  const override = useCaseOverrideStore.getState().overrides[strategyId];
+  const images = override ? override.images : base.map((b) => b.image);
+  return images.map((image, i) => {
+    const b = base[i];
+    return {
+      image,
+      name: b?.name || '自定义参考案例',
+      location: b?.location || '',
+      year: b?.year || '',
+      architect: b?.architect || '',
+      highlight: b?.highlight || (i < base.length ? '' : '用户添加的参考案例图'),
+      custom: i >= base.length,
+    };
+  });
 }
 
 /** 从匹配结果中取策略定义（库外策略用 definition 现场构建） */

@@ -4,8 +4,9 @@ import { useReportStore } from '../stores/report';
 import { useBoardStore } from '../stores/board';
 import { useSettingsStore } from '../stores/settings';
 import { strategyMap } from '../data/strategies';
-import { getCasesByStrategy } from '../data/cases';
 import SafeImage from '../components/SafeImage';
+import { resolveCases, resolveCaseMeta } from '../services/strategyPool';
+import { compressImage, StorageQuotaError } from '../services/imageCompress';
 import {
   imageGenerationService,
   type GeneratedImage,
@@ -115,6 +116,7 @@ export default function BoardPage() {
   const [genStep, setGenStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const [genError, setGenError] = useState<string | null>(null);
+  const [boardNotice, setBoardNotice] = useState<string | null>(null);
   const cancelRef = useRef(false);
 
   const [viewport, setViewport] = useState<Viewport>({ x: 0, y: 0, scale: 1 });
@@ -157,9 +159,8 @@ export default function BoardPage() {
   // 异步参考图：策略变化时自动带入该策略案例图（用户未手动改过时）
   useEffect(() => {
     if (genStrategy !== autoRefStrategy) {
-      const refs = getCasesByStrategy(genStrategy)
+      const refs = resolveCaseMeta(genStrategy)
         .map((c) => c.image)
-        .filter((src) => src.startsWith('http'))
         .slice(0, 3);
       setReferenceImages(refs);
       setAutoRefStrategy(genStrategy);
@@ -189,7 +190,7 @@ export default function BoardPage() {
     const key = `${report.id}::${firstId}`;
     const store = useBoardStore.getState();
     if (store.hydratedWithReport !== key && store.items.length === 0) {
-      const refs = getCasesByStrategy(firstId).slice(0, 4);
+      const refs = resolveCaseMeta(firstId).slice(0, 4);
       addItems(
         refs.map((ref, i) => ({
           kind: 'reference' as const,
@@ -197,8 +198,8 @@ export default function BoardPage() {
           y: 110 + Math.floor(i / 2) * 250 - (i % 2 ? 16 : 0),
           width: 264,
           src: ref.image,
-          title: ref.name,
-          note: ref.highlight,
+          title: ref.name ?? '参考案例',
+          note: ref.highlight ?? '',
           meta: { strategyId: firstId, timestamp: report.createdAt },
         })),
       );
@@ -210,7 +211,7 @@ export default function BoardPage() {
   }, [report]);
 
   const leftCases = useMemo(
-    () => (leftStrategy ? getCasesByStrategy(leftStrategy) : []),
+    () => (leftStrategy ? resolveCases(leftStrategy) : []),
     [leftStrategy],
   );
 
@@ -317,20 +318,32 @@ export default function BoardPage() {
     });
   }
 
-  function readFileToBoard(file: File, kind: 'inspiration'): void {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const src = String(reader.result);
-      addItem({
-        kind,
-        x: 240 + Math.random() * 100,
-        y: 180 + Math.random() * 80,
-        width: 280,
-        src,
-        title: file.name || '灵感图',
-      });
-    };
-    reader.readAsDataURL(file);
+  /**
+   * 处理一张图片：
+   * - 画板已选中图片 → 原位替换 src（位置、尺寸、便签保留）
+   * - 未选中 → 新增一张灵感图
+   */
+  async function ingestImage(file: File): Promise<void> {
+    try {
+      const { dataUrl } = await compressImage(file);
+      const targetId = useBoardStore.getState().selectedId;
+      if (targetId) {
+        updateItem(targetId, { src: dataUrl });
+        setBoardNotice(`已原位替换图片，位置与尺寸保持不变`);
+      } else {
+        addItem({
+          kind: 'inspiration',
+          x: 240 + Math.random() * 100,
+          y: 180 + Math.random() * 80,
+          width: 280,
+          src: dataUrl,
+          title: file.name || '灵感图',
+        });
+      }
+    } catch (err) {
+      if (err instanceof StorageQuotaError) setBoardNotice(err.message);
+      else if (err instanceof Error) setBoardNotice(err.message);
+    }
   }
 
   function handleUploadClick(): void {
@@ -339,11 +352,22 @@ export default function BoardPage() {
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>): void {
     const files = event.target.files;
-    if (files && files[0]) readFileToBoard(files[0], 'inspiration');
+    if (files && files[0]) void ingestImage(files[0]);
     event.target.value = '';
   }
 
-  // 全局粘贴图片
+  /** 点击工具条「替换此图」：先确保该图处于选中态，再打开文件选择 */
+  const replaceFileInputRef = useRef<HTMLInputElement>(null);
+  function handleReplaceClick(): void {
+    if (selectedId) replaceFileInputRef.current?.click();
+  }
+  function handleReplaceFileChange(event: React.ChangeEvent<HTMLInputElement>): void {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (file) void ingestImage(file);
+  }
+
+  // 全局粘贴图片：选中图 → 替换；未选中 → 新增
   useEffect(() => {
     function onPaste(event: ClipboardEvent): void {
       const active = document.activeElement;
@@ -353,7 +377,7 @@ export default function BoardPage() {
       for (const item of Array.from(items)) {
         if (item.type.startsWith('image/')) {
           const file = item.getAsFile();
-          if (file) readFileToBoard(file, 'inspiration');
+          if (file) void ingestImage(file);
           event.preventDefault();
           break;
         }
@@ -363,6 +387,13 @@ export default function BoardPage() {
     return () => window.removeEventListener('paste', onPaste);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // boardNotice 自动消失
+  useEffect(() => {
+    if (!boardNotice) return;
+    const t = window.setTimeout(() => setBoardNotice(null), 3200);
+    return () => window.clearTimeout(t);
+  }, [boardNotice]);
 
   // ---------------- 生成概念图 ----------------
 
@@ -611,8 +642,18 @@ export default function BoardPage() {
               className="hidden"
               onChange={handleFileChange}
             />
+            <input
+              ref={replaceFileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleReplaceFileChange}
+            />
             <p className="mt-2 text-center text-[11px] leading-relaxed text-ink-3">
               也可直接 Ctrl/⌘ + V 粘贴剪贴板图片
+            </p>
+            <p className="mt-1.5 rounded bg-surface-raised px-2.5 py-2 text-[10.5px] leading-relaxed text-ink-3">
+              规则：画板中选中一张图片时，上传 / 粘贴将原位替换该图（位置尺寸不变）；未选中时新增贴图。
             </p>
           </div>
         </div>
@@ -620,6 +661,11 @@ export default function BoardPage() {
 
       {/* 中间画板 */}
       <main className="relative flex-1 overflow-hidden bg-blueprint">
+        {boardNotice && (
+          <div className="pointer-events-none absolute left-1/2 top-4 z-40 -translate-x-1/2 rounded-md border border-white/15 bg-[#23272f]/95 px-4 py-2 text-[12px] text-white/90 shadow-xl">
+            {boardNotice}
+          </div>
+        )}
         <div
           ref={stageRef}
           data-stage-bg="1"
@@ -695,6 +741,13 @@ export default function BoardPage() {
                             {item.meta.style}
                           </span>
                         )}
+                        <button
+                          type="button"
+                          className="rounded px-1.5 py-0.5 text-[10.5px] text-white/50 hover:bg-white/10 hover:text-white"
+                          onClick={handleReplaceClick}
+                        >
+                          替换此图
+                        </button>
                         <button
                           type="button"
                           className="rounded px-1.5 py-0.5 text-[10.5px] text-white/50 hover:bg-white/10 hover:text-white"

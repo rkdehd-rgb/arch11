@@ -7,6 +7,10 @@ import {
   useCustomStrategyStore,
   type CustomCaseRef,
 } from '../stores/customStrategy';
+import {
+  useCaseOverrideStore,
+  type CaseOverrideMap,
+} from '../stores/caseOverride';
 import type { Strategy } from '../data/strategies';
 import type { GrsaiNode } from '../types';
 
@@ -54,6 +58,8 @@ export default function SettingsPage() {
   const customStrategies = useCustomStrategyStore((s) => s.strategies);
   const customCases = useCustomStrategyStore((s) => s.cases);
   const replaceAllCustom = useCustomStrategyStore((s) => s.replaceAll);
+  const caseOverrides = useCaseOverrideStore((s) => s.overrides);
+  const replaceAllOverrides = useCaseOverrideStore((s) => s.replaceAll);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [libMessage, setLibMessage] = useState<string | null>(null);
 
@@ -70,10 +76,11 @@ export default function SettingsPage() {
     const payload = {
       app: 'ArchReason',
       type: 'custom-strategy-library',
-      version: 1,
+      version: 2,
       exportedAt: new Date().toISOString(),
       strategies: customStrategies,
       cases: customCases,
+      caseOverrides,
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], {
       type: 'application/json',
@@ -100,6 +107,7 @@ export default function SettingsPage() {
         const parsed = JSON.parse(String(reader.result)) as {
           strategies?: Strategy[];
           cases?: CustomCaseRef[];
+          caseOverrides?: CaseOverrideMap;
         };
         if (!Array.isArray(parsed.strategies)) {
           throw new Error('文件缺少 strategies 数组');
@@ -114,8 +122,16 @@ export default function SettingsPage() {
             )
           : [];
         replaceAllCustom(validStrategies, validCases);
+        // 恢复案例图覆盖层（旧版本文件无此字段，置空）
+        let overrideCount = 0;
+        if (parsed.caseOverrides && typeof parsed.caseOverrides === 'object') {
+          replaceAllOverrides(parsed.caseOverrides);
+          overrideCount = Object.keys(parsed.caseOverrides).length;
+        } else {
+          replaceAllOverrides({});
+        }
         setLibMessage(
-          `已导入 ${validStrategies.length} 条自定义策略（当前自定义库被替换）。`,
+          `已导入 ${validStrategies.length} 条自定义策略、${overrideCount} 组案例图覆盖（当前库被替换）。`,
         );
       } catch (err) {
         setLibMessage(
@@ -366,6 +382,12 @@ export default function SettingsPage() {
                 {customStrategies.length}
               </span>
             </div>
+            <div className="flex flex-1 items-center justify-between rounded-md border border-line bg-paper px-4 py-3">
+              <span className="text-[12.5px] text-ink-2">案例图覆盖</span>
+              <span className="font-mono text-[15px] font-semibold text-ink">
+                {Object.keys(caseOverrides).length}
+              </span>
+            </div>
           </div>
           <p className="mt-2 text-[11.5px] text-ink-3">
             当前策略库总数：内置 {BUILTIN_STRATEGY_COUNT} + 自定义 {customStrategies.length} ={' '}
@@ -377,8 +399,8 @@ export default function SettingsPage() {
               type="button"
               className="btn btn-secondary !h-9 !text-[12.5px]"
               onClick={handleExportLibrary}
-              disabled={customStrategies.length === 0}
-              title="导出全部自定义策略为 JSON"
+              disabled={customStrategies.length === 0 && Object.keys(caseOverrides).length === 0}
+              title="导出自定义策略与案例图覆盖为 JSON"
             >
               导出策略库
             </button>
@@ -399,7 +421,7 @@ export default function SettingsPage() {
             />
           </div>
           <p className="mt-2 text-[11px] text-ink-3">
-            导入会整体替换当前自定义库；清空浏览器数据会丢失自定义策略，建议定期导出备份。
+            导出包含自定义策略与全部案例图替换/添加结果；导入会整体替换当前自定义库与案例图覆盖。清空浏览器数据会丢失，建议定期备份。
           </p>
           {libMessage && (
             <div className="mt-3 rounded-md border border-line bg-paper px-3 py-2 text-[12px] text-ink-2 fade-in">

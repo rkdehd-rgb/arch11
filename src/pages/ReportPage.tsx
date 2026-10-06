@@ -3,14 +3,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useReportStore } from '../stores/report';
 import { useBoardStore } from '../stores/board';
 import { useCustomStrategyStore } from '../stores/customStrategy';
+import { useCaseOverrideStore } from '../stores/caseOverride';
 import {
   resolveStrategy,
   resolveCases,
+  resolveCaseMeta,
   getGroupName,
   makeSuggestedId,
 } from '../services/strategyPool';
 import type { Strategy } from '../data/strategies';
-import SafeImage from '../components/SafeImage';
+import CaseGallery from '../components/CaseGallery';
 import type { InferenceReport, StrategyMatch } from '../types';
 
 function formatTime(ms: number): string {
@@ -25,7 +27,7 @@ function autoPlaceReferences(
   match: StrategyMatch,
 ): void {
   const board = useBoardStore.getState();
-  const refs = resolveCases(match.strategyId).slice(0, 4);
+  const refs = resolveCaseMeta(match.strategyId).slice(0, 4);
   const items = refs.map((ref, i) => {
     const col = i % 2;
     const row = Math.floor(i / 2);
@@ -35,8 +37,8 @@ function autoPlaceReferences(
       y: 120 + row * 250 - (i % 2) * 18,
       width: 268,
       src: ref.image,
-      title: ref.name,
-      note: ref.highlight,
+      title: ref.name ?? '参考案例',
+      note: ref.highlight ?? '',
       meta: {
         strategyId: match.strategyId,
         timestamp: report.createdAt,
@@ -106,7 +108,24 @@ export default function ReportPage() {
       source: 'user',
       addedAt: Date.now(),
     };
-    addStrategy(strategy, match.cases ?? []);
+    // 合并用户对该库外策略已编辑的案例图（覆盖层优先）
+    const overrideImages =
+      useCaseOverrideStore.getState().overrides[match.strategyId]?.images;
+    const baseCases = match.cases ?? [];
+    const casesToStore = overrideImages
+      ? overrideImages.map((image, i) => {
+          const b = baseCases[i];
+          return {
+            image,
+            name: b?.name ?? '自定义参考案例',
+            location: b?.location ?? '',
+            year: b?.year ?? '',
+            architect: b?.architect ?? '',
+            highlight: b?.highlight ?? (i >= baseCases.length ? '用户添加的参考案例图' : ''),
+          };
+        })
+      : baseCases;
+    addStrategy(strategy, casesToStore);
   }
 
   function goCreate(strategyId?: string): void {
@@ -189,7 +208,6 @@ export default function ReportPage() {
         <div className="space-y-5">
           {builtinMatches.slice(0, 5).map((match, index) => {
             const strategy = resolveStrategy(match);
-            const refs = resolveCases(match.strategyId);
             if (!strategy) return null;
             return (
               <article key={match.strategyId} className="card overflow-hidden">
@@ -254,13 +272,10 @@ export default function ReportPage() {
                   </div>
                 </div>
 
-                {/* 参考案例 */}
+                {/* 参考案例（可替换 / 删除 / 添加） */}
                 <div className="border-t border-line bg-surface-raised px-6 py-5">
                   <div className="mb-3 flex items-center justify-between">
-                    <div className="text-[12px] font-semibold text-ink-2">
-                      参考案例
-                      <span className="ml-2 font-normal text-ink-3">{refs.length} 个建成项目</span>
-                    </div>
+                    <div className="text-[12px] font-semibold text-ink-2">参考案例</div>
                     <button
                       type="button"
                       className="btn btn-secondary !h-8 !px-3 !text-[12px]"
@@ -273,34 +288,10 @@ export default function ReportPage() {
                       </svg>
                     </button>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    {refs.slice(0, 2).map((ref, ri) => (
-                      <div
-                        key={ref.id ?? `ref-${ri}`}
-                        className="overflow-hidden rounded-md border border-line bg-surface"
-                      >
-                        <div className="aspect-[4/3] w-full overflow-hidden bg-line">
-                          <SafeImage
-                            src={ref.image}
-                            alt={`${ref.name}，${ref.location}`}
-                            className="h-full w-full object-cover"
-                          />
-                        </div>
-                        <div className="p-3">
-                          <div className="flex items-baseline justify-between gap-2">
-                            <span className="text-[13px] font-semibold text-ink">{ref.name}</span>
-                            <span className="shrink-0 font-mono text-[10.5px] text-ink-3">{ref.year}</span>
-                          </div>
-                          <div className="mt-0.5 text-[11.5px] text-ink-3">
-                            {ref.location} · {ref.architect}
-                          </div>
-                          <p className="mt-1.5 text-[12px] leading-relaxed text-ink-2">
-                            {ref.highlight}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  <CaseGallery
+                    strategyId={match.strategyId}
+                    baseCases={resolveCases(match.strategyId)}
+                  />
                 </div>
               </article>
             );
@@ -322,7 +313,6 @@ export default function ReportPage() {
             <div className="space-y-5">
               {suggestedMatches.map((match) => {
                 const strategy = resolveStrategy(match);
-                const refs = match.cases ?? [];
                 if (!strategy) return null;
                 const cleanId = makeSuggestedId(
                   match.strategyId.replace(/^suggested::/, '') || strategy.name,
@@ -420,48 +410,20 @@ export default function ReportPage() {
                       </div>
                     </div>
 
-                    {refs.length > 0 && (
-                      <div className="border-t border-accent/20 bg-white/50 px-6 py-5">
-                        <div className="mb-3 text-[12px] font-semibold text-ink-2">
-                          参考案例
-                          <span className="ml-2 font-normal text-ink-3">
-                            {refs.length} 个建成项目
-                          </span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          {refs.slice(0, 2).map((ref, ri) => (
-                            <div
-                              key={`${match.strategyId}-case-${ri}`}
-                              className="overflow-hidden rounded-md border border-line bg-surface"
-                            >
-                              <div className="aspect-[4/3] w-full overflow-hidden bg-line">
-                                <SafeImage
-                                  src={ref.image ?? ''}
-                                  alt={`${ref.name}，${ref.location}`}
-                                  className="h-full w-full object-cover"
-                                />
-                              </div>
-                              <div className="p-3">
-                                <div className="flex items-baseline justify-between gap-2">
-                                  <span className="text-[13px] font-semibold text-ink">
-                                    {ref.name}
-                                  </span>
-                                  <span className="shrink-0 font-mono text-[10.5px] text-ink-3">
-                                    {ref.year}
-                                  </span>
-                                </div>
-                                <div className="mt-0.5 text-[11.5px] text-ink-3">
-                                  {ref.location} · {ref.architect}
-                                </div>
-                                <p className="mt-1.5 text-[12px] leading-relaxed text-ink-2">
-                                  {ref.highlight}
-                                </p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                    <div className="border-t border-accent/20 bg-white/50 px-6 py-5">
+                      <div className="mb-3 text-[12px] font-semibold text-ink-2">参考案例</div>
+                      <CaseGallery
+                        strategyId={match.strategyId}
+                        baseCases={(match.cases ?? []).map((c) => ({
+                          image: c.image ?? '',
+                          name: c.name,
+                          location: c.location,
+                          year: c.year,
+                          architect: c.architect,
+                          highlight: c.highlight,
+                        }))}
+                      />
+                    </div>
                   </article>
                 );
               })}
