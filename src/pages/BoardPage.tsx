@@ -15,6 +15,8 @@ import {
 import ImageSearchPicker from '../components/ImageSearchPicker';
 import {
   imageGenerationService,
+  STYLE_OPTIONS,
+  getStyle,
   type GeneratedImage,
 } from '../services/imageGeneration';
 import {
@@ -112,6 +114,16 @@ export default function BoardPage() {
   const [transparent, setTransparent] = useState(false);
   const [maskUrl, setMaskUrl] = useState<string>('');
   const [showAdvanced, setShowAdvanced] = useState(false);
+  // 演示用概念风格（仅影响本地 SVG 兜底；真实接口忽略此参数）
+  const [genStyle, setGenStyle] = useState<string>(STYLE_OPTIONS[0].id);
+  const styleTouched = useRef(false);
+  useEffect(() => {
+    if (styleTouched.current) return;
+    let h = 0;
+    for (let i = 0; i < genStrategy.length; i += 1) h = (h * 31 + genStrategy.charCodeAt(i)) >>> 0;
+    setGenStyle(STYLE_OPTIONS[h % STYLE_OPTIONS.length].id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [genStrategy]);
   // 异步模式参考图（多图）；默认自动带入当前策略案例
   const [referenceImages, setReferenceImages] = useState<string[]>([]);
   const [autoRefStrategy, setAutoRefStrategy] = useState<string>('');
@@ -130,6 +142,11 @@ export default function BoardPage() {
   // 画板「自动找图」弹层
   const [boardPickerOpen, setBoardPickerOpen] = useState(false);
   const cancelRef = useRef(false);
+
+  // 卸载时取消进行中的生成轮询，避免对未挂载组件 setState 引发告警
+  useEffect(() => () => {
+    cancelRef.current = true;
+  }, []);
 
   const [viewport, setViewport] = useState<Viewport>({ x: 0, y: 0, scale: 1 });
   const stageRef = useRef<HTMLDivElement | null>(null);
@@ -477,10 +494,22 @@ export default function BoardPage() {
 
   // ---------------- 生成概念图 ----------------
 
+  /** gpt-base 型号的合法 size 映射（OpenAI 格式：比例 → 像素尺寸） */
+  const GPT_BASE_SIZE_MAP: Record<string, string> = {
+    '1:1': '1024x1024',
+    '16:9': '1536x1024',
+    '9:16': '1024x1536',
+    '4:3': '1152x864',
+    '3:4': '864x1152',
+    '3:2': '1536x1024',
+    '2:3': '1024x1536',
+    '21:9': '1536x1024',
+  };
+
   /** 计算 gpt-base 型号的 size：比例字符串或像素值 */
   function resolveGptBaseSize(): string {
     if (gptRatio.includes('x')) return gptRatio;
-    return GPT_BASE_DEFAULT_SIZE;
+    return GPT_BASE_SIZE_MAP[gptRatio] ?? GPT_BASE_DEFAULT_SIZE;
   }
 
   async function handleGenerate(): Promise<void> {
@@ -631,7 +660,7 @@ export default function BoardPage() {
     const strategyName = strategyMap.get(genStrategy)?.name ?? '';
     let generated: GeneratedImage;
     try {
-      generated = await imageGenerationService.generate(prompt, modelSpec.family, {
+      generated = await imageGenerationService.generate(prompt, genStyle, {
         strategyId: genStrategy,
         strategyName,
         timestamp: startedAt,
@@ -643,7 +672,8 @@ export default function BoardPage() {
     const waitMs = Math.max(0, animationMs - (Date.now() - startedAt));
     await new Promise((r) => setTimeout(r, waitMs));
 
-    const label = noKey ? `${modelSpec.label}·演示` : `${modelSpec.label}·降级`;
+    const styleName = getStyle(genStyle).name;
+    const label = noKey ? `${styleName}·演示` : `${styleName}·降级`;
     addGeneratedItem(generated.src, label, 'degraded', startedAt, true);
     if (reason) setGenError(`接口失败：${reason}；已用程序化 SVG 兜底。`);
     setGenPhase('idle');
@@ -1176,6 +1206,27 @@ export default function BoardPage() {
             </div>
           </div>
 
+          {/* 概念风格（演示兜底用） */}
+          <div className="mt-5">
+            <label className="field-label" htmlFor="genStyle">概念风格（演示图）</label>
+            <select
+              id="genStyle"
+              className="input"
+              value={genStyle}
+              onChange={(e) => {
+                styleTouched.current = true;
+                setGenStyle(e.target.value);
+              }}
+            >
+              {STYLE_OPTIONS.map((s) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
+            <p className="mt-1 text-[10.5px] text-ink-3">
+              风格仅作用于「未配置 Key / 真实接口失败」时的本地 SVG 演示图。
+            </p>
+          </div>
+
           {/* -------- 动态参数区：nano-banana -------- */}
           {(modelSpec.paramStyle === 'banana' || modelSpec.paramStyle === 'banana2') && (
             <div className="mt-5 space-y-4">
@@ -1260,7 +1311,12 @@ export default function BoardPage() {
                     <button
                       key={q}
                       type="button"
-                      className="h-7 flex-1 rounded-md border font-mono text-[11px] border-accent bg-accent-soft text-accent-dark"
+                      className={`h-7 flex-1 rounded-md border font-mono text-[11px] ${
+                        quality === q
+                          ? 'border-accent bg-accent-soft text-accent-dark'
+                          : 'border-line text-ink-2 hover:border-line-strong'
+                      }`}
+                      onClick={() => setQuality(q)}
                     >
                       {q}
                     </button>

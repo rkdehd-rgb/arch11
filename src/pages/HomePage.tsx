@@ -5,6 +5,12 @@ import { useTaskStore } from '../stores/task';
 import { useReportStore } from '../stores/report';
 import { runInference, buildEdges, localFallback } from '../services/llm';
 import type { InferenceReport, InferenceResult } from '../types';
+import { strategies as builtinStrategies } from '../data/strategies';
+
+// 内置策略数从数据源动态推导，文案随实际条目数自动更新
+const BUILTIN_STRATEGY_COUNT = builtinStrategies.filter(
+  (s) => (s.source ?? 'builtin') === 'builtin'
+).length;
 
 const BUILDING_TYPES = [
   '住宅',
@@ -29,7 +35,7 @@ const CORE_DEMANDS = [
 
 const REASONING_STEPS = [
   { key: 'parse', title: '解析任务书', desc: '提取项目规模、类型、场地与核心诉求' },
-  { key: 'match', title: '匹配策略库', desc: '将任务条件与 32 条策略逐一比对' },
+  { key: 'match', title: '匹配策略库', desc: `将任务条件与 ${BUILTIN_STRATEGY_COUNT} 条策略逐一比对` },
   { key: 'synergy', title: '计算策略协同', desc: '分析命中策略之间的增益组合关系' },
   { key: 'report', title: '生成推理报告', desc: '结构化输出匹配理由与落地思路' },
 ];
@@ -133,7 +139,7 @@ export default function HomePage() {
               输入设计任务书
             </h1>
             <p className="mt-1.5 text-[13.5px] text-ink-2">
-              填写结构化信息并粘贴完整任务书，ArchReason 将从 32 条策略中推理最匹配的方案方向。
+              填写结构化信息并粘贴完整任务书，ArchReason 将从 {BUILTIN_STRATEGY_COUNT} 条策略中推理最匹配的方案方向。
             </p>
           </div>
           <div className="flex shrink-0 gap-2">

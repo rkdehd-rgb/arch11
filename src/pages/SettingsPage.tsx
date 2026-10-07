@@ -11,10 +11,14 @@ import {
   useCaseOverrideStore,
   type CaseOverrideMap,
 } from '../stores/caseOverride';
+import { strategies as builtinStrategies } from '../data/strategies';
 import type { Strategy } from '../data/strategies';
 import type { GrsaiNode } from '../types';
 
-const BUILTIN_STRATEGY_COUNT = 32;
+// 内置策略数从数据源动态推导，避免与 data/strategies.ts 中的实际条目数脱节
+const BUILTIN_STRATEGY_COUNT = builtinStrategies.filter(
+  (s) => (s.source ?? 'builtin') === 'builtin'
+).length;
 
 type TestStatus = 'idle' | 'testing' | 'success' | 'fail';
 
