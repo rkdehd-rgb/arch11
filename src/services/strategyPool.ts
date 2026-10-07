@@ -18,6 +18,8 @@ export interface CaseMeta {
   year?: string;
   architect?: string;
   highlight?: string;
+  /** 原图兜底地址（优先用本地 /cases/<id>.jpg，缺失时回退此地址） */
+  imageFallback?: string;
 }
 
 /** 渲染用案例视图：合并覆盖层图片与基础元数据 */
@@ -30,6 +32,8 @@ export interface CaseView {
   highlight: string;
   /** 是否为用户在基础案例之外新增的图 */
   custom: boolean;
+  /** 原图兜底地址 */
+  imageFallback: string;
 }
 
 /** 非响应式读取当前用户自定义策略（供服务层/提示词构建使用） */
@@ -77,8 +81,8 @@ export function resolveCases(strategyId: string): CaseRef[] {
 /** 有效案例元数据：覆盖层优先，否则用基础案例；用于画板自动贴图等只需图片/简述处 */
 export function resolveCaseMeta(strategyId: string): CaseMeta[] {
   const override = useCaseOverrideStore.getState().overrides[strategyId];
+  const base = resolveCases(strategyId);
   if (override) {
-    const base = resolveCases(strategyId);
     return override.images.map((image, i) => {
       const b = base[i];
       return {
@@ -88,6 +92,7 @@ export function resolveCaseMeta(strategyId: string): CaseMeta[] {
         year: b?.year,
         architect: b?.architect,
         highlight: b?.highlight,
+        imageFallback: b?.image,
       };
     });
   }
@@ -104,9 +109,14 @@ export function resolveCaseMeta(strategyId: string): CaseMeta[] {
         architect: c.architect,
         highlight: c.highlight,
         image: c.image ?? '',
+        imageFallback: c.image ?? '',
       }));
   }
-  return getCasesByStrategy(strategyId);
+  return getCasesByStrategy(strategyId).map((b) => ({
+    ...b,
+    image: `/cases/${b.id}.jpg`,
+    imageFallback: b.image,
+  }));
 }
 
 /** 渲染用案例视图：合并覆盖层图片 + 基础元数据，新增图标 custom */
@@ -116,7 +126,11 @@ export function resolveCaseView(
 ): CaseView[] {
   const base = baseCases ?? resolveCases(strategyId);
   const override = useCaseOverrideStore.getState().overrides[strategyId];
-  const images = override ? override.images : base.map((b) => b.image);
+  const isBuiltin = !isUserStrategy(strategyId);
+  // 内置案例优先用本地 /cases/<id>.jpg；库外/用户案例保留原图
+  const localOf = (b: { id?: string; image: string } | undefined): string =>
+    isBuiltin && b?.id ? `/cases/${b.id}.jpg` : (b?.image ?? '');
+  const images = override ? override.images : base.map(localOf);
   return images.map((image, i) => {
     const b = base[i];
     return {
@@ -127,6 +141,7 @@ export function resolveCaseView(
       architect: b?.architect || '',
       highlight: b?.highlight || (i < base.length ? '' : '用户添加的参考案例图'),
       custom: i >= base.length,
+      imageFallback: b?.image ?? '',
     };
   });
 }

@@ -172,3 +172,73 @@ goooodRouter.get('/case-image', async (req: Request, res: Response) => {
     clearTimeout(timer);
   }
 });
+
+interface ArticleImagePayload {
+  images: { url: string; thumb: string }[];
+}
+const articleImageCache = new Map<string, { expiresAt: number; payload: ArticleImagePayload }>();
+
+/** 从文章页 HTML 提取 oss.gooood.cn/uploads 下的图片（正文图），去重并还原原图地址 */
+function parseArticleImages(html: string): { url: string; thumb: string }[] {
+  const found = html.match(/oss\.gooood\.cn\/uploads\/[^\s"'`<>)]+/g) ?? [];
+  const seen = new Set<string>();
+  const out: { url: string; thumb: string }[] = [];
+  for (const raw of found) {
+    const url = raw.startsWith('http') ? raw : `https://${raw}`;
+    const original = toOriginalImage(url);
+    if (seen.has(original)) continue;
+    seen.add(original);
+    out.push({ url: original, thumb: url });
+    if (out.length >= 40) break;
+  }
+  return out;
+}
+
+/** 抓取单篇文章页，返回其正文图片列表（用于「文章内图」而非封面） */
+goooodRouter.get('/case-images', async (req: Request, res: Response) => {
+  const rawUrl = typeof req.query.url === 'string' ? req.query.url.trim() : '';
+  let parsed: URL;
+  try {
+    parsed = new URL(rawUrl);
+  } catch {
+    res.status(400).json({ error: '非法文章地址' });
+    return;
+  }
+  const host = parsed.hostname.replace(/^www\./, '');
+  if (parsed.protocol !== 'https:' || host !== 'gooood.cn') {
+    res.status(403).json({ error: '仅允许抓取 gooood.cn 的文章页' });
+    return;
+  }
+
+  const cacheKey = `${parsed.pathname}${parsed.search}`;
+  const cached = articleImageCache.get(cacheKey);
+  if (cached && cached.expiresAt > Date.now()) {
+    res.json(cached.payload);
+    return;
+  }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  try {
+    const upstream = await fetch(parsed.toString(), {
+      headers: { 'User-Agent': DESKTOP_UA, Accept: 'text/html,application/xhtml+xml' },
+      signal: controller.signal,
+    });
+    if (!upstream.ok) {
+      res.status(502).json({ error: `文章页获取失败：HTTP ${upstream.status}` });
+      return;
+    }
+    const html = await upstream.text();
+    const payload: ArticleImagePayload = { images: parseArticleImages(html) };
+    articleImageCache.set(cacheKey, {
+      expiresAt: Date.now() + SEARCH_CACHE_TTL_MS,
+      payload,
+    });
+    res.json(payload);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : '未知错误';
+    res.status(502).json({ error: `文章图抓取失败：${message}` });
+  } finally {
+    clearTimeout(timer);
+  }
+});

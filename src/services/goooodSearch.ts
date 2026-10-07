@@ -58,3 +58,25 @@ export async function searchGooood(keyword: string, page = 1): Promise<GoooodSea
     clearTimeout(timer);
   }
 }
+
+export interface GoooodArticleImage {
+  url: string;
+  thumb: string;
+}
+
+/** 抓取某篇文章页的正文图片（而非搜索封面），用于「文章内图」选择 */
+export async function fetchGoooodArticleImages(pageUrl: string): Promise<GoooodArticleImage[]> {
+  const url = `/api/case-images?url=${encodeURIComponent(pageUrl)}`;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    const data = (await res.json().catch(() => null)) as { images?: GoooodArticleImage[]; error?: string } | null;
+    if (!res.ok || !data) {
+      throw new Error(data?.error ?? `文章图抓取失败 HTTP ${res.status}`);
+    }
+    return Array.isArray(data.images) ? data.images : [];
+  } finally {
+    clearTimeout(timer);
+  }
+}

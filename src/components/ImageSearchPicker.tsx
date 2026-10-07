@@ -6,7 +6,9 @@ import {
 import {
   searchGooood,
   fetchGoooodImageBlob,
+  fetchGoooodArticleImages,
   type GoooodImage,
+  type GoooodArticleImage,
 } from '../services/goooodSearch';
 import { compressImage, StorageQuotaError } from '../services/imageCompress';
 import SafeImage from './SafeImage';
@@ -96,6 +98,12 @@ export default function ImageSearchPicker({
   const [downloadProgress, setDownloadProgress] = useState<{ done: number; total: number } | null>(null);
   const searchSeqRef = useRef(0);
 
+  // 「文章内图」展开：抓取某篇文章页的正文图片作为额外可多选候选
+  const [expandedPage, setExpandedPage] = useState<string | null>(null);
+  const [articleCands, setArticleCands] = useState<Candidate[]>([]);
+  const [articleLoading, setArticleLoading] = useState(false);
+  const [articleError, setArticleError] = useState('');
+
   function mapGooood(items: GoooodImage[]): Candidate[] {
     return items.map((it) => ({
       id: `gooood::${it.image}`,
@@ -182,6 +190,39 @@ export default function ImageSearchPicker({
     }
   }
 
+  // 展开某篇 gooood 文章的正文图（文章内图），作为额外可多选候选
+  async function openArticleImages(cand: Candidate): Promise<void> {
+    if (!cand.pageUrl) return;
+    if (expandedPage === cand.pageUrl) {
+      setExpandedPage(null);
+      setArticleCands([]);
+      return;
+    }
+    setExpandedPage(cand.pageUrl);
+    setArticleError('');
+    setArticleCands([]);
+    setArticleLoading(true);
+    try {
+      const imgs: GoooodArticleImage[] = await fetchGoooodArticleImages(cand.pageUrl);
+      setArticleCands(
+        imgs.map((it, i) => ({
+          id: `gooood-in::${it.url}`,
+          source: 'gooood' as const,
+          thumb: it.thumb,
+          fullUrl: it.url,
+          title: `${cand.title} · 内图${i + 1}`,
+          subtitle: '',
+          meta: '',
+          pageUrl: cand.pageUrl,
+        })),
+      );
+    } catch (err) {
+      setArticleError(err instanceof Error ? err.message : '文章图抓取失败');
+    } finally {
+      setArticleLoading(false);
+    }
+  }
+
   // 首次打开自动搜索
   useEffect(() => {
     if (initialKeyword.trim()) void runSearch(initialKeyword);
@@ -206,8 +247,9 @@ export default function ImageSearchPicker({
   }
 
   async function handleConfirm(): Promise<void> {
+    const allCands = [...results, ...articleCands];
     const chosen = selected
-      .map((id) => results.find((r) => r.id === id))
+      .map((id) => allCands.find((r) => r.id === id))
       .filter((x): x is Candidate => Boolean(x));
     if (chosen.length === 0) return;
 
@@ -396,16 +438,27 @@ export default function ImageSearchPicker({
                       )}
                       <div className="mt-0.5 flex items-center justify-between">
                         <span className="font-mono text-[9px] text-ink-3">{cand.meta}</span>
-                        {cand.pageUrl && (
-                          <a
-                            href={cand.pageUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-[9.5px] text-accent hover:underline"
-                          >
-                            查看来源
-                          </a>
-                        )}
+                        <span className="flex items-center gap-2">
+                          {cand.source === 'gooood' && cand.pageUrl && (
+                            <button
+                              type="button"
+                              onClick={() => void openArticleImages(cand)}
+                              className="text-[9.5px] text-accent hover:underline"
+                            >
+                              {expandedPage === cand.pageUrl ? '收起内图' : '文章内图'}
+                            </button>
+                          )}
+                          {cand.pageUrl && (
+                            <a
+                              href={cand.pageUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-[9.5px] text-accent hover:underline"
+                            >
+                              查看来源
+                            </a>
+                          )}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -424,6 +477,67 @@ export default function ImageSearchPicker({
               >
                 {loadingMore ? '加载中…' : '加载更多'}
               </button>
+            </div>
+          )}
+
+          {expandedPage && (
+            <div className="mt-4 border-t border-line pt-4">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-[12px] font-semibold text-ink-2">文章内图（可多选）</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setExpandedPage(null);
+                    setArticleCands([]);
+                  }}
+                  className="text-[11px] text-ink-3 hover:text-ink"
+                >
+                  收起
+                </button>
+              </div>
+              {articleLoading && <span className="text-[11.5px] text-ink-3">正在抓取文章内图…</span>}
+              {articleError && <span className="text-[11.5px] text-[#8a2f2f]">{articleError}</span>}
+              {!articleLoading && !articleError && articleCands.length === 0 && (
+                <span className="text-[11.5px] text-ink-3">该文章未解析到正文图片</span>
+              )}
+              {articleCands.length > 0 && (
+                <div className="grid grid-cols-3 gap-3">
+                  {articleCands.map((ac) => {
+                    const isSel = selected.includes(ac.id);
+                    const dis = !isSel && selected.length >= remaining;
+                    return (
+                      <div
+                        key={ac.id}
+                        className={`group relative overflow-hidden rounded-md border text-left transition-all ${
+                          isSel ? 'border-accent ring-1 ring-accent' : 'border-line hover:border-line-strong'
+                        } ${dis ? 'cursor-not-allowed opacity-40' : ''}`}
+                      >
+                        <button
+                          type="button"
+                          disabled={dis}
+                          onClick={() => toggleSelect(ac)}
+                          title={ac.title}
+                          className="block w-full"
+                        >
+                          <div className="relative aspect-[4/3] w-full bg-line">
+                            <SafeImage src={ac.thumb} alt={ac.title} className="h-full w-full object-cover" />
+                            {isSel && (
+                              <span className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-white">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round">
+                                  <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                        <div className="px-2 py-1.5">
+                          <div className="truncate text-[11px] text-ink">{ac.title}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 

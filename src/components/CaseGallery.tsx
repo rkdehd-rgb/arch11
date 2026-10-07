@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import type { CaseMeta } from '../services/strategyPool';
-import { resolveCaseView, getStrategyById } from '../services/strategyPool';
+import { resolveCaseView, getStrategyById, resolveCases } from '../services/strategyPool';
 import { useCaseOverrideStore, MAX_CASE_IMAGES } from '../stores/caseOverride';
 import { compressImage, StorageQuotaError } from '../services/imageCompress';
 import SafeImage from './SafeImage';
@@ -46,6 +46,7 @@ export default function CaseGallery({ strategyId, baseCases }: CaseGalleryProps)
     setMode(null);
     if (!file || !ctx) return;
     setError(null);
+    ensureSeeded();
     try {
       const { dataUrl } = await compressImage(file);
       if (ctx.action === 'add') addImage(strategyId, dataUrl);
@@ -66,7 +67,19 @@ export default function CaseGallery({ strategyId, baseCases }: CaseGalleryProps)
     setMode({ action: 'replace', index });
     hiddenInputRef.current?.click();
   }
+  /**
+   * 首次编辑内置案例前，先把内置图列表灌入覆盖层，使「删除/替换/追加」能逐张生效。
+   * 否则覆盖层为空时 removeImage/replaceImage 是 no-op，内置图看似「删不掉」。
+   */
+  function ensureSeeded(): void {
+    const store = useCaseOverrideStore.getState();
+    if (store.overrides[strategyId]) return;
+    const base = baseCases ?? resolveCases(strategyId);
+    store.setImages(strategyId, base.map((b) => b.image).filter(Boolean));
+  }
+
   function doDelete(index: number): void {
+    ensureSeeded();
     removeImage(strategyId, index);
   }
 
@@ -92,6 +105,7 @@ export default function CaseGallery({ strategyId, baseCases }: CaseGalleryProps)
 
   /** 挑选确认：已转 base64；add 批量追加，replace 替换该位置（取首张） */
   function handlePickerConfirm(dataUris: string[]): void {
+    ensureSeeded();
     if (pickerMode.action === 'replace') {
       if (dataUris[0]) replaceImage(strategyId, pickerMode.index, dataUris[0]);
     } else {
@@ -144,6 +158,7 @@ export default function CaseGallery({ strategyId, baseCases }: CaseGalleryProps)
                   src={view.image}
                   alt={`${view.name}，${view.location}`}
                   className="h-full w-full object-cover"
+                  fallbackSrc={view.imageFallback}
                 />
                 {/* hover 工具条 */}
                 <div className="absolute right-1.5 top-1.5 flex gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
