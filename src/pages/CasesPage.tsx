@@ -11,7 +11,7 @@ interface StrategyCases {
   group: string;
   isUser: boolean;
   hasOverride: boolean;
-  images: Array<{ image: string; fallback: string; name: string; custom: boolean }>;
+  images: Array<{ image: string; fallback: string; fallback2: string; name: string; custom: boolean }>;
 }
 
 const keyOf = (strategyId: string, index: number) => `${strategyId}#${index}`;
@@ -41,6 +41,7 @@ export default function CasesPage() {
         images: resolveCaseView(strategy.id).map((view) => ({
           image: view.image,
           fallback: view.imageFallback,
+          fallback2: view.imageFallback2,
           name: view.name,
           custom: view.custom,
         })),
@@ -257,6 +258,7 @@ export default function CasesPage() {
                             alt={`${img.name} 案例图 ${index + 1}`}
                             className="h-full w-full object-cover"
                             fallbackSrc={img.fallback}
+                            fallbackSrc2={img.fallback2}
                           />
                         </div>
 

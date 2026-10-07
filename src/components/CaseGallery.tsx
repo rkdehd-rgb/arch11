@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import type { CaseMeta } from '../services/strategyPool';
-import { resolveCaseView, getStrategyById, resolveCases } from '../services/strategyPool';
+import { resolveCaseView, getStrategyById } from '../services/strategyPool';
 import { useCaseOverrideStore, MAX_CASE_IMAGES } from '../stores/caseOverride';
 import { useAuthStore } from '../stores/auth';
 import { compressImage, StorageQuotaError } from '../services/imageCompress';
@@ -85,14 +85,18 @@ export default function CaseGallery({ strategyId, baseCases }: CaseGalleryProps)
     hiddenInputRef.current?.click();
   }
   /**
-   * 首次编辑内置案例前，先把内置图列表灌入覆盖层，使「删除/替换/追加」能逐张生效。
-   * 否则覆盖层为空时 removeImage/replaceImage 是 no-op，内置图看似「删不掉」。
+   * 首次编辑内置案例前，先把**当前实际展示**的图片列表灌入覆盖层，使「删除/替换/追加」
+   * 能逐张生效。否则覆盖层为空时 removeImage/replaceImage 是 no-op，内置图看似「删不掉」。
+   * 必须用 resolveCaseView（而不是原始 image 字段），否则会把内置图从本地
+   * `/cases/<id>.jpg` 悄悄换成远程地址。
    */
   function ensureSeeded(): void {
     const store = useCaseOverrideStore.getState();
     if (store.overrides[strategyId]) return;
-    const base = baseCases ?? resolveCases(strategyId);
-    store.setImages(strategyId, base.map((b) => b.image).filter(Boolean));
+    store.setImages(
+      strategyId,
+      resolveCaseView(strategyId, baseCases).map((v) => v.image),
+    );
   }
 
   function doDelete(index: number): void {
