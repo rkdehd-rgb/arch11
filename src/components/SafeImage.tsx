@@ -5,8 +5,10 @@ interface SafeImageProps {
   alt: string;
   className?: string;
   draggable?: boolean;
-  /** 主图加载失败时回退使用的图片地址 */
+  /** 主图加载失败时回退使用的图片地址（第一级） */
   fallbackSrc?: string;
+  /** 第二级回退地址（主图与一级回退均失败时） */
+  fallbackSrc2?: string;
 }
 
 /** 生成建筑线稿风格的 SVG 占位图 data URI */
@@ -33,13 +35,14 @@ export default function SafeImage({
   className,
   draggable = false,
   fallbackSrc,
+  fallbackSrc2,
 }: SafeImageProps) {
-  const [usedFallback, setUsedFallback] = useState(false);
-  const [errored, setErrored] = useState(false);
+  // 0: 主图 / 1: 一级回退 / 2: 二级回退 / 3: 全部失败
+  const [stage, setStage] = useState(0);
+  const sources = [src, fallbackSrc, fallbackSrc2];
+  const displaySrc = sources[stage];
 
-  const displaySrc = usedFallback ? fallbackSrc : src;
-
-  if (errored || !displaySrc) {
+  if (stage >= 3 || !displaySrc) {
     return (
       <img
         src={placeholderSvg('图片暂不可用', alt)}
@@ -56,10 +59,7 @@ export default function SafeImage({
       alt={alt}
       className={className}
       draggable={draggable}
-      onError={() => {
-        if (fallbackSrc && !usedFallback) setUsedFallback(true);
-        else setErrored(true);
-      }}
+      onError={() => setStage((s) => Math.min(3, s + 1))}
       loading="lazy"
       referrerPolicy="no-referrer"
     />

@@ -18,8 +18,10 @@ export interface CaseMeta {
   year?: string;
   architect?: string;
   highlight?: string;
-  /** 原图兜底地址（优先用本地 /cases/<id>.jpg，缺失时回退此地址） */
+  /** 一级回退地址（gooood 图，已走代理） */
   imageFallback?: string;
+  /** 二级回退地址（wiki 原图） */
+  imageFallback2?: string;
 }
 
 /** 渲染用案例视图：合并覆盖层图片与基础元数据 */
@@ -32,8 +34,19 @@ export interface CaseView {
   highlight: string;
   /** 是否为用户在基础案例之外新增的图 */
   custom: boolean;
-  /** 原图兜底地址 */
+  /** 一级回退地址（gooood 图，已走代理） */
   imageFallback: string;
+  /** 二级回退地址（wiki 原图） */
+  imageFallback2: string;
+}
+
+/** gooood 图床地址走后端代理，避免防盗链；其余地址原样返回 */
+function toDisplayUrl(url: string): string {
+  if (!url) return url;
+  if (url.includes('oss.gooood.cn')) {
+    return `/api/case-image?url=${encodeURIComponent(url)}`;
+  }
+  return url;
 }
 
 /** 非响应式读取当前用户自定义策略（供服务层/提示词构建使用） */
@@ -92,7 +105,8 @@ export function resolveCaseMeta(strategyId: string): CaseMeta[] {
         year: b?.year,
         architect: b?.architect,
         highlight: b?.highlight,
-        imageFallback: b?.image,
+        imageFallback: toDisplayUrl(b?.image ?? ''),
+        imageFallback2: b?.imageWiki ?? b?.image ?? '',
       };
     });
   }
@@ -109,13 +123,15 @@ export function resolveCaseMeta(strategyId: string): CaseMeta[] {
         architect: c.architect,
         highlight: c.highlight,
         image: c.image ?? '',
-        imageFallback: c.image ?? '',
+        imageFallback: toDisplayUrl(c.image ?? ''),
+        imageFallback2: c.image ?? '',
       }));
   }
   return getCasesByStrategy(strategyId).map((b) => ({
     ...b,
     image: `/cases/${b.id}.jpg`,
-    imageFallback: b.image,
+    imageFallback: toDisplayUrl(b.image),
+    imageFallback2: b.imageWiki ?? b.image,
   }));
 }
 
@@ -141,7 +157,8 @@ export function resolveCaseView(
       architect: b?.architect || '',
       highlight: b?.highlight || (i < base.length ? '' : '用户添加的参考案例图'),
       custom: i >= base.length,
-      imageFallback: b?.image ?? '',
+      imageFallback: toDisplayUrl(b?.image ?? ''),
+      imageFallback2: b?.imageWiki ?? b?.image ?? '',
     };
   });
 }

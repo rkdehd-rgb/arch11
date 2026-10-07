@@ -148,3 +148,6 @@ node-compile-cache/
 # 缺失时前端自动回退 wiki 原图。如需部署站点也用本地图，取消下面两行忽略并提交 public/cases。
 public/cases/*
 !public/cases/.gitkeep
+
+# gooood 图源映射（由 scripts/map-gooood-images.mjs 生成）
+gooood-map.json

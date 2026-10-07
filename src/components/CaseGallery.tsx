@@ -159,6 +159,7 @@ export default function CaseGallery({ strategyId, baseCases }: CaseGalleryProps)
                   alt={`${view.name}，${view.location}`}
                   className="h-full w-full object-cover"
                   fallbackSrc={view.imageFallback}
+                  fallbackSrc2={view.imageFallback2}
                 />
                 {/* hover 工具条 */}
                 <div className="absolute right-1.5 top-1.5 flex gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
