@@ -223,7 +223,7 @@ export function reportToPrintHtml(report: InferenceReport): string {
   const suggested = report.result.suggestedStrategies ?? [];
   const title = report.task.projectName || '未命名项目';
 
-  const rows: string[] = [];
+  const rows: Array<[string, string]> = [];
   rows.push(['推理时间', formatTime(report.createdAt)]);
   rows.push(['使用模型', `${report.model}${report.degraded ? '（本地规则推理）' : ''}`]);
   if (report.task.location) rows.push(['项目地点', report.task.location]);

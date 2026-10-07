@@ -1,5 +1,7 @@
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSettingsStore } from '../stores/settings';
+import { useAuthStore } from '../stores/auth';
+import { useSyncStore } from '../stores/sync';
 
 const FLOW_STEPS = [
   { path: '/', label: '任务书', step: '01' },
@@ -11,6 +13,58 @@ const FLOW_STEPS = [
 function isPathActive(current: string, target: string): boolean {
   if (target === '/') return current === '/';
   return current.startsWith(target);
+}
+
+/** 右上角云同步状态：未登录时引导登录，登录后展示同步态与账号入口 */
+function CloudStatus() {
+  const ready = useAuthStore((s) => s.ready);
+  const user = useAuthStore((s) => s.user);
+  const status = useSyncStore((s) => s.status);
+  const message = useSyncStore((s) => s.message);
+
+  if (!ready) return null;
+
+  if (!user) {
+    return (
+      <NavLink
+        to="/login"
+        className="flex items-center gap-1.5 rounded px-2 py-1 text-[12px] text-ink-2 transition-colors hover:bg-line hover:text-ink"
+        title="登录后可将报告与案例图同步到云端"
+      >
+        <span className="h-1.5 w-1.5 rounded-full bg-line-strong" />
+        未登录 · 仅本机
+      </NavLink>
+    );
+  }
+
+  const label =
+    status === 'syncing'
+      ? '同步中…'
+      : status === 'error'
+        ? '同步失败'
+        : status === 'synced'
+          ? '已同步'
+          : '本地已保留';
+  const dotClass =
+    status === 'syncing'
+      ? 'bg-ink-3'
+      : status === 'error'
+        ? 'bg-accent'
+        : status === 'synced'
+          ? 'bg-[#5d7a52]'
+          : 'bg-line-strong';
+
+  return (
+    <NavLink
+      to="/login"
+      className="flex items-center gap-1.5 rounded px-2 py-1 text-[12px] text-ink-2 transition-colors hover:bg-line hover:text-ink"
+      title={message ?? `${user.label} · ${label}`}
+    >
+      <span className={`h-1.5 w-1.5 rounded-full ${dotClass}`} />
+      <span className="max-w-[92px] truncate">{user.label}</span>
+      <span className="text-ink-3">· {label}</span>
+    </NavLink>
+  );
 }
 
 export default function Layout() {
@@ -62,7 +116,7 @@ export default function Layout() {
           </nav>
         )}
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {!isConfigured && (
             <NavLink
               to="/settings"
@@ -72,6 +126,20 @@ export default function Layout() {
               未配置模型
             </NavLink>
           )}
+
+          <NavLink
+            to="/case-library"
+            className={({ isActive }) =>
+              `rounded px-2 py-1 text-[12.5px] transition-colors ${
+                isActive ? 'bg-line text-ink' : 'text-ink-2 hover:bg-line hover:text-ink'
+              }`
+            }
+          >
+            案例图库
+          </NavLink>
+
+          <CloudStatus />
+
           <NavLink
             to="/settings"
             className="flex h-8 w-8 items-center justify-center rounded text-ink-3 transition-colors hover:bg-line hover:text-ink"

@@ -22,6 +22,8 @@ export interface CaseMeta {
   imageFallback?: string;
   /** 二级回退地址（wiki 原图） */
   imageFallback2?: string;
+  /** 内置案例的原 wiki 图地址（最终回退） */
+  imageWiki?: string;
 }
 
 /** 渲染用案例视图：合并覆盖层图片与基础元数据 */

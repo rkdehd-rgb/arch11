@@ -26,6 +26,8 @@ interface ReportState {
   setActive: (id: string | null) => void;
   removeReport: (id: string) => void;
   getReport: (id: string) => InferenceReport | undefined;
+  /** 整体替换（云端同步回填用），并按时间倒序、保留最近 30 份 */
+  replaceAll: (reports: InferenceReport[]) => void;
 }
 
 export const useReportStore = create<ReportState>((set, get) => ({
@@ -46,4 +48,9 @@ export const useReportStore = create<ReportState>((set, get) => ({
     });
   },
   getReport: (id) => get().reports.find((r) => r.id === id),
+  replaceAll: (reports) => {
+    const next = [...reports].sort((a, b) => b.createdAt - a.createdAt).slice(0, 30);
+    persist(next);
+    set({ reports: next });
+  },
 }));

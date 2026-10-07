@@ -6,7 +6,10 @@ export interface CaseRef {
   year: string;
   architect: string;
   highlight: string;
+  /** 主图地址；重配后为 gooood 图，未命中时为 wiki 图 */
   image: string;
+  /** 原 wiki 图地址，作为最终回退（主图与本地图都取不到时使用） */
+  imageWiki?: string;
 }
 
 export const cases: CaseRef[] = [

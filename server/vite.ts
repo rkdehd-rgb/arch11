@@ -66,6 +66,12 @@ export function setupStaticServer(app: Application): void {
   // 1. 服务静态文件（如果存在对应文件则直接返回）
   app.use(express.static(distPath));
 
+  // 1.5 云服务数据面（/.cloud/**）由平台边缘转发到云后端，绝不落到 SPA 兜底上。
+  //     万一请求真的走到这里，返回明确错误比回一个 HTML 页面更容易定位。
+  app.use('/.cloud', (_req: Request, res: Response) => {
+    res.status(404).json({ error: 'cloud data plane is not served by the app server' });
+  });
+
   // 2. SPA fallback - 所有未处理的请求返回 index.html
   // 到达这里的请求说明：
   //   - 不是 API 请求（已被前面注册的路由处理）

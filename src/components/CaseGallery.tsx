@@ -2,9 +2,25 @@ import { useRef, useState } from 'react';
 import type { CaseMeta } from '../services/strategyPool';
 import { resolveCaseView, getStrategyById, resolveCases } from '../services/strategyPool';
 import { useCaseOverrideStore, MAX_CASE_IMAGES } from '../stores/caseOverride';
+import { useAuthStore } from '../stores/auth';
 import { compressImage, StorageQuotaError } from '../services/imageCompress';
+import { uploadCaseImage } from '../services/caseStorage';
 import SafeImage from './SafeImage';
 import ImageSearchPicker from './ImageSearchPicker';
+
+/**
+ * 已登录时把本地压缩后的图片转存到云存储，返回可跨设备访问的 `cloud:` 路径；
+ * 未登录（或上传失败）则保持本地 dataURL，绝不因为云存储问题丢掉用户刚加的图。
+ */
+async function toStoredImage(dataUrl: string): Promise<string> {
+  const uid = useAuthStore.getState().session?.user.id;
+  if (!uid) return dataUrl;
+  try {
+    return await uploadCaseImage(dataUrl, uid);
+  } catch {
+    return dataUrl;
+  }
+}
 
 interface CaseGalleryProps {
   strategyId: string;
@@ -49,8 +65,9 @@ export default function CaseGallery({ strategyId, baseCases }: CaseGalleryProps)
     ensureSeeded();
     try {
       const { dataUrl } = await compressImage(file);
-      if (ctx.action === 'add') addImage(strategyId, dataUrl);
-      else replaceImage(strategyId, ctx.index, dataUrl);
+      const stored = await toStoredImage(dataUrl);
+      if (ctx.action === 'add') addImage(strategyId, stored);
+      else replaceImage(strategyId, ctx.index, stored);
     } catch (err) {
       if (err instanceof StorageQuotaError) setError(err.message);
       else if (err instanceof Error) setError(err.message);
@@ -104,12 +121,13 @@ export default function CaseGallery({ strategyId, baseCases }: CaseGalleryProps)
   }
 
   /** 挑选确认：已转 base64；add 批量追加，replace 替换该位置（取首张） */
-  function handlePickerConfirm(dataUris: string[]): void {
+  async function handlePickerConfirm(dataUris: string[]): Promise<void> {
     ensureSeeded();
+    const stored = await Promise.all(dataUris.map(toStoredImage));
     if (pickerMode.action === 'replace') {
-      if (dataUris[0]) replaceImage(strategyId, pickerMode.index, dataUris[0]);
+      if (stored[0]) replaceImage(strategyId, pickerMode.index, stored[0]);
     } else {
-      addImages(strategyId, dataUris);
+      addImages(strategyId, stored);
     }
   }
 

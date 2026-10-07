@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { isCloudImage, resolveCloudImage } from '../services/caseStorage';
 
 interface SafeImageProps {
   src: string;
@@ -39,13 +40,37 @@ export default function SafeImage({
 }: SafeImageProps) {
   // 0: 主图 / 1: 一级回退 / 2: 二级回退 / 3: 全部失败
   const [stage, setStage] = useState(0);
-  const sources = [src, fallbackSrc, fallbackSrc2];
+  // 云存储对象是私有的，渲染前要换取短时效签名 URL
+  const [resolved, setResolved] = useState<string | null>(isCloudImage(src) ? null : src);
+  const [resolving, setResolving] = useState(isCloudImage(src));
+
+  useEffect(() => {
+    setStage(0);
+    if (!isCloudImage(src)) {
+      setResolved(src);
+      setResolving(false);
+      return;
+    }
+    let alive = true;
+    setResolving(true);
+    setResolved(null);
+    void resolveCloudImage(src).then((url) => {
+      if (!alive) return;
+      setResolved(url);
+      setResolving(false);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [src]);
+
+  const sources = [resolved, fallbackSrc, fallbackSrc2];
   const displaySrc = sources[stage];
 
-  if (stage >= 3 || !displaySrc) {
+  if (resolving || stage >= 3 || !displaySrc) {
     return (
       <img
-        src={placeholderSvg('图片暂不可用', alt)}
+        src={placeholderSvg(resolving ? '加载中…' : '图片暂不可用', alt)}
         alt={alt}
         className={className}
         draggable={false}
