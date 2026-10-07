@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useReportStore } from '../stores/report';
+import { exportReportMarkdown, exportReportPdf } from '../services/reportExport';
 import { useBoardStore } from '../stores/board';
 import { useCustomStrategyStore } from '../stores/customStrategy';
 import { useCaseOverrideStore } from '../stores/caseOverride';
@@ -75,6 +76,8 @@ export default function ReportPage() {
     [customStrategies],
   );
 
+  const [exportMsg, setExportMsg] = useState<string | null>(null);
+
   if (!report) {
     return (
       <div className="flex h-full items-center justify-center">
@@ -141,6 +144,22 @@ export default function ReportPage() {
     navigate(`/board?report=${report.id}&strategy=${targetMatch.strategyId}`);
   }
 
+  function handleExportMarkdown(): void {
+    if (!report) return;
+    exportReportMarkdown(report);
+    setExportMsg('已导出 Markdown 文件。');
+  }
+
+  function handleExportPdf(): void {
+    if (!report) return;
+    const opened = exportReportPdf(report);
+    setExportMsg(
+      opened
+        ? '已打开打印视图：在弹窗中选择「另存为 PDF」即可保存。'
+        : '浏览器拦截了打印弹窗，请允许本站弹出窗口后重试。',
+    );
+  }
+
   return (
     <div className="h-full overflow-y-auto">
       <div className="mx-auto w-full max-w-[980px] px-8 py-10">
@@ -155,10 +174,23 @@ export default function ReportPage() {
               {report.task.projectName || '未命名项目'}
             </span>
           </h1>
-          <button type="button" className="btn btn-secondary" onClick={() => navigate('/reports')}>
-            历史报告
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <button type="button" className="btn btn-secondary" onClick={handleExportMarkdown}>
+              导出 Markdown
+            </button>
+            <button type="button" className="btn btn-secondary" onClick={handleExportPdf}>
+              导出 PDF
+            </button>
+            <button type="button" className="btn btn-secondary" onClick={() => navigate('/reports')}>
+              历史报告
+            </button>
+          </div>
         </div>
+        {exportMsg && (
+          <div className="-mt-3 mb-6 rounded-md border border-line bg-surface-raised px-3.5 py-2 text-[12px] text-ink-2 fade-in">
+            {exportMsg}
+          </div>
+        )}
 
         {/* 报告头 */}
         <div className="card mb-8 p-6">

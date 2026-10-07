@@ -100,8 +100,9 @@ export default function BoardPage() {
 
   const llmConfig = useSettingsStore((s) => s.config);
   const grsaiNode: GrsaiNode = llmConfig.grsaiNode ?? 'global';
-  const grsaiKey = llmConfig.apiKey;
-  const grsaiReady = Boolean(grsaiKey.trim());
+  // 生图 Key：优先使用 Grsai 专用 Key，留空时回退到通用 Key（一个 Grsai Key 跑通推理+生图）
+  const grsaiKey = (llmConfig.grsaiApiKey?.trim() || llmConfig.apiKey).trim();
+  const grsaiReady = Boolean(grsaiKey);
 
   const [genMode, setGenMode] = useState<GrsaiMode>('async');
   const [modelId, setModelId] = useState<string>(DEFAULT_MODEL_ID);

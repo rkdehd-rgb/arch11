@@ -13,6 +13,7 @@ function loadSettings(): ModelConfig {
         apiKey: parsed.apiKey ?? '',
         model: parsed.model ?? '',
         grsaiNode: parsed.grsaiNode === 'cn' ? 'cn' : 'global',
+        grsaiApiKey: parsed.grsaiApiKey ?? '',
       };
     }
   } catch {

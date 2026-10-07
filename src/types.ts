@@ -6,6 +6,12 @@ export interface ModelConfig {
   model: string;
   /** Grsai 生图接入节点：global=grsaiapi.com，cn=grsai.dakka.com.cn */
   grsaiNode?: GrsaiNode;
+  /**
+   * Grsai 生图专用 API Key（可选）。
+   * 留空时沿用上面的 apiKey（适用「一个 Grsai Key 跑通推理+生图」场景）；
+   * 当推理用其它服务商（如 DeepSeek/OpenAI）时，在此单独填写 Grsai Key 即可打通真实生图。
+   */
+  grsaiApiKey?: string;
 }
 
 export type GrsaiNode = 'global' | 'cn';

@@ -68,12 +68,16 @@ export default function SettingsPage() {
   const [libMessage, setLibMessage] = useState<string | null>(null);
 
   const [showKey, setShowKey] = useState(false);
+  const [showGrsaiKey, setShowGrsaiKey] = useState(false);
   const [status, setStatus] = useState<TestStatus>('idle');
   const [message, setMessage] = useState<string | null>(null);
 
   const canTest = Boolean(
     config.baseUrl.trim() && config.apiKey.trim() && config.model.trim(),
   );
+
+  // 实际生效的生图 Key：专用 Key 优先，留空回退到通用 Key
+  const effectiveGrsaiKey = (config.grsaiApiKey?.trim() || config.apiKey.trim());
 
   /** 导出自定义策略库为 JSON 文件 */
   function handleExportLibrary(): void {
@@ -276,8 +280,9 @@ export default function SettingsPage() {
             <h2 className="text-[15px] font-semibold text-ink">Grsai 生图接口</h2>
           </div>
           <p className="mb-5 text-[12.5px] text-ink-2">
-            全部生图接口（统一异步生成 / OpenAI 同步生图 / 图片编辑）与 16 个模型共用上方 API Key
-            （Authorization Bearer）。切换节点将同时影响全部生图接口。
+            全部生图接口（统一异步生成 / OpenAI 同步生图 / 图片编辑）与 16 个模型共用 API Key
+            （Authorization Bearer）。默认沿用上方 LLM 的 Key（一个 Grsai Key 跑通推理 + 生图），
+            也可在下方单独填写生图专用 Key。切换节点将同时影响全部生图接口。
           </p>
           <p className="mb-5 rounded-md border border-line bg-paper px-3.5 py-2.5 text-[11.5px] leading-relaxed text-ink-3">
             参考图将在本地（浏览器端）预处理为 base64 后再提交，无需公网可访问；个别图无法加载时会自动剔除并提示。
@@ -303,16 +308,59 @@ export default function SettingsPage() {
             </button>
           </div>
 
-          <div className="mt-5 rounded-md border border-line bg-paper px-4 py-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[12.5px] text-ink-2">API Key（与 LLM 共用）</span>
-              <span className={`font-mono text-[11px] ${config.apiKey.trim() ? 'text-[#5d7a52]' : 'text-accent'}`}>
-                {config.apiKey.trim() ? '已配置' : '未配置'}
-              </span>
+          <div className="mt-5">
+            <label className="field-label" htmlFor="grsaiApiKey">
+              Grsai 生图 API Key（可选）
+            </label>
+            <div className="relative">
+              <input
+                id="grsaiApiKey"
+                className="input pr-12 font-mono text-[13px]"
+                type={showGrsaiKey ? 'text' : 'password'}
+                value={config.grsaiApiKey ?? ''}
+                placeholder="留空则沿用上方 LLM 的 API Key"
+                onChange={(e) => update({ grsaiApiKey: e.target.value })}
+              />
+              <button
+                type="button"
+                className="absolute right-2 top-1/2 flex h-7 w-8 -translate-y-1/2 items-center justify-center rounded text-ink-3 hover:text-ink"
+                onClick={() => setShowGrsaiKey((v) => !v)}
+                title={showGrsaiKey ? '隐藏' : '显示'}
+              >
+                {showGrsaiKey ? (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                  </svg>
+                ) : (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
+              </button>
             </div>
             <p className="mt-1.5 text-[11.5px] text-ink-3">
-              在上方 LLM 配置区填写 API Key 即可，一个 Key 跑通「推理 + 生图」全流程。
+              推理若使用 Grsai 自身模型，可留空（与上方 Key 共用）；若推理用 DeepSeek / OpenAI 等其它服务商，
+              请在此单独填写 Grsai Key，才能打通画板的真实生图（否则画板会用程序化 SVG 演示生成）。
             </p>
+            <div className="mt-2 rounded-md border border-line bg-paper px-4 py-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[12.5px] text-ink-2">当前生效的生图 Key</span>
+                <span className={`font-mono text-[11px] ${effectiveGrsaiKey ? 'text-[#5d7a52]' : 'text-accent'}`}>
+                  {effectiveGrsaiKey
+                    ? config.grsaiApiKey?.trim()
+                      ? '已配置（专用）'
+                      : '已配置（沿用 LLM Key）'
+                    : '未配置'}
+                </span>
+              </div>
+              <p className="mt-1.5 text-[11.5px] text-ink-3">
+                {effectiveGrsaiKey
+                  ? '画板生成将优先调用真实生图接口，失败时自动降级为程序化 SVG 演示。'
+                  : '未配置任何 Key：画板将使用程序化 SVG 演示生成，流程不中断。'}
+              </p>
+            </div>
           </div>
 
           <p className="mt-4 text-[11.5px] text-ink-3">
