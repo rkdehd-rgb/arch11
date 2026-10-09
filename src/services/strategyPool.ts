@@ -42,10 +42,19 @@ export interface CaseView {
   imageFallback2: string;
 }
 
-/** gooood 图床地址走后端代理，避免防盗链；其余地址原样返回 */
+/** 需要走后端代理的图源（含防盗链站点）；其余地址原样返回 */
+const PROXIED_IMAGE_HOSTS = [
+  'oss.gooood.cn',
+  'image.archiposition.com',
+  'www.archcollege.com',
+  'images.divisare.com',
+  'images.adsttc.com',
+  'static.dezeen.com',
+];
+
 function toDisplayUrl(url: string): string {
   if (!url) return url;
-  if (url.includes('oss.gooood.cn')) {
+  if (PROXIED_IMAGE_HOSTS.some((host) => url.includes(host))) {
     return `/api/case-image?url=${encodeURIComponent(url)}`;
   }
   return url;

@@ -1,10 +1,14 @@
 import { Router } from 'express';
 import { goooodRouter } from './gooood';
+import { caseImageRouter } from './case-image';
 
 const router = Router();
 
-// gooood（谷德设计网）搜索与图片代理
+// gooood（谷德设计网）站内搜索与文章正文图抓取
 router.use('/api', goooodRouter);
+
+// 案例参考图多源代理：gooood / 有方 / 建筑学院 / divisare / ArchDaily / dezeen
+router.use('/api', caseImageRouter);
 
 // API 路由示例
 router.get('/api/hello', (_req, res) => {

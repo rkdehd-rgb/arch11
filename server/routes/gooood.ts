@@ -3,7 +3,6 @@ import { Router, type Request, type Response } from 'express';
 export const goooodRouter = Router();
 
 const GOOOOD_ORIGIN = 'https://www.gooood.cn';
-const IMAGE_HOST = 'oss.gooood.cn';
 const FETCH_TIMEOUT_MS = 15_000;
 const SEARCH_CACHE_TTL_MS = 60_000;
 const DESKTOP_UA =
@@ -132,44 +131,6 @@ goooodRouter.get('/case-search', async (req: Request, res: Response) => {
   } catch (err) {
     const message = err instanceof Error ? err.message : '未知错误';
     res.status(502).json({ error: `谷德搜索失败：${message}` });
-  }
-});
-
-goooodRouter.get('/case-image', async (req: Request, res: Response) => {
-  const rawUrl = typeof req.query.url === 'string' ? req.query.url : '';
-  let parsed: URL;
-  try {
-    parsed = new URL(rawUrl);
-  } catch {
-    res.status(400).json({ error: '非法图片地址' });
-    return;
-  }
-  if (parsed.protocol !== 'https:' || parsed.hostname !== IMAGE_HOST) {
-    res.status(403).json({ error: '仅允许代理 oss.gooood.cn 的图片' });
-    return;
-  }
-
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-  try {
-    const upstream = await fetch(parsed.toString(), {
-      headers: { 'User-Agent': DESKTOP_UA, Accept: 'image/*' },
-      signal: controller.signal,
-    });
-    if (!upstream.ok) {
-      res.status(502).json({ error: `图片获取失败：HTTP ${upstream.status}` });
-      return;
-    }
-    const contentType = upstream.headers.get('content-type') ?? 'image/jpeg';
-    const buffer = Buffer.from(await upstream.arrayBuffer());
-    res.setHeader('Content-Type', contentType);
-    res.setHeader('Cache-Control', `public, max-age=${SEARCH_CACHE_TTL_MS / 1000}`);
-    res.send(buffer);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : '未知错误';
-    res.status(502).json({ error: `图片代理失败：${message}` });
-  } finally {
-    clearTimeout(timer);
   }
 });
 

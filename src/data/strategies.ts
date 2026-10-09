@@ -1,4 +1,4 @@
-/** 策略来源：builtin=内置 32 条，user=用户收藏入库 */
+/** 策略来源：builtin=内置 42 条，user=用户收藏入库 */
 export type StrategySource = 'builtin' | 'user';
 
 export interface Strategy {
@@ -427,6 +427,138 @@ export const strategies: Strategy[] = [
     scenarios: ['滨水与公园相邻地块', '大型文化场馆', '需要柔化边界的大体量建筑'],
     synergies: ['boundary-penetrate', 'urban-public-space', 'public-return'],
     synergyNote: '梯度开放配合流线渗透，城市与建筑之间不再有截然的门槛。',
+  },
+
+  // ---------- 绿色低碳（续） ----------
+  {
+    id: 'demand-flex',
+    name: '光储直柔与柔性用电',
+    nameEn: 'Demand-Side Flexibility',
+    group: 'green',
+    tags: ['绿色低碳', '产能', '柔性用电'],
+    concept:
+      '以屋面光伏、储能电池与直流配电组成建筑侧的柔性电源，通过用能时段的主动错峰与需求响应削减电网峰值负荷。建筑由被动用电户转为可与电网双向协商的节点。',
+    scenarios: ['双碳与近零能耗示范项目', '峰谷电价差显著的地区', '变压器容量受限的园区'],
+    synergies: ['bipv', 'passive-design', 'structure-space'],
+    synergyNote: '光伏产能是柔性调节的电源基础，被动式设计则压低需要调节的总量。',
+  },
+
+  // ---------- 空间原型（续） ----------
+  {
+    id: 'civic-stair',
+    name: '城市大台阶',
+    nameEn: 'Civic Grand Stair',
+    group: 'space',
+    tags: ['空间原型', '公共活动', '竖向连接'],
+    concept:
+      '把楼层间的高差放大为可坐、可聚、可观演的大台阶，让竖向交通同时成为城市公共剧场。台阶在连接不同标高的同时，制造出自发的停留与观看。',
+    scenarios: ['场地存在高差的公共建筑', '文化场馆与商业综合体入口', '需要集聚人气的城市节点'],
+    synergies: ['gradient-open', 'public-return', 'urban-public-space'],
+    synergyNote: '大台阶是梯度开放最直接的形式，把边界高差转化为公共活动面。',
+  },
+
+  // ---------- 在地文脉（续） ----------
+  {
+    id: 'heritage-juxtapose',
+    name: '新旧并置',
+    nameEn: 'Heritage Juxtaposition',
+    group: 'context',
+    tags: ['在地文脉', '更新', '对比'],
+    concept:
+      '以清晰可辨的当代体量介入历史环境，通过材料、尺度与构造的对比而非模仿，让新旧各自成立又相互对话。加建部分不伪装成历史，时代信息因此坦率可读。',
+    scenarios: ['历史街区与保护建筑扩建', '博物馆与遗址展示项目', '城市核心区更新地块'],
+    synergies: ['memory-retain', 'typology-evolve', 'symbol-translate'],
+    synergyNote: '先保留记忆载体，再以并置手法加入当代层，新旧关系才不会含糊。',
+  },
+  {
+    id: 'typology-evolve',
+    name: '地域类型演化',
+    nameEn: 'Regional Typology Evolution',
+    group: 'context',
+    tags: ['在地文脉', '类型学', '空间组织'],
+    concept:
+      '提取院落、里弄、骑楼、天井等地域空间类型的组织逻辑，以当代尺度与功能重新演绎，而非复制其外形。类型是活的规则，演化后仍能容纳今天的生活方式。',
+    scenarios: ['历史风貌区的新建项目', '地域特色住宅与街区', '需要延续肌理的城市更新'],
+    synergies: ['courtyard-embed', 'urban-block', 'local-material'],
+    synergyNote: '类型演化决定空间组织，在地材料负责质感表达，共同支撑地域性。',
+  },
+
+  // ---------- 复合业态（续） ----------
+  {
+    id: 'transit-integrate',
+    name: '站城一体 TOD',
+    nameEn: 'Transit-Integrated Development',
+    group: 'mixed',
+    tags: ['复合业态', '交通', '高密度'],
+    concept:
+      '以轨道站点为核心组织商业、办公、居住与公共空间，用立体步行网络把换乘人流转化为街区活力。交通容量与开发强度在步行可达范围内精确匹配。',
+    scenarios: ['轨道站点周边与上盖开发', '交通枢纽综合体', '需提升公交分担率的城区'],
+    synergies: ['vertical-mix', 'boundary-penetrate', 'slow-stitch'],
+    synergyNote: '立体叠合解决容量，渗透边界完成向周边的步行缝合。',
+  },
+  {
+    id: 'community-embed',
+    name: '社区服务嵌合',
+    nameEn: 'Community Service Embedding',
+    group: 'mixed',
+    tags: ['复合业态', '社区', '公共服务'],
+    concept:
+      '把养老、托幼、文体、食堂等日常所需服务嵌入居住或商业开发之中，以步行可达的距离支撑日常生活。嵌合而非集中，服务才能贴近使用者。',
+    scenarios: ['大型居住社区与新城', '15 分钟生活圈建设', '存量商业与公建活化'],
+    synergies: ['public-return', 'vitality-ring', 'micro-weave'],
+    synergyNote: '服务嵌合与微更新织补结合，社区网络才被逐点补强。',
+  },
+
+  // ---------- 建造效率（续） ----------
+  {
+    id: 'digital-fabrication',
+    name: '数字建造',
+    nameEn: 'Digital Fabrication',
+    group: 'efficiency',
+    tags: ['建造效率', '参数化', '非标构件'],
+    concept:
+      '以参数化设计驱动数控加工、机械臂或增材制造，把复杂非标构件转化为可精确生产的工业品。设计精度与施工误差同时被压缩，异形不再等于昂贵。',
+    scenarios: ['异形幕墙与非标节点', '木构与轻质结构加工', '需高精度的改扩建工程'],
+    synergies: ['prefab', 'structure-space', 'light-build'],
+    synergyNote: '数字加工让轻质与一体化结构的高精度实现成为可能。',
+  },
+  {
+    id: 'vertical-extension',
+    name: '加建增容',
+    nameEn: 'Vertical Extension',
+    group: 'efficiency',
+    tags: ['建造效率', '城市更新', '存量'],
+    concept:
+      '在不拆除主体的前提下，通过轻质加层、内插夹层或顶升技术为既有建筑增加面积与功能。改造比重建更快、更省碳，也让存量资产重获生命周期。',
+    scenarios: ['老旧办公楼与住宅增容', '需要扩容的公共设施', '不宜大拆大建的历史城区'],
+    synergies: ['light-build', 'growth-frame', 'modular-build'],
+    synergyNote: '轻质加建降低荷载负担，可生长框架预留后续加层的结构余量。',
+  },
+
+  // ---------- 城市关系（续） ----------
+  {
+    id: 'blue-green-network',
+    name: '蓝绿网络',
+    nameEn: 'Blue-Green Network',
+    group: 'urban',
+    tags: ['城市关系', '生态廊道', '连通'],
+    concept:
+      '把河道、湿地、林地与公园连成连续的蓝绿网络，以廊道串联破碎生境并组织全城的慢行与通风。水系与绿地在城市尺度上成为同一套基础设施。',
+    scenarios: ['滨水片区与生态廊道', '城市双修与生境修复', '通风廊道与热岛缓解'],
+    synergies: ['sponge-city', 'slow-stitch', 'urban-public-space'],
+    synergyNote: '海绵设施是网络上的调蓄节点，慢行系统则让人能真正走通这张网。',
+  },
+  {
+    id: 'urban-block',
+    name: '街坊肌理修复',
+    nameEn: 'Urban Block Repair',
+    group: 'urban',
+    tags: ['城市关系', '肌理', '街区'],
+    concept:
+      '以围合街坊、小街区密路网的方式修补被大尺度开发破坏的城市肌理，恢复街道界面与街角公共性。密度不减，城市的连续性与可步行性却得以重建。',
+    scenarios: ['大拆大建后的新城修补', '老城更新与地块重组', '需要恢复街道生活的片区'],
+    synergies: ['facade-vitality', 'typology-evolve', 'micro-weave'],
+    synergyNote: '围合街坊提供连续的沿街界面，界面活化才有展开的载体。',
   },
 ];
 

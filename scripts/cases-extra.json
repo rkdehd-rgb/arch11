@@ -1,0 +1,239 @@
+[
+  {"id":"powerhouse-brattorkaia","strategyId":"demand-flex","name":"Powerhouse Brattørkaia","location":"挪威 特隆赫姆","year":"2019","architect":"Snøhetta","highlight":"北极圈边缘的正产能办公楼，年发电量约为自身耗电两倍，余电向邻楼与公交供电"},
+  {"id":"powerhouse-kjorbo","strategyId":"demand-flex","name":"Powerhouse Kjørbo","location":"挪威 桑德维卡","year":"2014","architect":"Snøhetta / Skanska","highlight":"两栋 1980 年代办公楼改造为正能建筑，光伏与地源热泵使产能翻倍"},
+  {"id":"kendeda-building","strategyId":"demand-flex","name":"Kendeda Building","location":"美国 亚特兰大","year":"2019","architect":"Miller Hull / Lord Aeck Sargent","highlight":"佐治亚理工的活建筑认证教学楼，光伏与雨水收集实现全年净正收益"},
+  {"id":"crystal-london","strategyId":"demand-flex","name":"The Crystal","location":"英国 伦敦","year":"2012","architect":"WilkinsonEyre","highlight":"全电驱动智慧城市展馆，地源热泵与光伏组成一体化能源系统"},
+  {"id":"nordhavn-school","strategyId":"demand-flex","name":"Nordhavn 国际学校","location":"丹麦 哥本哈根","year":"2018","architect":"C.F. Møller Architects","highlight":"光伏立面与海水冷却结合，整校接近零能耗运行"},
+  {"id":"bullitt-center","strategyId":"demand-flex","name":"Bullitt Center","location":"美国 西雅图","year":"2013","architect":"Miller Hull Partnership","highlight":"六层重木办公楼，雨水与光伏自给，被称最绿色的商业建筑之一"},
+
+  {"id":"kyoto-station","strategyId":"civic-stair","name":"京都站大楼","location":"日本 京都","year":"1997","architect":"原广司","highlight":"巨型阶梯峡谷贯穿南北，把车站中庭变成城市公共剧场"},
+  {"id":"oslo-opera","strategyId":"civic-stair","name":"奥斯陆歌剧院","location":"挪威 奥斯陆","year":"2008","architect":"Snøhetta","highlight":"白色大理石屋面自海面斜升为可攀登的公共坡道"},
+  {"id":"kriterion-stairs","strategyId":"civic-stair","name":"Kriterion 大台阶","location":"荷兰 阿姆斯特丹","year":"2016","architect":"MVRDV","highlight":"临时木台阶自广场升起 29 米，为古建筑修复期重连城市视线"},
+  {"id":"caixaforum-madrid","strategyId":"civic-stair","name":"马德里 CaixaForum","location":"西班牙 马德里","year":"2008","architect":"Herzog & de Meuron","highlight":"悬挑体量与开放台阶把历史电站转化为城市文化广场"},
+  {"id":"robson-square","strategyId":"civic-stair","name":"Robson Square","location":"加拿大 温哥华","year":"1979","architect":"Arthur Erickson","highlight":"屋顶广场与阶梯把三个街区缝合成连续的公共空间"},
+  {"id":"dokk1","strategyId":"civic-stair","name":"Dokk1 图书馆","location":"丹麦 奥胡斯","year":"2015","architect":"schmidt hammer lassen architects","highlight":"面向港湾的大台阶既是入口也是市民聚集的滨水看台"},
+
+  {"id":"louvre-pyramid","strategyId":"heritage-juxtapose","name":"卢浮宫玻璃金字塔","location":"法国 巴黎","year":"1989","architect":"贝聿铭","highlight":"极简玻璃锥体植入古典宫廷，以材料与几何对比界定新入口"},
+  {"id":"kolumba-museum","strategyId":"heritage-juxtapose","name":"Kolumba 博物馆","location":"德国 科隆","year":"2007","architect":"Peter Zumthor","highlight":"在哥特教堂废墟上以细砖砌体包裹并局部展露考古遗迹"},
+  {"id":"neues-museum","strategyId":"heritage-juxtapose","name":"柏林新博物馆","location":"德国 柏林","year":"2009","architect":"David Chipperfield Architects","highlight":"保留战争创伤痕迹，以新砌体补全而不复原原有体量"},
+  {"id":"british-museum-court","strategyId":"heritage-juxtapose","name":"大英博物馆大中庭","location":"英国 伦敦","year":"2000","architect":"Foster + Partners","highlight":"网壳玻璃顶罩覆盖历史庭院，圆形阅览室成为中庭核心"},
+  {"id":"carre-dart-nimes","strategyId":"heritage-juxtapose","name":"卡雷美术馆","location":"法国 尼姆","year":"1993","architect":"Norman Foster","highlight":"玻璃柱廊与罗马神庙对望，以现代秩序呼应古典立面"},
+  {"id":"coal-drops-yard","strategyId":"heritage-juxtapose","name":"Coal Drops Yard","location":"英国 伦敦","year":"2018","architect":"Heatherwick Studio","highlight":"两组维多利亚煤仓被一对上翘屋顶连成新街区"},
+
+  {"id":"ju-er-hutong","strategyId":"typology-evolve","name":"菊儿胡同新四合院","location":"中国 北京","year":"1990","architect":"吴良镛","highlight":"以类四合院单元重构胡同肌理，探索旧城住宅的类型演化"},
+  {"id":"sangath","strategyId":"typology-evolve","name":"桑珈建筑师工作室","location":"印度 艾哈迈达巴德","year":"1980","architect":"B. V. Doshi","highlight":"拱顶与下沉庭院以极低造价演化地域空间类型"},
+  {"id":"kandalama-hotel","strategyId":"typology-evolve","name":"坎达拉玛酒店","location":"斯里兰卡 丹布勒","year":"1995","architect":"Geoffrey Bawa","highlight":"建筑沿岩壁水平展开并被植被覆盖，延续热带聚落与地形的共生"},
+  {"id":"iima-ahmedabad","strategyId":"typology-evolve","name":"印度管理学院艾哈迈达巴德","location":"印度 艾哈迈达巴德","year":"1962","architect":"路易·康","highlight":"砖拱廊道与几何秩序重构印度传统建筑的空间语汇"},
+  {"id":"vanke-fifth-garden","strategyId":"typology-evolve","name":"万科第五园","location":"中国 深圳","year":"2005","architect":"王戈 / 都市实践","highlight":"以现代材料转译岭南民居的院落、窄巷与冷巷类型"},
+  {"id":"farming-kindergarten","strategyId":"typology-evolve","name":"农民幼儿园","location":"越南 同奈","year":"2013","architect":"Vo Trong Nghia Architects","highlight":"环形绿屋顶与自然通风延续热带民居的气候智慧"},
+
+  {"id":"shibuya-scramble","strategyId":"transit-integrate","name":"涩谷站城","location":"日本 东京","year":"2019","architect":"日建设计 / 隈研吾","highlight":"站体垂直叠合商业、办公与观景台，换乘人流直接转化为街区活力"},
+  {"id":"kowloon-union-square","strategyId":"transit-integrate","name":"九龙站 Union Square","location":"中国 香港","year":"2007","architect":"TFP Farrells","highlight":"机场快线上盖塔楼群以立体平台组织交通、商业与居住"},
+  {"id":"berlin-hauptbahnhof","strategyId":"transit-integrate","name":"柏林中央车站","location":"德国 柏林","year":"2006","architect":"gmp","highlight":"玻璃穹顶车站以交叉月台串联东西南北，周边开发同步启动"},
+  {"id":"oculus-wtc","strategyId":"transit-integrate","name":"世贸中心交通枢纽","location":"美国 纽约","year":"2016","architect":"Santiago Calatrava","highlight":"白色肋骨结构把地铁与轮渡换乘组织成城市大厅"},
+  {"id":"shanghai-hongqiao","strategyId":"transit-integrate","name":"上海虹桥综合交通枢纽","location":"中国 上海","year":"2010","architect":"华东建筑设计研究院","highlight":"高铁、机场与地铁在同一屋檐下实现零距离换乘"},
+  {"id":"hk-ifc","strategyId":"transit-integrate","name":"国际金融中心 IFC","location":"中国 香港","year":"2003","architect":"Cesar Pelli & Associates","highlight":"机场快线香港站上盖摩天楼，地下交通与空中商业垂直贯通"},
+
+  {"id":"kampung-admiralty","strategyId":"community-embed","name":"Kampung Admiralty","location":"新加坡","year":"2018","architect":"WOHA","highlight":"养老公寓、医疗与社区农场垂直叠合，一个屋檐下完成日常所需"},
+  {"id":"skyville-dawson","strategyId":"community-embed","name":"SkyVille @ Dawson","location":"新加坡","year":"2015","architect":"WOHA","highlight":"公共住宅以空中社区街连接各组团，重建邻里交往"},
+  {"id":"eight-tallet","strategyId":"community-embed","name":"8 Tallet","location":"丹麦 哥本哈根","year":"2010","architect":"BIG","highlight":"连续坡道把住宅、商业与共享庭院编织成一条公共路径"},
+  {"id":"chuangzhi-farm","strategyId":"community-embed","name":"创智农园","location":"中国 上海","year":"2016","architect":"四叶草堂","highlight":"在高密度社区嵌入可耕作的公共庭院，以农园凝聚邻里"},
+  {"id":"maggies-leeds","strategyId":"community-embed","name":"Maggie's Leeds","location":"英国 利兹","year":"2019","architect":"Heatherwick Studio","highlight":"三座种植木构花房为癌症患者提供非临床的心理支持空间"},
+  {"id":"tietgenkollegiet","strategyId":"community-embed","name":"Tietgenkollegiet 学生宿舍","location":"丹麦 哥本哈根","year":"2006","architect":"Lundgaard & Tranberg","highlight":"环形围合把居住、学习与公共厨房围绕共享庭院组织"},
+
+  {"id":"phoenix-media-center","strategyId":"digital-fabrication","name":"凤凰国际传媒中心","location":"中国 北京","year":"2013","architect":"邵韦平 / 北京建院","highlight":"莫比乌斯环形体量由参数化表皮与钢结构精确建造"},
+  {"id":"fondation-louis-vuitton","strategyId":"digital-fabrication","name":"路易威登基金会","location":"法国 巴黎","year":"2014","architect":"Gehry Partners","highlight":"十二片玻璃帆由数字化设计与定制构件逐片装配"},
+  {"id":"walt-disney-concert-hall","strategyId":"digital-fabrication","name":"沃尔特迪士尼音乐厅","location":"美国 洛杉矶","year":"2003","architect":"Gehry Partners","highlight":"曲面不锈钢板以数字模型驱动工厂成型与现场定位"},
+  {"id":"icd-itke-pavilion","strategyId":"digital-fabrication","name":"ICD/ITKE 研究馆","location":"德国 斯图加特","year":"2017","architect":"ICD / ITKE 斯图加特大学","highlight":"以机器人缠绕纤维构件建成的轻质实验性大跨"},
+  {"id":"messe-basel","strategyId":"digital-fabrication","name":"巴塞尔展览中心新馆","location":"瑞士 巴塞尔","year":"2013","architect":"Herzog & de Meuron","highlight":"叠层堆垛的体量与金属网幕墙由数字化幕墙系统实现"},
+  {"id":"mocape-shenzhen","strategyId":"digital-fabrication","name":"深圳当代艺术馆与城市规划展览馆","location":"中国 深圳","year":"2016","architect":"蓝天组 COOP HIMMELB(L)AU","highlight":"自由曲面金属表皮以参数化建模与数控加工完成"},
+
+  {"id":"amos-rex","strategyId":"vertical-extension","name":"Amos Rex","location":"芬兰 赫尔辛基","year":"2018","architect":"JKMM Architects","highlight":"地下展厅向上顶出起伏屋顶，把增容转化为城市广场"},
+  {"id":"whitechapel-gallery","strategyId":"vertical-extension","name":"白教堂画廊扩建","location":"英国 伦敦","year":"2009","architect":"Robbrecht en Daem","highlight":"旧图书馆被并入画廊，历史建筑在加建中获得新展厅"},
+  {"id":"moma-expansion","strategyId":"vertical-extension","name":"MoMA 扩建","location":"美国 纽约","year":"2019","architect":"Diller Scofidio + Renfro","highlight":"新馆把展厅与街道直接连通，在既有体量中扩容重组"},
+  {"id":"national-portrait-gallery","strategyId":"vertical-extension","name":"国家肖像馆改造","location":"英国 伦敦","year":"2023","architect":"Jamie Fobert Architects","highlight":"以新入口与北翼加建重新组织历史建筑的参观流线"},
+  {"id":"green-hill-shanghai","strategyId":"vertical-extension","name":"杨浦滨江 绿之丘","location":"中国 上海","year":"2019","architect":"同济原作设计工作室","highlight":"烟草仓库被拆解、加建与叠层，转化为可漫游的立体公园"},
+  {"id":"national-gallery-singapore","strategyId":"vertical-extension","name":"新加坡国家美术馆","location":"新加坡","year":"2015","architect":"studioMilou architecture","highlight":"前最高法院与政府大厦以金属顶棚并接，增容为双馆一体的美术馆"},
+
+  {"id":"bishan-ang-mo-kio","strategyId":"blue-green-network","name":"加冷河 - 碧山公园","location":"新加坡","year":"2012","architect":"戴水道 RAMBOLL","highlight":"混凝土排洪渠被改回自然河道，蓝绿空间同时承担雨洪与游憩"},
+  {"id":"emerald-necklace","strategyId":"blue-green-network","name":"波士顿翡翠项链","location":"美国 波士顿","year":"1878","architect":"Frederick Law Olmsted","highlight":"以连续绿带串起公园与水道，开蓝绿网络规划之先"},
+  {"id":"huangpu-riverside","strategyId":"blue-green-network","name":"上海黄浦江滨江公共空间","location":"中国 上海","year":"2017","architect":"多家设计机构","highlight":"四十五公里工业岸线贯通为连续步道与绿地，缝合被码头切断的城市"},
+  {"id":"waterplein-benthemplein","strategyId":"blue-green-network","name":"鹿特丹水广场","location":"荷兰 鹿特丹","year":"2013","architect":"De Urbanisten","highlight":"下沉运动场在暴雨时蓄水，晴天回归社区球场"},
+  {"id":"dasha-river","strategyId":"blue-green-network","name":"深圳大沙河生态长廊","location":"中国 深圳","year":"2019","architect":"AECOM 等","highlight":"河道治理与慢行绿廊结合，重建城市与水的日常联系"},
+  {"id":"chengdu-jinjiang","strategyId":"blue-green-network","name":"成都锦江绿道","location":"中国 成都","year":"2019","architect":"多家设计机构","highlight":"沿江绿道串联公园与社区，形成连续的滨水慢行网络"},
+
+  {"id":"superilles-barcelona","strategyId":"urban-block","name":"巴塞罗那超级街区","location":"西班牙 巴塞罗那","year":"2016","architect":"巴塞罗那市政府 / BCNecologia","highlight":"九个街区合并为车行受限的超级单元，把街道还给步行与社区生活"},
+  {"id":"vauban-freiburg","strategyId":"urban-block","name":"Vauban 生态街区","location":"德国 弗赖堡","year":"2000","architect":"市民自建联盟","highlight":"以围合街坊与无车街道重建紧凑、可步行的社区肌理"},
+  {"id":"hammarby-sjostad","strategyId":"urban-block","name":"Hammarby Sjöstad","location":"瑞典 斯德哥尔摩","year":"2010","architect":"多家事务所","highlight":"旧工业港区以密集围合街坊与滨水公共空间重构城市结构"},
+  {"id":"yangmeizhu-street","strategyId":"urban-block","name":"杨梅竹斜街更新","location":"中国 北京","year":"2013","architect":"大栅栏更新计划 / 多团队","highlight":"以渐进式修缮恢复斜街肌理，保留原住民与市井业态"},
+  {"id":"yuyuan-road","strategyId":"urban-block","name":"愚园路街区更新","location":"中国 上海","year":"2017","architect":"创邑 / 多团队","highlight":"沿街界面与弄堂空间被逐段激活，重塑街道生活"},
+  {"id":"nantou-old-town","strategyId":"urban-block","name":"南头古城","location":"中国 深圳","year":"2021","architect":"万科城市研究院 / 多建筑师","highlight":"城中村以微介入修补街巷肌理，植入文化与社区功能"},
+
+  {"id":"passivhaus-kranichstein","strategyId":"passive-design","name":"Passivhaus Kranichstein","location":"德国 达姆施塔特","year":"1991","architect":"Wolfgang Feist / Bott & Ridder","highlight":"全球首座被动房原型，以超保温与热回收把采暖需求压至极低"},
+  {"id":"commerzbank-frankfurt","strategyId":"passive-design","name":"法兰克福商业银行总部","location":"德国 法兰克福","year":"1997","architect":"Foster + Partners","highlight":"首座高层自然通风摩天楼，四季花园中庭组织气流与采光"},
+  {"id":"post-tower-bonn","strategyId":"passive-design","name":"德国邮政大厦","location":"德国 波恩","year":"2002","architect":"Murphy/Jahn","highlight":"双层玻璃皮与可开启窗实现高层自然通风与低能耗"},
+  {"id":"shenzhen-ibc","strategyId":"passive-design","name":"深圳建科大楼","location":"中国 深圳","year":"2009","architect":"深圳市建筑科学研究院","highlight":"以被动优先与自然通风实现夏热冬暖地区的低能耗示范"},
+
+  {"id":"one-central-park-sydney","strategyId":"vertical-greenery","name":"One Central Park","location":"澳大利亚 悉尼","year":"2014","architect":"Ateliers Jean Nouvel / PTW","highlight":"塔楼立面悬挂垂直花园，悬臂镜面把阳光反射到绿植与广场"},
+  {"id":"naman-retreat","strategyId":"vertical-greenery","name":"Naman 静修酒店","location":"越南 岘港","year":"2016","architect":"Vo Trong Nghia Architects","highlight":"以绿植廊架、竹构与地景环绕的滨海静修群落"},
+  {"id":"1000-trees-shanghai","strategyId":"vertical-greenery","name":"天安千树","location":"中国 上海","year":"2021","architect":"Heatherwick Studio","highlight":"山形层叠平台承载千余株树木，重塑沿河城市界面"},
+  {"id":"wonderwoods","strategyId":"vertical-greenery","name":"Wonderwoods 双塔","location":"荷兰 乌得勒支","year":"2024","architect":"MVSA / Stefano Boeri Architetti","highlight":"双塔以退台与绿化包裹，把森林层叠植入城市中心"},
+
+  {"id":"philadelphia-green-city","strategyId":"sponge-city","name":"费城绿色城市清洁水计划","location":"美国 费城","year":"2011","architect":"费城水务局","highlight":"以绿色基础设施替代灰色管网，在全城尺度推进雨洪消纳"},
+  {"id":"portland-green-streets","strategyId":"sponge-city","name":"波特兰绿色街道计划","location":"美国 波特兰","year":"2007","architect":"波特兰市交通局","highlight":"沿街雨水花园替代路缘，把街道变成雨水管理的连续载体"},
+  {"id":"fengxi-sponge-city","strategyId":"sponge-city","name":"沣西新城海绵城市","location":"中国 西安","year":"2015","architect":"沣西新城管委会","highlight":"中国首批海绵城市试点，以调蓄与渗滞系统应对西北雨洪与缺水"},
+  {"id":"fuzhou-sponge-city","strategyId":"sponge-city","name":"福州海绵城市试点","location":"中国 福州","year":"2016","architect":"福州市政府","highlight":"依托内河与山体构建蓄排结合的雨洪系统，缓解城区内涝"},
+
+  {"id":"cis-tower-manchester","strategyId":"bipv","name":"CIS Tower 光伏幕墙","location":"英国 曼彻斯特","year":"2006","architect":"改造设计团队","highlight":"在 1962 年办公塔上覆盖欧洲最大光伏幕墙，改造即产能"},
+  {"id":"sino-singapore-tianjin","strategyId":"bipv","name":"中新天津生态城","location":"中国 天津","year":"2008","architect":"中新合作团队","highlight":"国家间合作的生态城，以光伏与绿色建筑构建低碳示范"},
+  {"id":"baoding-bipv-tower","strategyId":"bipv","name":"电谷锦江国际酒店","location":"中国 保定","year":"2008","architect":"英利 / 本地设计院","highlight":"以光伏玻璃幕墙与光伏屋顶组成建筑的产能皮肤"},
+  {"id":"heliotrop-freiburg","strategyId":"bipv","name":"Heliotrop 太阳屋","location":"德国 弗赖堡","year":"1994","architect":"Rolf Disch","highlight":"可随日照旋转的住宅，屋顶光伏产能远超自身能耗"},
+
+  {"id":"menara-mesiniaga","strategyId":"wind-corridor","name":"Menara Mesiniaga","location":"马来西亚 梳邦再也","year":"1992","architect":"Ken Yeang / T.R. Hamzah & Yeang","highlight":"生物气候摩天楼，以竖向风道、遮阳翼与可开启窗实现自然通风"},
+  {"id":"singapore-library","strategyId":"wind-corridor","name":"新加坡国家图书馆","location":"新加坡","year":"2005","architect":"T.R. Hamzah & Yeang","highlight":"以中庭、遮阳与风廊组织自然通风，降低大楼能耗"},
+  {"id":"portcullis-house","strategyId":"wind-corridor","name":"Portcullis House","location":"英国 伦敦","year":"2001","architect":"Michael Hopkins","highlight":"国会办公楼以拔风塔与自然通风取代全空调系统"},
+  {"id":"pearl-river-tower","strategyId":"wind-corridor","name":"珠江城大厦","location":"中国 广州","year":"2013","architect":"SOM","highlight":"立面风洞引入风力发电，结合冷辐射与光伏降低能耗"},
+
+  {"id":"serpentine-pavilion-2000","strategyId":"light-build","name":"蛇形画廊 2000 展亭","location":"英国 伦敦","year":"2000","architect":"Zaha Hadid","highlight":"轻质帐篷式展亭以桁架与织物围合，临时而开放"},
+  {"id":"tamedia","strategyId":"light-build","name":"Tamedia 办公大楼","location":"瑞士 苏黎世","year":"2013","architect":"坂茂","highlight":"全木结构以精密卯榫节点连接，无胶可拆卸"},
+  {"id":"london-basketball-arena","strategyId":"light-build","name":"伦敦奥运篮球馆","location":"英国 伦敦","year":"2012","architect":"WilkinsonEyre / Populous","highlight":"白盒式临时场馆以轻钢与可回收材料搭建，赛后拆除复用"},
+  {"id":"orquideorama","strategyId":"light-build","name":"Orquideorama 花亭","location":"哥伦比亚 麦德林","year":"2006","architect":"Plan:B Arquitectos","highlight":"格栅木构花亭以轻质重复单元覆盖植物园公共空间"},
+
+  {"id":"moneo-merida","strategyId":"courtyard-embed","name":"国家罗马艺术博物馆","location":"西班牙 梅里达","year":"1986","architect":"Rafael Moneo","highlight":"砖墙与高窗组织序列空间，庭院与拱廊呼应罗马遗构"},
+  {"id":"kimbell-art-museum","strategyId":"courtyard-embed","name":"金贝尔艺术博物馆","location":"美国 沃斯堡","year":"1972","architect":"路易·康","highlight":"摆线拱顶下的庭院与天窗把柔和光线引入展厅"},
+  {"id":"gilardi-house","strategyId":"courtyard-embed","name":"吉拉尔迪住宅","location":"墨西哥 墨西哥城","year":"1976","architect":"Luis Barragán","highlight":"彩色墙面与庭院水池构成静谧内向的空间序列"},
+  {"id":"sumiyoshi-row-house","strategyId":"courtyard-embed","name":"住吉的长屋","location":"日本 大阪","year":"1976","architect":"安藤忠雄","highlight":"在狭长宅地中切开中庭，把自然与光引入日常生活"},
+
+  {"id":"ministry-education-rio","strategyId":"pilotis","name":"巴西教育卫生部大楼","location":"巴西 里约热内卢","year":"1943","architect":"Lúcio Costa / Oscar Niemeyer","highlight":"底层架空与可调遮阳板奠定巴西现代主义的语汇"},
+  {"id":"swiss-pavilion-cite","strategyId":"pilotis","name":"瑞士学生宿舍","location":"法国 巴黎","year":"1933","architect":"勒·柯布西耶","highlight":"以独立柱墩把宿舍抬离地面，底层通透供人穿行"},
+  {"id":"alvorada-palace","strategyId":"pilotis","name":"阿尔沃拉达宫","location":"巴西 巴西利亚","year":"1958","architect":"Oscar Niemeyer","highlight":"细柱廊把宫殿轻盈托起，地面被完整还给景观"},
+  {"id":"esplanade-singapore","strategyId":"pilotis","name":"新加坡滨海艺术中心","location":"新加坡","year":"2002","architect":"DP Architects / Michael Wilford","highlight":"以遮阳壳与开放底层把演出场馆归还给滨水公共空间"},
+
+  {"id":"salk-institute","strategyId":"gray-space","name":"索尔克研究所","location":"美国 拉霍亚","year":"1965","architect":"路易·康","highlight":"柚木廊架与混凝土墙体在庭院两侧投下深长阴影，灰空间成为秩序本身"},
+  {"id":"barcelona-pavilion","strategyId":"gray-space","name":"巴塞罗那德国馆","location":"西班牙 巴塞罗那","year":"1929","architect":"密斯·凡·德·罗","highlight":"檐下挑出形成连续阴影，室内外由材质与高差而非墙体区分"},
+  {"id":"cafa-xiangshan","strategyId":"gray-space","name":"中国美院象山校区","location":"中国 杭州","year":"2004","architect":"王澍","highlight":"檐廊、廊桥与瓦爿墙把半室外空间织成漫游网络"},
+  {"id":"porto-school-architecture","strategyId":"gray-space","name":"波尔图建筑学院","location":"葡萄牙 波尔图","year":"1999","architect":"Álvaro Siza","highlight":"连续廊道与庭院围合出层次分明的半室外过渡"},
+
+  {"id":"sky-habitat","strategyId":"terrace-step","name":"Sky Habitat","location":"新加坡","year":"2013","architect":"Safdie Architects","highlight":"阶梯式退台自地面攀升至空中，每户获得露台与花园"},
+  {"id":"the-mountain","strategyId":"terrace-step","name":"The Mountain","location":"丹麦 哥本哈根","year":"2008","architect":"BIG","highlight":"停车屋面被抬升为阶梯山形，每层住户坐拥南向露台"},
+  {"id":"via-57-west","strategyId":"terrace-step","name":"Via 57 West","location":"美国 纽约","year":"2016","architect":"BIG","highlight":"扭转的体量围合出阶梯庭院，把欧洲街坊植入曼哈顿"},
+  {"id":"namba-parks","strategyId":"terrace-step","name":"难波公园","location":"日本 大阪","year":"2003","architect":"Jerde Partnership","highlight":"退台屋面自街道逐级升起，形成可漫游的空中峡谷花园"},
+
+  {"id":"shanghai-tower","strategyId":"atrium-core","name":"上海中心大厦","location":"中国 上海","year":"2015","architect":"Gensler","highlight":"分区空中大堂构成垂直中庭，组织超高层的人流与社交"},
+  {"id":"marina-one","strategyId":"atrium-core","name":"Marina One","location":"新加坡","year":"2018","architect":"Ingenhoven Architects","highlight":"四塔围合的绿色心脏中庭成为整组建筑的公共核心"},
+  {"id":"lloyds-building","strategyId":"atrium-core","name":"劳埃德大厦","location":"英国 伦敦","year":"1986","architect":"Richard Rogers","highlight":"服务塔外置后释放出贯通的中庭，成为保险交易的公共大厅"},
+  {"id":"toronto-city-hall","strategyId":"atrium-core","name":"多伦多市政厅","location":"加拿大 多伦多","year":"1965","architect":"Viljo Revell","highlight":"弧形双塔围合出圆形中庭广场，把市政厅变为市民客厅"},
+
+  {"id":"apple-park","strategyId":"shared-floor","name":"Apple Park","location":"美国 库比蒂诺","year":"2017","architect":"Foster + Partners","highlight":"环形巨构以连续大平层办公与内院组织数千人协作"},
+  {"id":"facebook-mpk20","strategyId":"shared-floor","name":"Facebook MPK20","location":"美国 门洛帕克","year":"2015","architect":"Gehry Partners","highlight":"全球最大开敞办公层之一，以大平层支撑灵活协作"},
+  {"id":"unilever-hamburg","strategyId":"shared-floor","name":"联合利华总部","location":"德国 汉堡","year":"2009","architect":"Behnisch Architekten","highlight":"中庭串联的开放式大平层让跨部门交流自然发生"},
+  {"id":"tencent-binhai","strategyId":"shared-floor","name":"腾讯滨海大厦","location":"中国 深圳","year":"2017","architect":"NBBJ","highlight":"双塔以连桥衔接，室内以弹性大平层支持团队重组"},
+
+  {"id":"ningbo-museum","strategyId":"local-material","name":"宁波博物馆","location":"中国 宁波","year":"2008","architect":"王澍","highlight":"以回收旧砖瓦砌成瓦爿墙，把拆除记忆织回新建筑"},
+  {"id":"fuyang-wencun","strategyId":"local-material","name":"富阳文村","location":"中国 杭州","year":"2016","architect":"王澍","highlight":"以夯土与杭灰石重塑浙北民居原型，激活在地营造"},
+  {"id":"shangping-village","strategyId":"local-material","name":"上坪古村复兴","location":"中国 福建","year":"2017","architect":"何崴 / 中央美院","highlight":"以夯土与木构的当代介入，让闽北古村重获公共活力"},
+  {"id":"songyang-sugar-mill","strategyId":"local-material","name":"松阳红糖工坊","location":"中国 浙江","year":"2018","architect":"DnA 徐甜甜","highlight":"以竹材与砖砌的轻介入延续传统红糖作坊的劳作空间"},
+
+  {"id":"jinmao-tower","strategyId":"symbol-translate","name":"上海金茂大厦","location":"中国 上海","year":"1999","architect":"SOM","highlight":"层叠收分的塔身抽象自中国古塔，转译而非复制"},
+  {"id":"kagawa-prefec-office","strategyId":"symbol-translate","name":"香川县厅舍","location":"日本 高松","year":"1958","architect":"丹下健三","highlight":"以清水混凝土转译传统木构的梁柱与檐下层次"},
+  {"id":"louvre-abu-dhabi","strategyId":"symbol-translate","name":"阿布扎比卢浮宫","location":"阿联酋 阿布扎比","year":"2017","architect":"让·努维尔建筑事务所","highlight":"多层镂空穹顶落下光雨，转译阿拉伯麦地那的遮荫智慧"},
+  {"id":"beijing-t3","strategyId":"symbol-translate","name":"北京首都机场 T3 航站楼","location":"中国 北京","year":"2008","architect":"Foster + Partners","highlight":"连续曲面屋面以龙的动势转译地域意象，组织超长流线"},
+
+  {"id":"zollverein","strategyId":"memory-retain","name":"埃森关税同盟煤矿工业建筑群","location":"德国 埃森","year":"2001","architect":"OMA / SANAA 等","highlight":"煤矿洗选厂被完整保留并转为文化地标，工业记忆成为展品本身"},
+  {"id":"elbphilharmonie","strategyId":"memory-retain","name":"汉堡易北爱乐音乐厅","location":"德国 汉堡","year":"2017","architect":"Herzog & de Meuron","highlight":"历史仓库上叠加玻璃音乐厅，新旧体量在剖面中清晰叠合"},
+  {"id":"psa-shanghai","strategyId":"memory-retain","name":"上海当代艺术博物馆","location":"中国 上海","year":"2012","architect":"同济原作设计工作室","highlight":"南市发电厂被保留并改制为当代艺术馆，烟囱成为城市坐标"},
+  {"id":"battersea-power-station","strategyId":"memory-retain","name":"巴特西电站","location":"英国 伦敦","year":"2022","architect":"WilkinsonEyre","highlight":"废弃燃煤电站被整体保留改造，四座烟囱重新点亮河岸"},
+
+  {"id":"micro-yuan","strategyId":"micro-weave","name":"微杂院","location":"中国 北京","year":"2014","architect":"张轲 / 标准营造","highlight":"在大杂院中植入儿童图书角，以极小介入激活胡同日常"},
+  {"id":"caoyang-baixi-park","strategyId":"micro-weave","name":"曹杨百禧公园","location":"中国 上海","year":"2021","architect":"刘宇扬建筑事务所","highlight":"废弃铁路支线被改造成三层立体公园，缝合工人新村"},
+  {"id":"pantang-wuyue","strategyId":"micro-weave","name":"泮塘五约","location":"中国 广州","year":"2019","architect":"多团队","highlight":"以针灸式改造保留西关村落肌理，植入文创与社区功能"},
+  {"id":"espana-library-park","strategyId":"micro-weave","name":"西班牙图书馆公园","location":"哥伦比亚 麦德林","year":"2007","architect":"Giancarlo Mazzanti","highlight":"三块巨石般的学习空间坐落于山顶贫民区，以教育节点缝合城市"},
+
+  {"id":"institut-monde-arabe","strategyId":"climate-form","name":"阿拉伯世界研究所","location":"法国 巴黎","year":"1987","architect":"让·努维尔建筑事务所","highlight":"上万枚感光光圈随日照开合，以机械屏调节光与热"},
+  {"id":"metropol-parasol","strategyId":"climate-form","name":"都市阳伞","location":"西班牙 塞维利亚","year":"2011","architect":"Jürgen Mayer H.","highlight":"巨型木构伞盖在酷热广场上投下大面积阴影，重塑公共活动"},
+
+  {"id":"hudson-yards","strategyId":"vertical-mix","name":"哈德逊城市广场","location":"美国 纽约","year":"2019","architect":"KPF 等","highlight":"铁路站场上盖的垂直复合城市，办公商业居住共享基座"},
+  {"id":"marina-bay-sands","strategyId":"vertical-mix","name":"滨海湾金沙","location":"新加坡","year":"2010","architect":"Safdie Architects","highlight":"三塔托起空中花园与无边泳池，酒店会展商业垂直叠合"},
+  {"id":"burj-khalifa","strategyId":"vertical-mix","name":"哈利法塔","location":"阿联酋 迪拜","year":"2010","architect":"SOM","highlight":"在单一塔体内垂直叠合办公、酒店、住宅与观景"},
+  {"id":"pingan-finance","strategyId":"vertical-mix","name":"深圳平安金融中心","location":"中国 深圳","year":"2017","architect":"KPF","highlight":"塔楼垂直叠合办公、商业与观光，组织高密度城市核心"},
+
+  {"id":"kings-cross-london","strategyId":"time-evolve","name":"国王十字区","location":"英国 伦敦","year":"2012","architect":"Argent / 多团队","highlight":"铁路用地分期演化，先以公共空间与院校启动，再逐步填充业态"},
+  {"id":"hafencity","strategyId":"time-evolve","name":"汉堡港口城","location":"德国 汉堡","year":"2010","architect":"多家事务所","highlight":"旧港口以分期开发逐步转为居住、办公与文化街区"},
+  {"id":"oct-loft","strategyId":"time-evolve","name":"华侨城创意文化园 OCT-LOFT","location":"中国 深圳","year":"2005","architect":"厂区自主更新","highlight":"东部工业区厂房按时序被创意业态接力填充，自发演化"},
+  {"id":"shangsheng-xinsuo","strategyId":"time-evolve","name":"上生·新所","location":"中国 上海","year":"2018","architect":"罗昂设计","highlight":"生物制品研究所园区分层活化，历史建筑与新业态交替生长"},
+
+  {"id":"oodi-library","strategyId":"boundary-penetrate","name":"Oodi 中央图书馆","location":"芬兰 赫尔辛基","year":"2018","architect":"ALA Architects","highlight":"首层大厅无门槛向城市敞开，公共流线自由穿越建筑"},
+
+  {"id":"grand-front-osaka","strategyId":"vitality-ring","name":"大阪 Grand Front","location":"日本 大阪","year":"2013","architect":"多家事务所","highlight":"以连廊与广场串联车站两侧，形成全天候商业活力环"},
+  {"id":"chengdu-taikoo-li","strategyId":"vitality-ring","name":"成都远洋太古里","location":"中国 成都","year":"2015","architect":"Oval Partnership / 罗健中","highlight":"街巷式布局把快慢生活叠合，形成可逛可停的开放街区"},
+  {"id":"covent-garden","strategyId":"vitality-ring","name":"考文特花园","location":"英国 伦敦","year":"1980","architect":"多团队","highlight":"历史市场以街头表演与市集延续昼夜不息的公共活力"},
+
+  {"id":"yoyogi-gymnasium","strategyId":"structure-space","name":"代代木国立竞技场","location":"日本 东京","year":"1964","architect":"丹下健三","highlight":"悬索屋面在两根巨柱间翻卷，结构本身即空间与形式"},
+  {"id":"munich-olympiastadion","strategyId":"structure-space","name":"慕尼黑奥林匹克体育场","location":"德国 慕尼黑","year":"1972","architect":"Frei Otto / Günter Behnisch","highlight":"轻质索网帐篷把结构、遮阳与地景合为一体"},
+  {"id":"birds-nest-beijing","strategyId":"structure-space","name":"国家体育场（鸟巢）","location":"中国 北京","year":"2008","architect":"Herzog & de Meuron / 中国建筑设计院","highlight":"编织钢结构既是受力体系也是建筑形象，内外不分"},
+  {"id":"cctv-headquarters","strategyId":"structure-space","name":"中央电视台总部大楼","location":"中国 北京","year":"2012","architect":"OMA","highlight":"不规则网格筒体在三维弯折中同时完成结构与建筑表达"},
+
+  {"id":"central-park-newyork","strategyId":"urban-public-space","name":"纽约中央公园","location":"美国 纽约","year":"1858","architect":"Olmsted & Vaux","highlight":"以人造田园在曼哈顿中心返还八平方公里无价公共绿地"},
+  {"id":"rose-kennedy-greenway","strategyId":"urban-public-space","name":"罗斯·肯尼迪绿道","location":"美国 波士顿","year":"2008","architect":"多团队","highlight":"拆除高架后以线性公园覆盖隧道，把城市重新还给行人"},
+  {"id":"huacheng-square","strategyId":"urban-public-space","name":"花城广场","location":"中国 广州","year":"2010","architect":"多家设计机构","highlight":"珠江新城中轴上的城市客厅，把超高层群缝合成开放地面"},
+  {"id":"gardens-by-the-bay","strategyId":"urban-public-space","name":"滨海湾花园","location":"新加坡","year":"2012","architect":"Grant Associates / WilkinsonEyre","highlight":"填海地上建成超级树丛与温室，把公共花园还给滨海核心"},
+
+  {"id":"promenade-plantee","strategyId":"slow-stitch","name":"巴黎绿荫步道","location":"法国 巴黎","year":"1993","architect":"Philippe Mathieux 等","highlight":"废弃高架铁路被改造成线性花园步道，比高线公园更早实践"},
+  {"id":"xiamen-mountain-trail","strategyId":"slow-stitch","name":"厦门山海健康步道","location":"中国 厦门","year":"2020","architect":"多团队","highlight":"以高架步道与山体步径串联城市与山野，缝合被道路割裂的山城联系"},
+
+  {"id":"beijing-central-axis","strategyId":"view-corridor","name":"北京中轴线","location":"中国 北京","year":"明清以来","architect":"历史营造体系","highlight":"七点八公里南北轴线以高度与序列控制全城视线与秩序"},
+  {"id":"london-river-view","strategyId":"view-corridor","name":"泰晤士河视廊保护","location":"英国 伦敦","year":"多轮规划","architect":"伦敦规划体系","highlight":"以法定视廊与高度管制保护圣保罗大教堂等历史地标的可视性"},
+  {"id":"brasilia-monumental-axis","strategyId":"view-corridor","name":"巴西利亚纪念轴","location":"巴西 巴西利亚","year":"1960","architect":"Lúcio Costa","highlight":"十字交叉的城市轴线以开阔视廊组织纪念性公共空间"},
+
+  {"id":"mucem","strategyId":"gradient-open","name":"欧洲与地中海文明博物馆","location":"法国 马赛","year":"2013","architect":"Rudy Ricciotti","highlight":"以空中步道与遮阳混凝土网把场馆向海湾与旧港逐级开放"},
+
+  {"id":"raffles-chongqing","strategyId":"public-return","name":"重庆来福士","location":"中国 重庆","year":"2019","architect":"Safdie Architects","highlight":"底层开放廊道与滨江广场向全城敞开，建筑成为山城会客厅"},
+  {"id":"bay-eye-shenzhen","strategyId":"public-return","name":"湾区之眼","location":"中国 深圳","year":"2024","architect":"中国建筑设计研究院 等","highlight":"七成建筑面积沉入地下，屋面全域开放为市民公园"},
+  {"id":"domino-park","strategyId":"public-return","name":"多米诺公园","location":"美国 布鲁克林","year":"2018","architect":"James Corner Field Operations","highlight":"糖厂改造中以私有公共空间换取开发权，滨水岸线还给市民"},
+  {"id":"jr-gate-tower","strategyId":"public-return","name":"JR Gate Tower","location":"日本 名古屋","year":"2017","architect":"多团队","highlight":"以容积奖励换取巴士总站与步行广场，把交通与公共设施返还城市"},
+
+  {"id":"xiongan-civic-center","strategyId":"prefab","name":"雄安市民服务中心","location":"中国 雄安","year":"2018","architect":"多团队","highlight":"以全装配式与模块化在极短工期建成园区，示范工业化建造"},
+  {"id":"chapel-wharf","strategyId":"prefab","name":"Chapel Wharf","location":"英国 曼彻斯特","year":"2021","architect":"Dandara / PCE","highlight":"四座高层住宅以 hybriDfMA 体系装配，千余套公寓免脚手架建造"},
+  {"id":"kallang-whampoa","strategyId":"prefab","name":"加冷黄埔组屋","location":"新加坡","year":"2020","architect":"新加坡建屋发展局","highlight":"以预制墙板楼梯与整体卫浴实现公共住宅的装配式量产"},
+  {"id":"jinan-cmc-housing","strategyId":"prefab","name":"济南中建·大学里","location":"中国 济南","year":"2025","architect":"中建科技","highlight":"288 个功能模块现场拼装，六成工序前置工厂完成"},
+
+  {"id":"innocell-hk","strategyId":"modular-build","name":"InnoCell 人才公寓","location":"中国 香港","year":"2021","architect":"模块化联合团队","highlight":"香港首个永久性钢结构模块化高层，17 层宿舍现场快速吊装"},
+  {"id":"citizenm-la","strategyId":"modular-build","name":"citizenM 洛杉矶酒店","location":"美国 洛杉矶","year":"2020","architect":"模块化联合团队","highlight":"高地震烈度区的高层模块化酒店，房间模块整体预制到位"},
+  {"id":"ibis-perth","strategyId":"modular-build","name":"珀斯宜必思酒店","location":"澳大利亚 珀斯","year":"2021","architect":"模块化联合团队","highlight":"17 层酒店工厂预制率约九成五，含整体预装玻璃幕墙"},
+  {"id":"amsterdam-student-housing","strategyId":"modular-build","name":"阿姆斯特丹大学学生公寓","location":"荷兰 阿姆斯特丹","year":"2011","architect":"模块化联合团队","highlight":"模块在使用十余年后被整体搬迁异地复用，验证可循环建造"},
+
+  {"id":"molenvliet","strategyId":"growth-frame","name":"Molenvliet 支撑住宅","location":"荷兰 帕彭德雷赫特","year":"1977","architect":"Frans van der Werf","highlight":"以支撑与填充分离的开放建筑，123 户皆由居民参与定型"},
+  {"id":"patch22","strategyId":"growth-frame","name":"Patch22","location":"荷兰 阿姆斯特丹","year":"2016","architect":"FRANTZEN et al.","highlight":"木混杂交结构只做骨架与服务，户型由住户合成与调整"},
+  {"id":"superlofts","strategyId":"growth-frame","name":"Superlofts","location":"荷兰 阿姆斯特丹","year":"2015","architect":"Marc Koehler Architects","highlight":"以可自主建造的高挑空间框架，让住户自行完成内部填充"},
+  {"id":"tetterode","strategyId":"growth-frame","name":"Tetterode 综合体","location":"荷兰 阿姆斯特丹","year":"1987","architect":"多团队","highlight":"住宅公司只修缮外壳，内部构造由新住户自行完成"},
+
+  {"id":"one-world-trade","strategyId":"core-skin","name":"世界贸易中心一号楼","location":"美国 纽约","year":"2014","architect":"SOM","highlight":"高强混凝土核心筒支撑无柱楼面，外围获得连续自由的办公空间"},
+  {"id":"upperhills-shenzhen","strategyId":"core-skin","name":"深业上城塔楼","location":"中国 深圳","year":"2020","architect":"SOM","highlight":"梯级核心筒以巨型柱与连梁组成，换取完全无柱的外墙视野"},
+  {"id":"hanking-center","strategyId":"core-skin","name":"汉京中心","location":"中国 深圳","year":"2018","architect":"Morphosis","highlight":"核心筒与电梯外移分离，主体获得无遮挡的自由平面与立面"},
+  {"id":"inland-steel-building","strategyId":"core-skin","name":"内陆钢铁大厦","location":"美国 芝加哥","year":"1958","architect":"SOM","highlight":"把服务核心完全外置，楼面得以全开敞并自由划分"},
+
+  {"id":"zara-huaihai","strategyId":"facade-vitality","name":"Zara 淮海路旗舰店","location":"中国 上海","year":"2025","architect":"AIM Architecture","highlight":"首层台阶化成可坐的公共看台，零售界面成为城市基础设施"},
+  {"id":"west-bund-dream-center","strategyId":"facade-vitality","name":"西岸梦中心","location":"中国 上海","year":"2024","architect":"多团队","highlight":"沿江商业以开放立面与公共空间深度融合，激活滨水界面"},
+  {"id":"omotesando","strategyId":"facade-vitality","name":"表参道","location":"日本 东京","year":"2006","architect":"多家事务所","highlight":"榉树街两侧的精品界面以透明橱窗与遮荫构成连续活跃街道"},
+  {"id":"stroget","strategyId":"facade-vitality","name":"Strøget 步行街","location":"丹麦 哥本哈根","year":"1962","architect":"Jan Gehl 等推动","highlight":"渐进式步行化让沿街界面持续活化，成为街道生活范本"},
+
+  {"id":"yazd-windcatcher","strategyId":"climate-form","name":"亚兹德多拉塔巴德风塔","location":"伊朗 亚兹德","year":"18 世纪","architect":"传统营造体系","highlight":"高耸风塔捕获高空凉风并导入室内，沙漠气候的被动降温典范"},
+  {"id":"hawa-mahal","strategyId":"climate-form","name":"斋浦尔风宫","location":"印度 斋浦尔","year":"1799","architect":"传统营造体系","highlight":"满布镂空石窗的立面引导穿堂风，为室内提供持续的蒸发凉爽"},
+  {"id":"huizhou-courtyard-house","strategyId":"climate-form","name":"徽州天井民居","location":"中国 安徽","year":"明清","architect":"传统营造体系","highlight":"四水归堂的天井形成烟囱效应，高墙小窗调节湿热气候"},
+  {"id":"shanghai-planetarium","strategyId":"climate-form","name":"上海天文馆","location":"中国 上海","year":"2021","architect":"Ennead Architects","highlight":"以智能遮阳与形体自遮荫回应日照，把气候逻辑写进曲面"},
+
+  {"id":"21st-century-museum-kanazawa","strategyId":"boundary-penetrate","name":"金泽 21 世纪美术馆","location":"日本 金泽","year":"2004","architect":"SANAA","highlight":"无前后之分的圆形体量向公园开放，公众可自由穿越场地"},
+  {"id":"louisiana-museum","strategyId":"boundary-penetrate","name":"路易斯安那现代艺术博物馆","location":"丹麦 胡姆勒拜克","year":"1958","architect":"Jørgen Bo & Vilhelm Wohlert","highlight":"展厅沿公园地形自由延展，室内外边界在廊道中不断渗透"},
+
+  {"id":"iconsiam","strategyId":"vitality-ring","name":"ICONSIAM","location":"泰国 曼谷","year":"2018","architect":"Urban Architecture 等","highlight":"以河岸阶梯广场串联商业与公共活动，形成全天候活力界面"},
+
+  {"id":"madrid-rio","strategyId":"slow-stitch","name":"马德里河岸","location":"西班牙 马德里","year":"2011","architect":"West 8 等","highlight":"高速路入地后将河岸还给步行，缝合被干道割裂的城市"},
+
+  {"id":"sun-yat-sen-mausoleum","strategyId":"view-corridor","name":"中山陵","location":"中国 南京","year":"1929","architect":"吕彦直","highlight":"以层层台阶与轴线组织登山视线，把纪念序列融入山势"},
+
+  {"id":"tianfu-art-park","strategyId":"gradient-open","name":"天府艺术公园 当代艺术馆","location":"中国 成都","year":"2021","architect":"中建西南院","highlight":"以起伏屋面与地景坡道消解场馆边界，向湖面逐级开放"},
+
+  {"id":"rmit-rodda-lane","strategyId":"boundary-penetrate","name":"RMIT Rodda Lane","location":"澳大利亚 墨尔本","year":"2021","architect":"Sibling Architecture","highlight":"把校园后勤后巷缝合为连续公共空间，师生与市民自由穿越"},
+  {"id":"ut-austin-speedway","strategyId":"slow-stitch","name":"UT 奥斯汀 Speedway 步行廊道","location":"美国 奥斯汀","year":"2016","architect":"PWP Landscape Architecture","highlight":"校园服务道路改造为半英里步行绿廊，缝合被车行割裂的校区"},
+  {"id":"harpa-concert-hall","strategyId":"gradient-open","name":"Harpa 音乐厅","location":"冰岛 雷克雅未克","year":"2011","architect":"Henning Larsen / Olafur Eliasson","highlight":"晶格玻璃立面把场馆向海港敞开，室内外边界随光线渐变"}
+]
